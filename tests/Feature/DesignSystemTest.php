@@ -27,7 +27,7 @@ class DesignSystemTest extends TestCase
     {
         $buttonHtml = $this->blade('<x-button variant="primary">Acessar Portal</x-button>');
         $buttonHtml->assertSee('<button', false);
-        $buttonHtml->assertSee('bg-cbn-navy', false);
+        $buttonHtml->assertSee('bg-cbn-orange', false);
         $buttonHtml->assertSee('Acessar Portal');
 
         $linkHtml = $this->blade('<x-button href="https://example.com" variant="gold">Saiba Mais</x-button>');
