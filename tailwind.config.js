@@ -13,8 +13,10 @@ export default {
                 cbn: {
                     navy: '#0D2240',
                     'navy-dark': '#071324',
+                    'navy-light': '#163660',
                     gold: '#C89D3C',
                     'gold-light': '#DFC16B',
+                    'gold-dark': '#9E7B28',
                 },
             },
             fontFamily: {
