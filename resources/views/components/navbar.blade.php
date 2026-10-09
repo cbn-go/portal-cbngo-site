@@ -17,6 +17,7 @@
 <header
     x-data="{ open: false }"
     @keydown.escape.window="open = false"
+    @click.outside="open = false"
     class="sticky top-0 z-40 bg-cbn-navy text-white border-b border-cbn-gold/30 shadow-md"
 >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,22 +76,14 @@
                     aria-controls="cbn-mobile-menu"
                     aria-label="Alternar menu de navegação"
                     @click="open = !open"
-                    onclick="
-                        const menu = document.getElementById('cbn-mobile-menu');
-                        if (!window.Alpine) {
-                            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                            this.setAttribute('aria-expanded', !isExpanded);
-                            menu.classList.toggle('hidden');
-                        }
-                    "
                     class="p-2 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold transition"
                 >
-                    <!-- Icon Hamburger (when closed) -->
+                    <!-- Icon Hamburger (visible by default; Alpine hides when open) -->
                     <svg x-show="!open" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                     </svg>
-                    <!-- Icon Close X (when open) -->
-                    <svg x-show="open" style="display: none;" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                    <!-- Icon Close X (hidden until Alpine opens the menu) -->
+                    <svg x-show="open" x-cloak class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
@@ -98,18 +91,18 @@
         </div>
     </div>
 
-    <!-- Mobile Drawer Menu -->
+    <!-- Mobile Drawer Menu (visibility via Alpine x-show only — do not use Tailwind `hidden` here) -->
     <div
         id="cbn-mobile-menu"
         x-show="open"
+        x-cloak
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 -translate-y-2"
         x-transition:enter-end="opacity-100 translate-y-0"
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-2"
-        @click.outside="open = false"
-        class="hidden lg:hidden border-t border-white/10 bg-cbn-navy-dark px-4 pt-3 pb-6 space-y-2 shadow-2xl"
+        class="lg:hidden border-t border-white/10 bg-cbn-navy-dark px-4 pt-3 pb-6 space-y-2 shadow-2xl"
     >
         <nav class="flex flex-col space-y-1" aria-label="Navegação mobile">
             @foreach ($navItems as $key => $item)

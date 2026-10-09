@@ -120,4 +120,19 @@ class DesignSystemTest extends TestCase
         $navbarHtml->assertSee('text-cbn-gold font-semibold bg-white/5', false);
         $navbarHtml->assertSee('Notícias');
     }
+
+    /**
+     * Garante que o drawer mobile não usa Tailwind `hidden` junto com Alpine x-show
+     * (conflito que impede o menu de abrir quando Alpine está carregado).
+     */
+    public function test_navbar_mobile_drawer_uses_alpine_visibility_without_tailwind_hidden(): void
+    {
+        $navbarHtml = $this->blade('<x-navbar />');
+
+        $navbarHtml->assertSee('id="cbn-mobile-menu"', false);
+        $navbarHtml->assertSee('x-show="open"', false);
+        $navbarHtml->assertSee('x-cloak', false);
+        $navbarHtml->assertSee('lg:hidden', false);
+        $navbarHtml->assertDontSee('hidden lg:hidden', false);
+    }
 }

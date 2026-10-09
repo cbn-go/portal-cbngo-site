@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide Alpine-controlled UI until Alpine initializes (avoids FOUC). */
+[x-cloak] {
+    display: none !important;
+}
+
 @font-face {
     font-family: 'Baker Signet';
     src: url('../assets/fonts/baker-signet.ttf') format('truetype');

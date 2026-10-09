@@ -55,7 +55,7 @@
                     type="button"
                     aria-label="Fechar aviso"
                     @click="show = false"
-                    onclick="this.closest('#cbn-urgent-banner').remove()"
+                    onclick="if (!window.Alpine) this.closest('#cbn-urgent-banner')?.remove()"
                     class="p-1 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
