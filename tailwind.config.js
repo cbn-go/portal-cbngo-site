@@ -18,8 +18,10 @@ export default {
                 },
             },
             fontFamily: {
-                sans: ['"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
-                serif: ['"Playfair Display"', ...defaultTheme.fontFamily.serif],
+                sans: ['"Humanist 521"', '"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
+                serif: ['"Baker Signet"', '"Playfair Display"', ...defaultTheme.fontFamily.serif],
+                'brand-serif': ['"Baker Signet"', 'serif'],
+                'brand-sans': ['"Humanist 521"', 'sans-serif'],
             },
         },
     },

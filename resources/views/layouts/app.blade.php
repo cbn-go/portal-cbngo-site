@@ -7,28 +7,28 @@
 
     <title>{{ config('app.name', 'CBN Goiás') }} - @yield('title', 'Convenção Batista Nacional do Estado de Goiás')</title>
 
-    <!-- Fonts -->
+    <!-- Google Fonts Fallbacks -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Assets / Tailwind via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex flex-col min-h-full font-sans text-slate-800 antialiased selection:bg-amber-500 selection:text-white">
-    <header class="bg-[#0D2240] text-white border-b border-amber-600/30">
+<body class="flex flex-col min-h-full font-sans text-slate-800 antialiased selection:bg-cbn-gold selection:text-cbn-navy-dark">
+    <header class="bg-cbn-navy text-white border-b border-cbn-gold/30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-400/30 flex items-center justify-center font-bold text-amber-400 text-lg">
+                <div class="w-10 h-10 rounded-lg bg-cbn-gold/20 border border-cbn-gold/40 flex items-center justify-center font-bold text-cbn-gold font-brand-serif text-xl">
                     CBN
                 </div>
                 <div>
-                    <span class="block text-lg font-bold tracking-tight text-white group-hover:text-amber-300 transition">CBN-GO</span>
+                    <span class="block text-lg font-bold tracking-tight text-white group-hover:text-cbn-gold-light transition font-brand-serif">CBN-GO</span>
                     <span class="block text-xs text-slate-300">Convenção Batista Nacional do Estado de Goiás</span>
                 </div>
             </a>
             <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a href="{{ route('home') }}" class="text-amber-400 hover:text-amber-300 transition">Início</a>
+                <a href="{{ route('home') }}" class="text-cbn-gold hover:text-cbn-gold-light transition">Início</a>
                 <a href="#sobre" class="text-slate-300 hover:text-white transition">Quem Somos</a>
                 <a href="#igrejas" class="text-slate-300 hover:text-white transition">Igrejas</a>
                 <a href="#noticias" class="text-slate-300 hover:text-white transition">Notícias</a>
@@ -41,7 +41,7 @@
         @yield('content')
     </main>
 
-    <footer class="bg-[#09172c] text-slate-400 border-t border-slate-800 py-8">
+    <footer class="bg-cbn-navy-dark text-slate-400 border-t border-slate-800 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
             <p class="font-semibold text-slate-200">Convenção Batista Nacional do Estado de Goiás (CBN-GO)</p>
             <p class="mt-1 text-xs text-slate-500">&copy; {{ date('Y') }} Todos os direitos reservados.</p>
