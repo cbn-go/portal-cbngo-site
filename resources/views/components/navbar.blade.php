@@ -22,19 +22,18 @@
 >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
-            <!-- Brand / Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-3.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded-lg p-1">
-                <div class="w-11 h-11 rounded-lg bg-cbn-gold/20 border border-cbn-gold/40 flex items-center justify-center font-bold text-cbn-gold font-brand-serif text-2xl shadow-inner group-hover:scale-105 transition-transform">
-                    CBN
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-xl font-bold tracking-tight text-white group-hover:text-cbn-gold-light transition font-brand-serif leading-none">
-                        CBN-GO
-                    </span>
-                    <span class="text-[11px] font-medium text-slate-300 tracking-wider uppercase mt-1 leading-none font-brand-sans">
-                        Convenção Batista Nacional de Goiás
-                    </span>
-                </div>
+            <!-- Brand / Logo oficial CBN | GO -->
+            <a
+                href="{{ route('home') }}"
+                class="flex items-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded-lg p-1 group"
+            >
+                <img
+                    src="{{ asset('images/brand/cbn-go-on-dark.png') }}"
+                    alt="CBN | GO — Convenção Batista Nacional Goiás"
+                    width="180"
+                    height="69"
+                    class="h-12 sm:h-14 w-auto transition opacity-95 group-hover:opacity-100"
+                />
             </a>
 
             <!-- Desktop Navigation -->

@@ -93,12 +93,14 @@ class DesignSystemTest extends TestCase
     public function test_navbar_and_footer_components_render_institutional_links(): void
     {
         $navbarHtml = $this->blade('<x-navbar />');
-        $navbarHtml->assertSee('CBN-GO');
+        $navbarHtml->assertSee('images/brand/cbn-go-on-dark.png', false);
+        $navbarHtml->assertSee('CBN | GO', false);
         $navbarHtml->assertSee('Quem Somos');
         $navbarHtml->assertSee('Igrejas');
         $navbarHtml->assertSee('aria-expanded', false);
 
         $footerHtml = $this->blade('<x-footer />');
+        $footerHtml->assertSee('images/brand/cbn-go-on-dark.png', false);
         $footerHtml->assertSee('Convenção Batista Nacional do Estado de Goiás');
         $footerHtml->assertSee('SETEBAN-GO');
         $footerHtml->assertSee('Goiânia');

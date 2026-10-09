@@ -3,15 +3,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             <!-- Coluna 1: Identidade & Redes Sociais -->
             <div class="space-y-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-cbn-gold/20 border border-cbn-gold/40 flex items-center justify-center font-bold text-cbn-gold font-brand-serif text-xl">
-                        CBN
-                    </div>
-                    <div>
-                        <span class="block text-lg font-bold text-white font-brand-serif leading-none">CBN-GO</span>
-                        <span class="block text-xs text-cbn-gold font-medium mt-1">Goiás</span>
-                    </div>
-                </div>
+                <a href="{{ route('home') }}" class="inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded">
+                    <img
+                        src="{{ asset('images/brand/cbn-go-on-dark.png') }}"
+                        alt="CBN | GO — Convenção Batista Nacional Goiás"
+                        width="160"
+                        height="62"
+                        class="h-12 w-auto"
+                    />
+                </a>
                 <p class="text-sm text-slate-400 leading-relaxed font-brand-sans">
                     Convenção Batista Nacional do Estado de Goiás. Promovendo comunhão, cooperação missionária e edificação do corpo de Cristo em todo o território goiano.
                 </p>
