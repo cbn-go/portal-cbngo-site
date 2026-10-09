@@ -28,7 +28,10 @@
 
         <!-- Título -->
         <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-cbn-gold-dark transition font-brand-serif line-clamp-2 leading-snug">
-            <a href="/artigos/{{ $slug }}" class="focus:outline-none">
+            <a
+                href="/artigos/{{ $slug }}"
+                class="focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded"
+            >
                 {{ $title }}
             </a>
         </h3>
@@ -66,7 +69,10 @@
             </div>
         </div>
 
-        <a href="/artigos/{{ $slug }}" class="text-xs font-semibold text-cbn-navy group-hover:text-cbn-gold-dark transition inline-flex items-center gap-1">
+        <a
+            href="/artigos/{{ $slug }}"
+            class="text-xs font-semibold text-cbn-navy group-hover:text-cbn-gold-dark transition inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded px-1.5 py-0.5"
+        >
             <span>Ler</span>
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

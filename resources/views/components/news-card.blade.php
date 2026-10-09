@@ -10,7 +10,10 @@
 
 <article {{ $attributes->merge(['class' => 'group flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md hover:border-cbn-gold/40 transition-all duration-200']) }}>
     <!-- Imagem / Thumbnail -->
-    <a href="/noticias/{{ $slug }}" class="relative block aspect-[16/9] w-full overflow-hidden bg-cbn-navy shrink-0 focus:outline-none">
+    <a
+        href="/noticias/{{ $slug }}"
+        class="relative block aspect-[16/9] w-full overflow-hidden bg-cbn-navy shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold"
+    >
         @if ($image)
             <img
                 src="{{ $image }}"
@@ -50,7 +53,10 @@
         @endif
 
         <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-cbn-gold-dark transition font-brand-serif line-clamp-2 leading-snug">
-            <a href="/noticias/{{ $slug }}" class="focus:outline-none">
+            <a
+                href="/noticias/{{ $slug }}"
+                class="focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded"
+            >
                 {{ $title }}
             </a>
         </h3>
@@ -61,11 +67,16 @@
             </p>
         @endif
 
-        <div class="pt-2 mt-auto flex items-center justify-between text-xs font-semibold text-cbn-navy group-hover:text-cbn-gold-dark transition">
-            <span>Ler notícia completa</span>
-            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-            </svg>
+        <div class="pt-2 mt-auto">
+            <a
+                href="/noticias/{{ $slug }}"
+                class="inline-flex items-center justify-between w-full text-xs font-semibold text-cbn-navy group-hover:text-cbn-gold-dark transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded py-0.5"
+            >
+                <span>Ler notícia completa</span>
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                </svg>
+            </a>
         </div>
     </div>
 </article>

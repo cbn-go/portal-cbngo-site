@@ -2,7 +2,23 @@
     'active' => 'home',
 ])
 
-<header class="sticky top-0 z-40 bg-cbn-navy text-white border-b border-cbn-gold/30 shadow-md">
+@php
+    $navItems = [
+        'home' => ['label' => 'Início', 'href' => route('home')],
+        'quem-somos' => ['label' => 'Quem Somos', 'href' => '#quem-somos'],
+        'diretoria' => ['label' => 'Diretoria', 'href' => '#diretoria'],
+        'igrejas' => ['label' => 'Igrejas', 'href' => '#igrejas'],
+        'noticias' => ['label' => 'Notícias', 'href' => '#noticias'],
+        'artigos' => ['label' => 'Artigos', 'href' => '#artigos'],
+        'contato' => ['label' => 'Contato', 'href' => '#contato'],
+    ];
+@endphp
+
+<header
+    x-data="{ open: false }"
+    @keydown.escape.window="open = false"
+    class="sticky top-0 z-40 bg-cbn-navy text-white border-b border-cbn-gold/30 shadow-md"
+>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
             <!-- Brand / Logo -->
@@ -14,7 +30,7 @@
                     <span class="text-xl font-bold tracking-tight text-white group-hover:text-cbn-gold-light transition font-brand-serif leading-none">
                         CBN-GO
                     </span>
-                    <span class="text-[11px] font-medium text-slate-300 tracking-wider uppercase mt-1 leading-none">
+                    <span class="text-[11px] font-medium text-slate-300 tracking-wider uppercase mt-1 leading-none font-brand-sans">
                         Convenção Batista Nacional de Goiás
                     </span>
                 </div>
@@ -22,30 +38,21 @@
 
             <!-- Desktop Navigation -->
             <nav class="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium" aria-label="Navegação principal">
-                <a
-                    href="{{ route('home') }}"
-                    class="px-3 py-2 rounded-md transition {{ $active === 'home' ? 'text-cbn-gold font-semibold bg-white/5' : 'text-slate-200 hover:text-white hover:bg-white/5' }}"
-                >
-                    Início
-                </a>
-                <a href="#quem-somos" class="px-3 py-2 rounded-md text-slate-200 hover:text-white hover:bg-white/5 transition">
-                    Quem Somos
-                </a>
-                <a href="#diretoria" class="px-3 py-2 rounded-md text-slate-200 hover:text-white hover:bg-white/5 transition">
-                    Diretoria
-                </a>
-                <a href="#igrejas" class="px-3 py-2 rounded-md text-slate-200 hover:text-white hover:bg-white/5 transition">
-                    Igrejas
-                </a>
-                <a href="#noticias" class="px-3 py-2 rounded-md text-slate-200 hover:text-white hover:bg-white/5 transition">
-                    Notícias
-                </a>
-                <a href="#artigos" class="px-3 py-2 rounded-md text-slate-200 hover:text-white hover:bg-white/5 transition">
-                    Artigos
-                </a>
-                <a href="#contato" class="px-3 py-2 rounded-md text-slate-200 hover:text-white hover:bg-white/5 transition">
-                    Contato
-                </a>
+                @foreach ($navItems as $key => $item)
+                    @php
+                        $isActive = ($active === $key);
+                        $linkClasses = $isActive
+                            ? 'text-cbn-gold font-semibold bg-white/5 shadow-inner'
+                            : 'text-slate-200 hover:text-white hover:bg-white/5';
+                    @endphp
+                    <a
+                        href="{{ $item['href'] }}"
+                        class="px-3 py-2 rounded-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold {{ $linkClasses }}"
+                        @if ($isActive) aria-current="page" @endif
+                    >
+                        {{ $item['label'] }}
+                    </a>
+                @endforeach
             </nav>
 
             <!-- Actions / Portal Admin CTA -->
@@ -58,25 +65,33 @@
                 </x-button>
             </div>
 
-            <!-- Mobile Hamburger Button -->
+            <!-- Mobile Hamburger & Close Button -->
             <div class="flex lg:hidden">
                 <button
                     type="button"
                     id="cbn-mobile-menu-toggle"
+                    :aria-expanded="open.toString()"
                     aria-expanded="false"
                     aria-controls="cbn-mobile-menu"
                     aria-label="Alternar menu de navegação"
+                    @click="open = !open"
                     onclick="
                         const menu = document.getElementById('cbn-mobile-menu');
-                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                        this.setAttribute('aria-expanded', !isExpanded);
-                        menu.classList.toggle('hidden');
+                        if (!window.Alpine) {
+                            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                            this.setAttribute('aria-expanded', !isExpanded);
+                            menu.classList.toggle('hidden');
+                        }
                     "
                     class="p-2 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold transition"
                 >
-                    <!-- Icon Menu -->
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                    <!-- Icon Hamburger (when closed) -->
+                    <svg x-show="!open" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
+                    <!-- Icon Close X (when open) -->
+                    <svg x-show="open" style="display: none;" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -86,30 +101,32 @@
     <!-- Mobile Drawer Menu -->
     <div
         id="cbn-mobile-menu"
+        x-show="open"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        @click.outside="open = false"
         class="hidden lg:hidden border-t border-white/10 bg-cbn-navy-dark px-4 pt-3 pb-6 space-y-2 shadow-2xl"
     >
         <nav class="flex flex-col space-y-1" aria-label="Navegação mobile">
-            <a href="{{ route('home') }}" class="px-3 py-2.5 rounded-md font-semibold text-cbn-gold bg-white/5">
-                Início
-            </a>
-            <a href="#quem-somos" class="px-3 py-2.5 rounded-md text-slate-200 hover:text-white hover:bg-white/5">
-                Quem Somos
-            </a>
-            <a href="#diretoria" class="px-3 py-2.5 rounded-md text-slate-200 hover:text-white hover:bg-white/5">
-                Diretoria
-            </a>
-            <a href="#igrejas" class="px-3 py-2.5 rounded-md text-slate-200 hover:text-white hover:bg-white/5">
-                Igrejas
-            </a>
-            <a href="#noticias" class="px-3 py-2.5 rounded-md text-slate-200 hover:text-white hover:bg-white/5">
-                Notícias
-            </a>
-            <a href="#artigos" class="px-3 py-2.5 rounded-md text-slate-200 hover:text-white hover:bg-white/5">
-                Artigos
-            </a>
-            <a href="#contato" class="px-3 py-2.5 rounded-md text-slate-200 hover:text-white hover:bg-white/5">
-                Contato
-            </a>
+            @foreach ($navItems as $key => $item)
+                @php
+                    $isActive = ($active === $key);
+                    $linkClasses = $isActive
+                        ? 'text-cbn-gold font-semibold bg-white/5'
+                        : 'text-slate-200 hover:text-white hover:bg-white/5';
+                @endphp
+                <a
+                    href="{{ $item['href'] }}"
+                    class="px-3 py-2.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold transition {{ $linkClasses }}"
+                    @if ($isActive) aria-current="page" @endif
+                >
+                    {{ $item['label'] }}
+                </a>
+            @endforeach
         </nav>
 
         <div class="pt-4 border-t border-white/10 flex flex-col gap-2">

@@ -1,16 +1,29 @@
 @props([
     'currentPage' => 1,
     'totalPages' => 1,
+    'baseUrl' => null,
     'prevUrl' => null,
     'nextUrl' => null,
 ])
 
+@php
+    $base = $baseUrl ?? request()->url();
+    $pageUrl = function($page) use ($base) {
+        $query = request()->query();
+        $query['page'] = $page;
+        return $base . '?' . http_build_query($query);
+    };
+
+    $computedPrev = $prevUrl ?? ($currentPage > 1 ? $pageUrl($currentPage - 1) : null);
+    $computedNext = $nextUrl ?? ($currentPage < $totalPages ? $pageUrl($currentPage + 1) : null);
+@endphp
+
 <nav role="navigation" aria-label="Navegação da paginação" class="flex items-center justify-between border-t border-slate-200 px-4 sm:px-0 py-4">
     <div class="-mt-px flex w-0 flex-1">
-        @if ($prevUrl)
+        @if ($computedPrev)
             <a
-                href="{{ $prevUrl }}"
-                class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-slate-500 hover:border-cbn-navy hover:text-cbn-navy transition"
+                href="{{ $computedPrev }}"
+                class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-slate-500 hover:border-cbn-navy hover:text-cbn-navy transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded"
             >
                 <svg class="mr-3 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M18 10a.75.75 0 01-.75.75H4.66l3.97 3.97a.75.75 0 11-1.06 1.06l-5.25-5.25a.75.75 0 010-1.06l5.25-5.25a.75.75 0 011.06 1.06L4.66 9.25h12.59A.75.75 0 0118 10z" clip-rule="evenodd" />
@@ -38,8 +51,8 @@
                 </span>
             @else
                 <a
-                    href="?page={{ $i }}"
-                    class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700 transition"
+                    href="{{ $pageUrl($i) }}"
+                    class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded"
                 >
                     {{ $i }}
                 </a>
@@ -48,10 +61,10 @@
     </div>
 
     <div class="-mt-px flex w-0 flex-1 justify-end">
-        @if ($nextUrl)
+        @if ($computedNext)
             <a
-                href="{{ $nextUrl }}"
-                class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-slate-500 hover:border-cbn-navy hover:text-cbn-navy transition"
+                href="{{ $computedNext }}"
+                class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-slate-500 hover:border-cbn-navy hover:text-cbn-navy transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded"
             >
                 Próxima
                 <svg class="ml-3 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

@@ -61,7 +61,7 @@ class DesignSystemTest extends TestCase
     }
 
     /**
-     * Valida o card de notícia com metadados e imagem fallback SVG quando não informada.
+     * Valida o card de notícia com metadados, fallback SVG e anéis de foco visível (WCAG 2.4.7 AA).
      */
     public function test_news_card_component_renders_title_category_and_fallback_image(): void
     {
@@ -71,10 +71,11 @@ class DesignSystemTest extends TestCase
         $newsHtml->assertSee('09/10/2026');
         $newsHtml->assertSee('nova-diretoria-eleita');
         $newsHtml->assertSee('<svg', false); // Fallback SVG
+        $newsHtml->assertSee('focus-visible:ring-cbn-gold', false); // A11y focus ring
     }
 
     /**
-     * Valida o card de artigo com avatar, autor e tempo estimado de leitura.
+     * Valida o card de artigo com avatar, autor, tempo de leitura e anel de foco visível.
      */
     public function test_article_card_component_renders_title_author_and_reading_time(): void
     {
@@ -83,10 +84,11 @@ class DesignSystemTest extends TestCase
         $articleHtml->assertSee('Pr. João Silva');
         $articleHtml->assertSee('5 min');
         $articleHtml->assertSee('Reflexão teológica sobre liderança.');
+        $articleHtml->assertSee('focus-visible:ring-cbn-gold', false); // A11y focus ring
     }
 
     /**
-     * Valida que o navbar e footer contêm links institucionais e atributos de acessibilidade.
+     * Valida que o navbar e footer contêm links institucionais, redes sociais e acessibilidade.
      */
     public function test_navbar_and_footer_components_render_institutional_links(): void
     {
@@ -94,11 +96,28 @@ class DesignSystemTest extends TestCase
         $navbarHtml->assertSee('CBN-GO');
         $navbarHtml->assertSee('Quem Somos');
         $navbarHtml->assertSee('Igrejas');
-        $navbarHtml->assertSee('aria-expanded="false"', false);
+        $navbarHtml->assertSee('aria-expanded', false);
 
         $footerHtml = $this->blade('<x-footer />');
         $footerHtml->assertSee('Convenção Batista Nacional do Estado de Goiás');
         $footerHtml->assertSee('SETEBAN-GO');
         $footerHtml->assertSee('Goiânia');
+        // Redes sociais exigidas no AC 2.2:
+        $footerHtml->assertSee('Instagram');
+        $footerHtml->assertSee('Facebook');
+        $footerHtml->assertSee('YouTube');
+        $footerHtml->assertSee('WhatsApp');
+    }
+
+    /**
+     * Valida que a prop active do navbar destaca o item correto tanto no desktop quanto no mobile.
+     */
+    public function test_navbar_highlights_specified_active_item_on_desktop_and_mobile(): void
+    {
+        $navbarHtml = $this->blade('<x-navbar active="noticias" />');
+
+        // Notícias deve ter classes ativas
+        $navbarHtml->assertSee('text-cbn-gold font-semibold bg-white/5', false);
+        $navbarHtml->assertSee('Notícias');
     }
 }
