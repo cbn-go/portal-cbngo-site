@@ -368,4 +368,68 @@ class HomeTest extends TestCase
         $response->assertSee('Pr. Roberto Silveira');
         $response->assertSee('Diretoria Executiva divulga calendário oficial para o ano eclesiástico de 2026');
     }
+
+    /**
+     * Valida que todos os links de saída da Home (/quem-somos, /igrejas, /noticias, /artigos, slugs)
+     * possuem rotas registradas e respondem com HTTP 200 (Zero 404s).
+     */
+    public function test_all_home_call_to_action_and_feed_links_respond_with_http_ok(): void
+    {
+        $this->withoutVite();
+
+        $routesToTest = [
+            '/quem-somos',
+            '/igrejas',
+            '/noticias',
+            '/noticias/comunicado-oficial-2026',
+            '/artigos',
+            '/artigos/reflexao-biblica-pastoral',
+        ];
+
+        foreach ($routesToTest as $uri) {
+            $response = $this->get($uri);
+            $response->assertStatus(200);
+        }
+    }
+
+    /**
+     * Valida que o banner de eventos possui o id="eventos" como âncora válida na página.
+     */
+    public function test_events_anchor_target_exists_on_home_page(): void
+    {
+        $this->withoutVite();
+
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertSee('id="eventos"', false);
+    }
+
+    /**
+     * Valida que avisos urgentes são priorizados por data de vigência mais recente (starts_at).
+     */
+    public function test_urgent_banner_prioritizes_latest_starts_at_when_multiple_are_active(): void
+    {
+        $this->withoutVite();
+
+        UrgentNotice::create([
+            'title' => 'Aviso Antigo',
+            'message' => 'Mensagem do aviso mais antigo.',
+            'is_active' => true,
+            'starts_at' => now()->subDays(5),
+        ]);
+
+        UrgentNotice::create([
+            'title' => 'Aviso Recente',
+            'message' => 'Mensagem do aviso mais recente em vigor.',
+            'is_active' => true,
+            'starts_at' => now()->subHour(),
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertSee('Mensagem do aviso mais recente em vigor.');
+        $response->assertDontSee('Mensagem do aviso mais antigo.');
+    }
 }

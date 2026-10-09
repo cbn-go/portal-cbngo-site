@@ -15,6 +15,7 @@ class HomeController extends Controller
     public function index(): View
     {
         $urgentNotice = UrgentNotice::active()
+            ->orderByDesc('starts_at')
             ->latest('id')
             ->first();
 

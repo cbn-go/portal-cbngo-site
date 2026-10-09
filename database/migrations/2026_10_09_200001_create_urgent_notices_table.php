@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
+            $table->index(['is_active', 'starts_at', 'ends_at']);
             $table->timestamps();
         });
     }

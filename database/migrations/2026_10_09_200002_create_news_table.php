@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('is_official')->default(false);
             $table->boolean('is_published')->default(true);
             $table->timestamp('published_at')->nullable();
+            $table->index(['is_published', 'published_at']);
             $table->timestamps();
         });
     }

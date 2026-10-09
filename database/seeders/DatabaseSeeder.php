@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
         UrgentNotice::create([
             'title' => 'Assembleia Geral Ordinária 2026',
             'message' => 'Inscrições abertas para delegados da 42ª Assembleia Geral Ordinária da CBN Goiás em Anápolis.',
-            'link' => '#inscricoes-ago-2026',
-            'link_text' => 'Inscrever Delegados',
+            'link' => '#eventos',
+            'link_text' => 'Ver Detalhes do Evento',
             'type' => 'warning',
             'is_active' => true,
             'starts_at' => now()->subDay(),

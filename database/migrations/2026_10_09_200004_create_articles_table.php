@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('reading_time')->default(5);
             $table->boolean('is_published')->default(true);
             $table->timestamp('published_at')->nullable();
+            $table->index(['is_published', 'published_at']);
             $table->timestamps();
         });
     }

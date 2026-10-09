@@ -82,7 +82,7 @@
         </div>
 
         {{-- Destaque Eventos Anuais & Assembleia Geral --}}
-        <div class="bg-gradient-to-br from-cbn-navy to-cbn-navy-dark text-white rounded-2xl p-8 shadow-md border border-cbn-navy-light/40 flex flex-col justify-between group">
+        <div id="eventos" class="bg-gradient-to-br from-cbn-navy to-cbn-navy-dark text-white rounded-2xl p-8 shadow-md border border-cbn-navy-light/40 flex flex-col justify-between group scroll-mt-24">
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
                     <x-badge variant="navy" size="sm" class="bg-white/10 text-cbn-gold border border-cbn-gold/30">
@@ -101,7 +101,7 @@
             </div>
             <div class="pt-6 mt-4 border-t border-white/10 flex items-center justify-between">
                 <span class="text-xs text-slate-300 font-medium">Calendário oficial 2026</span>
-                <x-button variant="secondary" size="sm" href="#eventos">
+                <x-button variant="secondary" size="sm" href="/noticias">
                     Ver Eventos Anuais &rarr;
                 </x-button>
             </div>
