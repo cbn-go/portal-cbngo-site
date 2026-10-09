@@ -18,6 +18,9 @@
     role="alert"
     x-data="{ show: true }"
     x-show="show"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
     id="cbn-urgent-banner"
     {{ $attributes->merge(['class' => "relative py-2.5 px-4 sm:px-6 text-sm font-medium border-b shadow-sm transition-all {$typeClasses}"]) }}
 >
@@ -38,7 +41,7 @@
             @if ($link)
                 <a
                     href="{{ $link }}"
-                    class="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-white underline underline-offset-4 hover:text-cbn-gold-light transition"
+                    class="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-white underline underline-offset-4 hover:text-cbn-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded transition"
                 >
                     {{ $linkText }}
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" aria-hidden="true">
@@ -51,6 +54,7 @@
                 <button
                     type="button"
                     aria-label="Fechar aviso"
+                    @click="show = false"
                     onclick="this.closest('#cbn-urgent-banner').remove()"
                     class="p-1 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
