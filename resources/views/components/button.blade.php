@@ -15,12 +15,12 @@
     };
 
     $variantClasses = match ($variant) {
-        'gold' => 'bg-cbn-gold text-cbn-navy-dark hover:bg-cbn-gold-light focus-visible:ring-cbn-gold shadow-sm hover:shadow',
-        'secondary' => 'bg-slate-800 text-white hover:bg-slate-700 focus-visible:ring-slate-800',
-        'outline' => 'border-2 border-cbn-navy text-cbn-navy hover:bg-cbn-navy hover:text-white focus-visible:ring-cbn-navy',
-        'outline-gold' => 'border-2 border-cbn-gold text-cbn-gold hover:bg-cbn-gold hover:text-cbn-navy-dark focus-visible:ring-cbn-gold',
+        'gold' => 'bg-cbn-gold text-cbn-black hover:bg-cbn-gold-light focus-visible:ring-cbn-gold shadow-sm hover:shadow',
+        'secondary' => 'bg-cbn-black text-white hover:bg-cbn-black/90 focus-visible:ring-cbn-black',
+        'outline' => 'border-2 border-cbn-orange text-cbn-orange hover:bg-cbn-orange hover:text-white focus-visible:ring-cbn-orange',
+        'outline-gold' => 'border-2 border-cbn-gold text-cbn-gold-dark hover:bg-cbn-gold hover:text-cbn-black focus-visible:ring-cbn-gold',
         'ghost' => 'text-slate-700 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-300',
-        default => 'bg-cbn-navy text-white hover:bg-cbn-navy-light focus-visible:ring-cbn-navy shadow-sm hover:shadow',
+        default => 'bg-cbn-orange text-white hover:bg-cbn-orange-mid focus-visible:ring-cbn-orange shadow-sm hover:shadow',
     };
 
     $classes = "{$baseClasses} {$sizeClasses} {$variantClasses}";

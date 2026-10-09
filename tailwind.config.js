@@ -11,27 +11,27 @@ export default {
         extend: {
             colors: {
                 /**
-                 * Tokens oficiais — Manual da Marca CBN
-                 * Portal tratado como peça institucional (3.2) sobre base da marca (3.1).
-                 * Classes *-navy* / *-gold* mantidas por compatibilidade com os componentes.
+                 * Manual da Marca CBN — portal como peça institucional (3.2).
+                 * Classes *-navy* / *-gold* mantidas por compatibilidade.
                  */
                 cbn: {
                     // 3.1 Marca
                     red: '#E00209',
                     black: '#1E120D',
 
-                    // Base escura do portal = preto da marca (ex-navy)
-                    navy: '#1E120D',
-                    'navy-dark': '#140E0A',
-                    'navy-light': '#3A2E28',
-
-                    // 3.2 Institucionais (acentos / CTAs — ex-gold)
+                    // 3.2 Institucionais — protagonistas do portal
+                    orange: '#F43517',
+                    'orange-mid': '#F36529',
                     gold: '#EFA162',
                     'gold-light': '#F1D6A9',
                     'gold-dark': '#F36529',
-                    orange: '#F43517',
 
-                    // 3.3 Informativos (disponíveis, sem protagonismo no portal)
+                    // Alias usados nos componentes (antes "navy") → laranjas 3.2
+                    navy: '#F43517',
+                    'navy-dark': '#D92E12',
+                    'navy-light': '#F36529',
+
+                    // 3.3 Informativos (secundário)
                     teal: '#038794',
                     'teal-light': '#69A195',
                     info: '#026A8E',
