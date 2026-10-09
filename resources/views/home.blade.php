@@ -5,9 +5,15 @@
 @section('content')
 <section class="relative bg-gradient-to-b from-cbn-navy to-cbn-navy-dark text-white py-20 px-4 sm:px-6 lg:px-8">
     <div class="max-w-5xl mx-auto text-center space-y-6">
-        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cbn-gold/10 text-cbn-gold-light border border-cbn-gold/30">
-            Fase 1: Setup Inicial Concluído
-        </span>
+        <div class="flex items-center justify-center gap-2">
+            <x-badge variant="gold" :dot="true">
+                Fase 2: Design System Integrado
+            </x-badge>
+            <a href="{{ route('design-system') }}" class="inline-flex items-center text-xs font-semibold text-cbn-gold-light hover:underline">
+                Ver Vitrine &rarr;
+            </a>
+        </div>
+
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-brand-serif">
             Convenção Batista Nacional do Estado de Goiás
         </h1>
@@ -15,12 +21,12 @@
             Portal institucional oficial da CBN-GO. Comunhão, proclamação do evangelho e suporte integral às igrejas batistas nacionais em território goiano.
         </p>
         <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <a href="#sobre" class="px-6 py-3 rounded-lg font-semibold bg-cbn-gold text-cbn-navy-dark hover:bg-cbn-gold-light transition shadow-lg shadow-cbn-gold/20">
+            <x-button variant="gold" size="lg" href="#sobre">
                 Conheça a CBN-GO
-            </a>
-            <a href="#igrejas" class="px-6 py-3 rounded-lg font-semibold bg-slate-800 text-white hover:bg-slate-700 border border-slate-700 transition">
+            </x-button>
+            <x-button variant="secondary" size="lg" href="#igrejas">
                 Encontre uma Igreja
-            </a>
+            </x-button>
         </div>
     </div>
 </section>
@@ -41,9 +47,9 @@
             <div class="w-10 h-10 rounded-lg bg-cbn-gold/20 text-cbn-gold flex items-center justify-center font-bold mb-4 font-brand-serif text-lg">
                 02
             </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2 font-brand-serif">Tailwind CSS & Vite</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-2 font-brand-serif">Design System Oficial</h3>
             <p class="text-slate-600 text-sm font-brand-sans">
-                Pipeline de compilação ultra-rápido com tokens oficiais de design e suporte a responsividade.
+                Biblioteca de componentes Blade com tokens oficiais de design e suporte a WCAG 2.1 AA.
             </p>
         </div>
 

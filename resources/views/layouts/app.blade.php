@@ -16,36 +16,28 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex flex-col min-h-full font-sans text-slate-800 antialiased selection:bg-cbn-gold selection:text-cbn-navy-dark">
-    <header class="bg-cbn-navy text-white border-b border-cbn-gold/30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-lg bg-cbn-gold/20 border border-cbn-gold/40 flex items-center justify-center font-bold text-cbn-gold font-brand-serif text-xl">
-                    CBN
-                </div>
-                <div>
-                    <span class="block text-lg font-bold tracking-tight text-white group-hover:text-cbn-gold-light transition font-brand-serif">CBN-GO</span>
-                    <span class="block text-xs text-slate-300">Convenção Batista Nacional do Estado de Goiás</span>
-                </div>
-            </a>
-            <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a href="{{ route('home') }}" class="text-cbn-gold hover:text-cbn-gold-light transition">Início</a>
-                <a href="#sobre" class="text-slate-300 hover:text-white transition">Quem Somos</a>
-                <a href="#igrejas" class="text-slate-300 hover:text-white transition">Igrejas</a>
-                <a href="#noticias" class="text-slate-300 hover:text-white transition">Notícias</a>
-                <a href="#contato" class="text-slate-300 hover:text-white transition">Contato</a>
-            </nav>
-        </div>
-    </header>
+    <!-- Skip Link Acessível (WCAG AA) -->
+    <a
+        href="#main-content"
+        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-cbn-gold focus:text-cbn-navy-dark focus:font-bold focus:rounded-md focus:shadow-lg focus:outline-none"
+    >
+        Pular para o conteúdo principal
+    </a>
 
-    <main class="flex-grow">
+    <!-- Barra de Avisos Urgentes (Opcional por página ou global) -->
+    @hasSection('banner')
+        @yield('banner')
+    @endif
+
+    <!-- Navbar Oficial -->
+    <x-navbar />
+
+    <!-- Conteúdo Principal -->
+    <main id="main-content" class="flex-grow">
         @yield('content')
     </main>
 
-    <footer class="bg-cbn-navy-dark text-slate-400 border-t border-slate-800 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
-            <p class="font-semibold text-slate-200">Convenção Batista Nacional do Estado de Goiás (CBN-GO)</p>
-            <p class="mt-1 text-xs text-slate-500">&copy; {{ date('Y') }} Todos os direitos reservados.</p>
-        </div>
-    </footer>
+    <!-- Rodapé Oficial -->
+    <x-footer />
 </body>
 </html>
