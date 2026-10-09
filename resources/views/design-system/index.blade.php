@@ -26,35 +26,76 @@
         </p>
     </header>
 
-    <!-- Seção 1: Design Tokens & Cores -->
-    <section class="space-y-6">
-        <h2 class="text-2xl font-bold text-slate-900 font-brand-serif border-l-4 border-cbn-gold pl-3">
-            Tokens de Cores
-        </h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-            <div class="p-4 rounded-xl bg-cbn-navy text-white space-y-1 shadow-sm">
-                <span class="block text-xs uppercase tracking-wider text-cbn-gold font-bold">Navy</span>
-                <span class="block font-mono text-xs">#0D2240</span>
+    <!-- Seção 1: Design Tokens & Cores (Manual da Marca CBN) -->
+    <section class="space-y-8">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-900 font-brand-serif border-l-4 border-cbn-red pl-3">
+                Tokens de Cores — Manual da Marca CBN
+            </h2>
+            <p class="text-sm text-slate-600 mt-2 font-brand-sans">
+                Paleta oficial extraída do Brandbook CBN (seções 3.1 Marca, 3.2 Institucionais e 3.3 Informativos).
+            </p>
+        </div>
+
+        <div class="space-y-3">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">3.1 Marca</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                <div class="p-4 rounded-xl bg-cbn-red text-white space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider font-bold">Red</span>
+                    <span class="block font-mono text-xs">#E00209</span>
+                </div>
+                <div class="p-4 rounded-xl bg-cbn-black text-white space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider font-bold">Black</span>
+                    <span class="block font-mono text-xs">#1E120D</span>
+                </div>
             </div>
-            <div class="p-4 rounded-xl bg-cbn-navy-dark text-white space-y-1 shadow-sm">
-                <span class="block text-xs uppercase tracking-wider text-cbn-gold font-bold">Navy Dark</span>
-                <span class="block font-mono text-xs">#071324</span>
+        </div>
+
+        <div class="space-y-3">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">3.3 Informativos (base do portal)</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                <div class="p-4 rounded-xl bg-cbn-navy text-white space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider text-cbn-gold-light font-bold">Navy</span>
+                    <span class="block font-mono text-xs">#001D4D</span>
+                </div>
+                <div class="p-4 rounded-xl bg-cbn-navy-dark text-white space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider text-cbn-gold-light font-bold">Navy Dark</span>
+                    <span class="block font-mono text-xs">#001233</span>
+                </div>
+                <div class="p-4 rounded-xl bg-cbn-navy-light text-white space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider text-slate-100 font-bold">Navy Light</span>
+                    <span class="block font-mono text-xs">#026A8E</span>
+                </div>
+                <div class="p-4 rounded-xl bg-cbn-teal text-white space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider font-bold">Teal</span>
+                    <span class="block font-mono text-xs">#038794</span>
+                </div>
+                <div class="p-4 rounded-xl bg-cbn-teal-light text-cbn-navy-dark space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider font-bold">Teal Light</span>
+                    <span class="block font-mono text-xs">#69A195</span>
+                </div>
             </div>
-            <div class="p-4 rounded-xl bg-cbn-navy-light text-white space-y-1 shadow-sm">
-                <span class="block text-xs uppercase tracking-wider text-slate-200 font-bold">Navy Light</span>
-                <span class="block font-mono text-xs">#163660</span>
-            </div>
-            <div class="p-4 rounded-xl bg-cbn-gold text-cbn-navy-dark space-y-1 shadow-sm">
-                <span class="block text-xs uppercase tracking-wider font-bold">Gold</span>
-                <span class="block font-mono text-xs">#C89D3C</span>
-            </div>
-            <div class="p-4 rounded-xl bg-cbn-gold-light text-cbn-navy-dark space-y-1 shadow-sm">
-                <span class="block text-xs uppercase tracking-wider font-bold">Gold Light</span>
-                <span class="block font-mono text-xs">#DFC16B</span>
-            </div>
-            <div class="p-4 rounded-xl bg-cbn-gold-dark text-white space-y-1 shadow-sm">
-                <span class="block text-xs uppercase tracking-wider font-bold">Gold Dark</span>
-                <span class="block font-mono text-xs">#9E7B28</span>
+        </div>
+
+        <div class="space-y-3">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">3.2 Institucionais (acentos / tokens *-gold*)</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div class="p-4 rounded-xl bg-cbn-orange text-white space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider font-bold">Orange</span>
+                    <span class="block font-mono text-xs">#F43517</span>
+                </div>
+                <div class="p-4 rounded-xl bg-cbn-gold-dark text-white space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider font-bold">Gold Dark</span>
+                    <span class="block font-mono text-xs">#F36529</span>
+                </div>
+                <div class="p-4 rounded-xl bg-cbn-gold text-cbn-navy-dark space-y-1 shadow-sm">
+                    <span class="block text-xs uppercase tracking-wider font-bold">Gold</span>
+                    <span class="block font-mono text-xs">#EFA162</span>
+                </div>
+                <div class="p-4 rounded-xl bg-cbn-gold-light text-cbn-navy-dark space-y-1 shadow-sm border border-slate-200">
+                    <span class="block text-xs uppercase tracking-wider font-bold">Gold Light</span>
+                    <span class="block font-mono text-xs">#F1D6A9</span>
+                </div>
             </div>
         </div>
     </section>

@@ -10,13 +10,27 @@ export default {
     theme: {
         extend: {
             colors: {
+                /**
+                 * Tokens oficiais — Manual da Marca CBN
+                 * 3.1 Marca | 3.2 Institucionais | 3.3 Informativos
+                 */
                 cbn: {
-                    navy: '#0D2240',
-                    'navy-dark': '#071324',
-                    'navy-light': '#163660',
-                    gold: '#C89D3C',
-                    'gold-light': '#DFC16B',
-                    'gold-dark': '#9E7B28',
+                    // 3.1 Marca
+                    red: '#E00209',
+                    black: '#1E120D',
+
+                    // 3.3 Informativos (base do portal público)
+                    navy: '#001D4D',
+                    'navy-dark': '#001233',
+                    'navy-light': '#026A8E',
+                    teal: '#038794',
+                    'teal-light': '#69A195',
+
+                    // 3.2 Institucionais (acentos quentes; classes *-gold* mantidas por compatibilidade)
+                    gold: '#EFA162',
+                    'gold-light': '#F1D6A9',
+                    'gold-dark': '#F36529',
+                    orange: '#F43517',
                 },
             },
             fontFamily: {
