@@ -5,12 +5,11 @@
 @php
     $navItems = [
         'home' => ['label' => 'Início', 'href' => route('home')],
-        'quem-somos' => ['label' => 'Quem Somos', 'href' => '#quem-somos'],
-        'diretoria' => ['label' => 'Diretoria', 'href' => '#diretoria'],
-        'igrejas' => ['label' => 'Igrejas', 'href' => '#igrejas'],
-        'noticias' => ['label' => 'Notícias', 'href' => '#noticias'],
-        'artigos' => ['label' => 'Artigos', 'href' => '#artigos'],
-        'contato' => ['label' => 'Contato', 'href' => '#contato'],
+        'quem-somos' => ['label' => 'Institucional', 'href' => route('quem-somos')],
+        'igrejas' => ['label' => 'Igrejas', 'href' => route('igrejas')],
+        'noticias' => ['label' => 'Notícias', 'href' => route('noticias.index')],
+        'artigos' => ['label' => 'Artigos', 'href' => route('artigos.index')],
+        'contato' => ['label' => 'Contato', 'href' => route('contato')],
     ];
 @endphp
 
@@ -18,36 +17,35 @@
     x-data="{ open: false }"
     @keydown.escape.window="open = false"
     @click.outside="open = false"
-    class="sticky top-0 z-40 bg-cbn-navy text-white border-b border-cbn-gold/30 shadow-md"
+    class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 shadow-sm"
 >
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <div class="flex items-center justify-between h-20">
-            <!-- Brand / Logo oficial CBN | GO -->
+            {{-- Logo oficial em fundo claro --}}
             <a
                 href="{{ route('home') }}"
-                class="flex items-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded-lg p-1 group"
+                class="flex items-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded-sm py-1 group"
             >
                 <img
-                    src="{{ asset('images/brand/cbn-go-on-dark.png') }}"
+                    src="{{ asset('images/brand/cbn-go.png') }}"
                     alt="CBN | GO — Convenção Batista Nacional Goiás"
                     width="180"
                     height="69"
-                    class="h-12 sm:h-14 w-auto transition opacity-95 group-hover:opacity-100"
+                    class="h-12 sm:h-14 w-auto"
                 />
             </a>
 
-            <!-- Desktop Navigation -->
-            <nav class="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium" aria-label="Navegação principal">
+            <nav class="hidden lg:flex items-center gap-8 text-sm font-medium" aria-label="Navegação principal">
                 @foreach ($navItems as $key => $item)
                     @php
                         $isActive = ($active === $key);
                         $linkClasses = $isActive
-                            ? 'text-cbn-gold font-semibold bg-white/5 shadow-inner'
-                            : 'text-slate-200 hover:text-white hover:bg-white/5';
+                            ? 'text-cbn-black font-semibold border-b-2 border-cbn-black pb-1'
+                            : 'text-neutral-600 hover:text-cbn-black transition-colors';
                     @endphp
                     <a
                         href="{{ $item['href'] }}"
-                        class="px-3 py-2 rounded-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold {{ $linkClasses }}"
+                        class="{{ $linkClasses }} focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded-sm"
                         @if ($isActive) aria-current="page" @endif
                     >
                         {{ $item['label'] }}
@@ -55,17 +53,21 @@
                 @endforeach
             </nav>
 
-            <!-- Actions / Portal Admin CTA -->
             <div class="hidden sm:flex items-center gap-3">
-                <x-button variant="gold" size="sm" href="https://admin.cbngo.com.br" target="_blank" rel="noopener noreferrer">
-                    <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                <a
+                    href="{{ route('igrejas') }}"
+                    class="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-neutral-800 hover:text-cbn-orange px-3 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded-sm"
+                >
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 21v-8m0 0V5.5L7 9v4m5-4l5 3.5V13m-10 8h10"/>
                     </svg>
+                    <span>Encontre acolhimento</span>
+                </a>
+                <x-button variant="primary" size="sm" href="https://admin.cbngo.com.br" target="_blank" rel="noopener noreferrer">
                     Área das Igrejas
                 </x-button>
             </div>
 
-            <!-- Mobile Hamburger & Close Button -->
             <div class="flex lg:hidden">
                 <button
                     type="button"
@@ -75,13 +77,11 @@
                     aria-controls="cbn-mobile-menu"
                     aria-label="Alternar menu de navegação"
                     @click="open = !open"
-                    class="p-2 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold transition"
+                    class="p-2 rounded-lg text-neutral-700 hover:text-cbn-black hover:bg-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange transition"
                 >
-                    <!-- Icon Hamburger (visible by default; Alpine hides when open) -->
                     <svg x-show="!open" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                     </svg>
-                    <!-- Icon Close X (hidden until Alpine opens the menu) -->
                     <svg x-show="open" x-cloak class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -90,7 +90,6 @@
         </div>
     </div>
 
-    <!-- Mobile Drawer Menu (visibility via Alpine x-show only — do not use Tailwind `hidden` here) -->
     <div
         id="cbn-mobile-menu"
         x-show="open"
@@ -101,19 +100,19 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-2"
-        class="lg:hidden border-t border-white/10 bg-cbn-navy-dark px-4 pt-3 pb-6 space-y-2 shadow-2xl"
+        class="lg:hidden border-t border-neutral-200 bg-white px-4 pt-3 pb-6 space-y-2 shadow-lg"
     >
         <nav class="flex flex-col space-y-1" aria-label="Navegação mobile">
             @foreach ($navItems as $key => $item)
                 @php
                     $isActive = ($active === $key);
                     $linkClasses = $isActive
-                        ? 'text-cbn-gold font-semibold bg-white/5'
-                        : 'text-slate-200 hover:text-white hover:bg-white/5';
+                        ? 'text-cbn-black font-semibold border-b-2 border-cbn-black pb-1 bg-neutral-50'
+                        : 'text-neutral-700 hover:text-cbn-black hover:bg-neutral-50';
                 @endphp
                 <a
                     href="{{ $item['href'] }}"
-                    class="px-3 py-2.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold transition {{ $linkClasses }}"
+                    class="px-3 py-2.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange transition {{ $linkClasses }}"
                     @if ($isActive) aria-current="page" @endif
                 >
                     {{ $item['label'] }}
@@ -121,8 +120,8 @@
             @endforeach
         </nav>
 
-        <div class="pt-4 border-t border-white/10 flex flex-col gap-2">
-            <x-button variant="gold" size="md" href="https://admin.cbngo.com.br" target="_blank" rel="noopener noreferrer" class="w-full">
+        <div class="pt-4 border-t border-neutral-100 flex flex-col gap-2">
+            <x-button variant="primary" size="md" href="https://admin.cbngo.com.br" target="_blank" rel="noopener noreferrer" class="w-full">
                 Área das Igrejas
             </x-button>
         </div>

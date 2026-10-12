@@ -14,201 +14,254 @@
 @endif
 
 @section('content')
-{{-- 3.2 HERO SECTION DE ALTO IMPACTO --}}
-<section class="relative bg-gradient-to-b from-cbn-navy via-cbn-navy to-cbn-navy-dark text-white py-20 lg:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
-    {{-- Detalhes decorativos sutis nobres --}}
-    <div class="absolute inset-0 opacity-10 pointer-events-none">
-        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-cbn-gold blur-3xl"></div>
-        <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-cbn-navy-light blur-3xl"></div>
-    </div>
+{{-- Hero (layout Stitch — fundo claro institucional) --}}
+<section class="relative min-h-[560px] lg:min-h-[640px] flex items-center justify-center overflow-hidden border-b border-neutral-200">
+    <div
+        class="absolute inset-0 bg-cover bg-center scale-105"
+        style="background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1920&q=80')"
+        role="img"
+        aria-label="Comunidade reunida em solidariedade e cuidado"
+    ></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-[#FFFDFB] via-[#FFFDFB]/95 to-[#FFFDFB]/80"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#FFFDFB]/75 via-transparent to-[#FFFDFB]"></div>
 
-    <div class="relative max-w-5xl mx-auto text-center space-y-6">
-        <div class="inline-flex items-center gap-2">
-            <x-badge variant="gold" :dot="true">
-                Convenção Batista Nacional de Goiás
-            </x-badge>
+    <div class="relative max-w-5xl mx-auto px-6 lg:px-12 py-20 lg:py-28 text-center flex flex-col items-center">
+        <div class="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-white border border-neutral-200/90 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-cbn-red" aria-hidden="true"></span>
+            <span class="text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-neutral-800">
+                Convenção Batista Nacional do Estado de Goiás
+            </span>
         </div>
 
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-brand-serif leading-tight">
-            Convenção Batista Nacional do Estado de Goiás
+        <h1 class="font-brand-serif font-extrabold text-3xl sm:text-5xl lg:text-6xl text-cbn-black tracking-tight leading-[1.15] max-w-4xl text-balance">
+            Uma Convenção que Cuida, Fortalece e Multiplica
         </h1>
 
-        <p class="text-xl sm:text-2xl text-cbn-gold font-brand-serif italic max-w-3xl mx-auto">
-            "Uma Convenção que Cuida, Fortalece e Multiplica"
+        <p class="mt-6 font-brand-sans text-base sm:text-lg lg:text-xl text-neutral-700 leading-relaxed max-w-2xl text-balance">
+            Transformamos fé em ação concreta: acolhemos famílias, fortalecemos comunidades e geramos oportunidades de dignidade em todo o Goiás.
         </p>
 
-        <p class="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto font-brand-sans leading-relaxed">
-            Comunhão, proclamação do evangelho bíblico e fortalecimento mútuo de congregações e líderes batistas nacionais em território goiano.
-        </p>
-
-        <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <x-button variant="gold" size="lg" href="/quem-somos">
+        <div class="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            <x-button variant="primary" size="lg" href="{{ route('quem-somos') }}" class="w-full sm:w-auto">
                 Conheça a CBN-GO
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                </svg>
             </x-button>
-            <x-button variant="outline" size="lg" href="/igrejas" class="text-white border-white/40 hover:bg-white/10 hover:border-white focus-visible:ring-white">
+            <x-button variant="outline-dark" size="lg" href="{{ route('igrejas') }}" class="w-full sm:w-auto">
                 Encontre uma Igreja
             </x-button>
         </div>
+
+        <div class="mt-14 inline-flex items-center gap-2 text-xs text-neutral-500 font-medium">
+            <span class="w-8 h-px bg-neutral-300" aria-hidden="true"></span>
+            <span>Cuidado · Esperança · Transformação social</span>
+            <span class="w-8 h-px bg-neutral-300" aria-hidden="true"></span>
+        </div>
     </div>
 </section>
 
-{{-- 3.5 BANNERS INSTITUCIONAIS DE DESTAQUE (SETEBAN-GO & EVENTOS ANUAIS) --}}
-<section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto -mt-8 relative z-10">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {{-- Destaque SETEBAN-GO --}}
-        <div class="bg-white rounded-2xl p-8 shadow-md border border-slate-200/80 hover:border-cbn-gold/50 transition-all duration-200 flex flex-col justify-between group">
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <x-badge variant="gold" size="sm">
-                        Educação Teológica
-                    </x-badge>
-                    <span class="text-xs font-bold text-cbn-navy uppercase tracking-wider font-brand-serif">
-                        SETEBAN-GO
-                    </span>
+{{-- Últimas Notícias --}}
+<section class="py-20 lg:py-24 bg-white border-b border-neutral-200" id="noticias">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-cbn-orange" aria-hidden="true"></span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-cbn-orange">Impacto em movimento</span>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-900 font-brand-serif group-hover:text-cbn-navy transition">
-                    Seminário Teológico Batista Nacional
-                </h3>
-                <p class="text-slate-600 text-sm font-brand-sans leading-relaxed">
-                    Formação teológica pastoral sólida com compromisso bíblico e fidelidade à Palavra de Deus. Cursos de teologia ministerial, liderança eclesiástica e capacitação contínua para obreiros em Goiás.
+                <h2 class="font-brand-serif font-bold text-2xl lg:text-3xl text-cbn-black tracking-tight">
+                    Últimas Notícias e Comunicados
+                </h2>
+                <p class="text-neutral-600 mt-2 text-sm md:text-base max-w-xl">
+                    Histórias reais de cuidado, solidariedade e transformação nas comunidades goianas
                 </p>
             </div>
-            <div class="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between">
-                <span class="text-xs text-slate-500 font-medium">Inscrições e vestibular abertos</span>
-                <x-button variant="gold" size="sm" href="https://setebango.com.br" target="_blank" rel="noopener noreferrer">
-                    Conhecer o SETEBAN-GO &rarr;
-                </x-button>
-            </div>
+            <a
+                href="{{ route('noticias.index') }}"
+                class="inline-flex items-center gap-1.5 text-sm font-semibold text-cbn-black hover:text-cbn-orange group transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
+            >
+                <span>Ver todas as notícias</span>
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                </svg>
+            </a>
         </div>
 
-        {{-- Destaque Eventos Anuais & Assembleia Geral --}}
-        <div id="eventos" class="bg-gradient-to-br from-cbn-navy to-cbn-navy-dark text-white rounded-2xl p-8 shadow-md border border-cbn-navy-light/40 flex flex-col justify-between group scroll-mt-24">
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <x-badge variant="navy" size="sm" class="bg-white/10 text-cbn-gold border border-cbn-gold/30">
-                        Comunhão & Unidade
-                    </x-badge>
-                    <span class="text-xs font-bold text-cbn-gold uppercase tracking-wider font-brand-serif">
-                        CBN-GO
-                    </span>
-                </div>
-                <h3 class="text-2xl font-bold text-white font-brand-serif group-hover:text-cbn-gold-light transition">
-                    Assembleia Geral & Eventos Anuais
-                </h3>
-                <p class="text-slate-300 text-sm font-brand-sans leading-relaxed">
-                    Participe dos nossos encontros estaduais, retiros pastorais, conferências missionárias da JAMI e eventos estaduais da juventude batista (JUBANG). Fortaleça a comunhão do seu ministério.
-                </p>
+        @if ($latestNews->isNotEmpty())
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach ($latestNews as $news)
+                    <x-news-card
+                        :title="$news->title"
+                        :slug="$news->slug"
+                        :category="$news->category"
+                        :date="$news->published_at"
+                        :image="$news->image_url"
+                        :excerpt="$news->excerpt"
+                    />
+                @endforeach
             </div>
-            <div class="pt-6 mt-4 border-t border-white/10 flex items-center justify-between">
-                <span class="text-xs text-slate-300 font-medium">Calendário oficial 2026</span>
-                <x-button variant="secondary" size="sm" href="/noticias">
-                    Ver Eventos Anuais &rarr;
-                </x-button>
+        @else
+            <div class="bg-[#FFFDFB] border border-dashed border-neutral-300 rounded-lg p-12 text-center text-neutral-500">
+                <p class="font-bold text-cbn-black font-brand-serif text-lg">Nenhuma notícia publicada no momento.</p>
+                <p class="text-sm text-neutral-500 mt-1">Em breve, novas histórias de impacto e cuidado nas comunidades.</p>
             </div>
-        </div>
+        @endif
     </div>
 </section>
 
-{{-- 3.3 SEÇÃO DE ÚLTIMAS NOTÍCIAS --}}
-<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-slate-200 gap-4">
-        <div>
-            <div class="flex items-center gap-2 mb-2">
-                <x-badge variant="gold" :dot="true" size="sm">
-                    Informativo Oficial
-                </x-badge>
-            </div>
-            <h2 class="text-3xl font-bold text-slate-900 font-brand-serif tracking-tight">
-                Últimas Notícias e Comunicados
-            </h2>
-            <p class="text-slate-600 text-sm mt-1 font-brand-sans">
-                Acompanhe as notícias mais recentes da convenção e os testemunhos das congregações goianas.
-            </p>
-        </div>
-        <a
-            href="/noticias"
-            class="inline-flex items-center gap-1.5 text-sm font-bold text-cbn-navy hover:text-cbn-gold-dark transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded self-start sm:self-auto"
-        >
-            <span>Ver todas as notícias</span>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-            </svg>
-        </a>
-    </div>
-
-    @if ($latestNews->isNotEmpty())
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach ($latestNews as $news)
-                <x-news-card
-                    :title="$news->title"
-                    :slug="$news->slug"
-                    :category="$news->category"
-                    :date="$news->published_at"
-                    :image="$news->image_url"
-                    :excerpt="$news->excerpt"
-                />
-            @endforeach
-        </div>
-    @else
-        <div class="bg-white border border-dashed border-slate-300 rounded-2xl p-12 text-center text-slate-500 shadow-sm">
-            <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-            </svg>
-            <p class="font-bold text-slate-800 font-brand-serif text-lg">Nenhuma notícia publicada no momento.</p>
-            <p class="text-sm text-slate-500 mt-1 font-brand-sans">Novos comunicados oficiais serão disponibilizados em breve.</p>
-        </div>
-    @endif
-</section>
-
-{{-- 3.4 SEÇÃO DE ARTIGOS E REFLEXÕES PASTORAIS --}}
-<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-slate-100/60 rounded-3xl my-10 border border-slate-200/60">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-slate-200 gap-4">
-        <div>
-            <div class="flex items-center gap-2 mb-2">
-                <x-badge variant="navy" :dot="true" size="sm">
-                    Edificação & Doutrina
-                </x-badge>
-            </div>
-            <h2 class="text-3xl font-bold text-slate-900 font-brand-serif tracking-tight">
+{{-- Artigos Pastorais --}}
+<section class="py-20 lg:py-24 bg-[#FAF9F7] border-b border-neutral-200" id="artigos">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="text-center max-w-2xl mx-auto mb-14">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-cbn-orange mb-2">
+                Fé que gera cuidado
+            </span>
+            <h2 class="font-brand-serif font-bold text-3xl lg:text-4xl text-cbn-black tracking-tight">
                 Artigos e Reflexões Pastorais
             </h2>
-            <p class="text-slate-600 text-sm mt-1 font-brand-sans">
-                Reflexões bíblicas, conselhos de liderança e estudos doutrinários produzidos por articulistas credenciados.
+            <div class="w-12 h-0.5 bg-cbn-orange mx-auto mt-4 mb-3" aria-hidden="true"></div>
+            <p class="text-neutral-600 text-sm md:text-base">
+                Reflexões que conectam fé, dignidade humana e responsabilidade social — para quem cuida de pessoas e transforma realidades.
             </p>
+            <a
+                href="{{ route('artigos.index') }}"
+                class="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-cbn-black hover:text-cbn-orange transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
+            >
+                Ver todos os artigos
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                </svg>
+            </a>
         </div>
-        <a
-            href="/artigos"
-            class="inline-flex items-center gap-1.5 text-sm font-bold text-cbn-navy hover:text-cbn-gold-dark transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-gold rounded self-start sm:self-auto"
-        >
-            <span>Ver todos os artigos</span>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-            </svg>
-        </a>
-    </div>
 
-    @if ($latestArticles->isNotEmpty())
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach ($latestArticles as $article)
-                <x-article-card
-                    :title="$article->title"
-                    :slug="$article->slug"
-                    :author-name="$article->author->name ?? 'Articulista CBN-GO'"
-                    :author-avatar="$article->author->avatar_url ?? null"
-                    :reading-time="$article->reading_time"
-                    :excerpt="$article->excerpt"
-                    :published-at="$article->published_at"
-                />
-            @endforeach
+        @if ($latestArticles->isNotEmpty())
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach ($latestArticles as $article)
+                    <x-article-card
+                        :title="$article->title"
+                        :slug="$article->slug"
+                        :author-name="$article->author->name ?? 'Articulista CBN-GO'"
+                        :author-avatar="$article->author->avatar_url ?? null"
+                        :reading-time="$article->reading_time"
+                        :excerpt="$article->excerpt"
+                        :published-at="$article->published_at"
+                    />
+                @endforeach
+            </div>
+        @else
+            <div class="bg-white border border-dashed border-neutral-300 rounded-lg p-12 text-center text-neutral-500">
+                <p class="font-bold text-cbn-black font-brand-serif text-lg">Nenhum artigo publicado no momento.</p>
+                <p class="text-sm text-neutral-500 mt-1">Em breve, novos textos sobre cuidado, justiça e transformação social.</p>
+            </div>
+        @endif
+    </div>
+</section>
+
+{{-- Destaques institucionais: SETEBAN + Assembleia / Eventos --}}
+<section class="py-20 lg:py-24 bg-white border-b border-neutral-200" id="institucional">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <div class="bg-[#FAF9F7] border border-neutral-200 rounded-lg p-8 lg:p-10 flex flex-col justify-between hover:border-neutral-300 transition-all duration-200">
+                <div>
+                    <div class="inline-flex items-center gap-2 mb-4">
+                        <span class="p-1.5 rounded bg-cbn-orange/10 text-cbn-orange">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-cbn-black">Formação que transforma vidas</span>
+                    </div>
+                    <h3 class="font-brand-serif font-bold text-2xl lg:text-3xl text-cbn-black tracking-tight">
+                        SETEBAN-GO
+                    </h3>
+                    <p class="text-neutral-700 text-sm lg:text-base mt-3 leading-relaxed">
+                        Seminário Teológico Batista Nacional: forma líderes preparados para servir pessoas, fortalecer famílias e gerar impacto social duradouro nas comunidades.
+                    </p>
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-200 text-xs font-medium text-neutral-800 rounded shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cbn-orange" aria-hidden="true"></span>
+                            Bacharelado em Teologia
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-200 text-xs font-medium text-neutral-800 rounded shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cbn-orange-mid" aria-hidden="true"></span>
+                            Liderança e cuidado pastoral
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-200 text-xs font-medium text-neutral-800 rounded shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cbn-gold" aria-hidden="true"></span>
+                            Ação comunitária
+                        </span>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-neutral-200/70 flex items-center justify-between gap-4">
+                    <x-button variant="secondary" size="sm" href="https://setebango.com.br" target="_blank" rel="noopener noreferrer">
+                        Conheça o SETEBAN-GO
+                    </x-button>
+                    <span class="text-xs font-medium text-cbn-orange bg-cbn-orange/10 px-3 py-1 rounded-full hidden sm:inline">Matrículas abertas</span>
+                </div>
+            </div>
+
+            <div id="eventos" class="scroll-mt-24 bg-[#FAF9F7] border border-neutral-200 rounded-lg p-8 lg:p-10 flex flex-col justify-between hover:border-neutral-300 transition-all duration-200">
+                <div>
+                    <div class="inline-flex items-center gap-2 mb-4">
+                        <span class="p-1.5 rounded bg-cbn-orange/10 text-cbn-orange">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-cbn-black">Encontros que geram impacto · Eventos Anuais</span>
+                    </div>
+                    <h3 class="font-brand-serif font-bold text-2xl lg:text-3xl text-cbn-black tracking-tight">
+                        Assembleia Geral & Eventos Anuais
+                    </h3>
+                    <p class="text-neutral-700 text-sm lg:text-base mt-3 leading-relaxed">
+                        Momentos em que igrejas se unem para decidir, celebrar e ampliar o alcance do cuidado social em Goiás — da capital ao interior.
+                    </p>
+                    <div class="mt-6 bg-white border border-neutral-200 rounded-lg p-4 space-y-3 shadow-sm">
+                        <div class="flex items-center justify-between text-xs pb-2 border-b border-neutral-100 gap-4">
+                            <span class="text-neutral-500 font-medium">Agenda</span>
+                            <span class="font-bold text-cbn-black text-right">Calendário oficial 2026</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs gap-4">
+                            <span class="text-neutral-500 font-medium">Foco</span>
+                            <span class="inline-flex items-center gap-1 font-semibold text-cbn-orange">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cbn-orange" aria-hidden="true"></span>
+                                Comunhão com propósito social
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-neutral-200/70 flex items-center justify-between gap-4">
+                    <x-button variant="primary" size="sm" href="{{ route('noticias.index') }}">
+                        Ver Eventos Anuais
+                    </x-button>
+                    <span class="text-xs text-neutral-500 font-medium hidden sm:inline">Unidade & Serviço</span>
+                </div>
+            </div>
         </div>
-    @else
-        <div class="bg-white border border-dashed border-slate-300 rounded-2xl p-12 text-center text-slate-500 shadow-sm">
-            <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            <p class="font-bold text-slate-800 font-brand-serif text-lg">Nenhum artigo publicado no momento.</p>
-            <p class="text-sm text-slate-500 mt-1 font-brand-sans">Reflexões pastorais serão publicadas em breve pelos nossos articulistas.</p>
+    </div>
+</section>
+
+{{-- Busca de igrejas --}}
+<section class="py-14 bg-white border-b border-neutral-200" id="igrejas">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="border border-neutral-200 rounded-lg p-6 sm:p-8 bg-[#FBFBFA] flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-cbn-black text-white flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-brand-serif font-bold text-lg text-cbn-black">Encontre uma comunidade de cuidado perto de você</h4>
+                    <p class="text-xs sm:text-sm text-neutral-600">Igrejas e pontos de apoio em Goiânia, Anápolis, Rio Verde e no interior — espaços de acolhimento, esperança e serviço.</p>
+                </div>
+            </div>
+            <x-button variant="outline-dark" size="sm" href="{{ route('igrejas') }}" class="w-full md:w-auto shrink-0">
+                Guia de Igrejas Filiadas
+            </x-button>
         </div>
-    @endif
+    </div>
 </section>
 @endsection
