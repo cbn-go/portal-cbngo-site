@@ -27,7 +27,7 @@ class DesignSystemTest extends TestCase
     {
         $buttonHtml = $this->blade('<x-button variant="primary">Acessar Portal</x-button>');
         $buttonHtml->assertSee('<button', false);
-        $buttonHtml->assertSee('bg-cbn-navy', false);
+        $buttonHtml->assertSee('bg-cbn-orange', false);
         $buttonHtml->assertSee('Acessar Portal');
 
         $linkHtml = $this->blade('<x-button href="https://example.com" variant="gold">Saiba Mais</x-button>');
@@ -71,7 +71,7 @@ class DesignSystemTest extends TestCase
         $newsHtml->assertSee('09/10/2026');
         $newsHtml->assertSee('nova-diretoria-eleita');
         $newsHtml->assertSee('<svg', false); // Fallback SVG
-        $newsHtml->assertSee('focus-visible:ring-cbn-gold', false); // A11y focus ring
+        $newsHtml->assertSee('focus-visible:ring-cbn-orange', false); // A11y focus ring
     }
 
     /**
@@ -84,7 +84,7 @@ class DesignSystemTest extends TestCase
         $articleHtml->assertSee('Pr. João Silva');
         $articleHtml->assertSee('5 min');
         $articleHtml->assertSee('Reflexão teológica sobre liderança.');
-        $articleHtml->assertSee('focus-visible:ring-cbn-gold', false); // A11y focus ring
+        $articleHtml->assertSee('focus-visible:ring-cbn-orange', false); // A11y focus ring
     }
 
     /**
@@ -93,12 +93,14 @@ class DesignSystemTest extends TestCase
     public function test_navbar_and_footer_components_render_institutional_links(): void
     {
         $navbarHtml = $this->blade('<x-navbar />');
-        $navbarHtml->assertSee('CBN-GO');
-        $navbarHtml->assertSee('Quem Somos');
+        $navbarHtml->assertSee('images/brand/cbn-go.png', false);
+        $navbarHtml->assertSee('CBN | GO', false);
+        $navbarHtml->assertSee('Institucional');
         $navbarHtml->assertSee('Igrejas');
         $navbarHtml->assertSee('aria-expanded', false);
 
         $footerHtml = $this->blade('<x-footer />');
+        $footerHtml->assertSee('images/brand/cbn-go-on-dark.png', false);
         $footerHtml->assertSee('Convenção Batista Nacional do Estado de Goiás');
         $footerHtml->assertSee('SETEBAN-GO');
         $footerHtml->assertSee('Goiânia');
@@ -116,8 +118,8 @@ class DesignSystemTest extends TestCase
     {
         $navbarHtml = $this->blade('<x-navbar active="noticias" />');
 
-        // Notícias deve ter classes ativas
-        $navbarHtml->assertSee('text-cbn-gold font-semibold bg-white/5', false);
+        // Notícias deve ter classes ativas (layout claro Stitch)
+        $navbarHtml->assertSee('text-cbn-black font-semibold border-b-2 border-cbn-black', false);
         $navbarHtml->assertSee('Notícias');
     }
 

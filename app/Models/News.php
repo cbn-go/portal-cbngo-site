@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property string $excerpt
  * @property string $content
  * @property string|null $image_url
+ * @property array<int, string>|null $gallery_images
  * @property string|null $church_name
  * @property string|null $city
  * @property bool $is_official
@@ -46,6 +47,7 @@ class News extends Model
         'excerpt',
         'content',
         'image_url',
+        'gallery_images',
         'church_name',
         'city',
         'is_official',
@@ -59,6 +61,7 @@ class News extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'gallery_images' => 'array',
         'is_official' => 'boolean',
         'is_published' => 'boolean',
         'published_at' => 'datetime',

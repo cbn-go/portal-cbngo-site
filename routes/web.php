@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -30,13 +31,8 @@ Route::get('/igrejas', function () {
     return view('placeholder', ['title' => 'Guia e Diretório de Igrejas Batistas Nacionais em Goiás']);
 })->name('igrejas');
 
-Route::get('/noticias', function () {
-    return view('placeholder', ['title' => 'Notícias e Comunicados da CBN-GO']);
-})->name('noticias.index');
-
-Route::get('/noticias/{slug}', function (string $slug) {
-    return view('placeholder', ['title' => 'Notícia Oficial', 'slug' => $slug]);
-})->name('noticias.show');
+Route::get('/noticias', [NewsController::class, 'index'])->name('noticias.index');
+Route::get('/noticias/{slug}', [NewsController::class, 'show'])->name('noticias.show');
 
 Route::get('/artigos', function () {
     return view('placeholder', ['title' => 'Artigos e Reflexões Pastorais']);

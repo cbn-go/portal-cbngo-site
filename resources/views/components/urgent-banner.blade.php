@@ -8,9 +8,9 @@
 
 @php
     $typeClasses = match ($type) {
-        'critical' => 'bg-rose-900 border-rose-700 text-rose-100',
+        'critical' => 'bg-cbn-red border-cbn-orange text-white',
         'info' => 'bg-cbn-navy border-cbn-navy-light text-slate-100',
-        default => 'bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 border-amber-500 text-white',
+        default => 'bg-gradient-to-r from-cbn-gold-dark via-cbn-orange to-cbn-red border-cbn-gold text-white',
     };
 @endphp
 
