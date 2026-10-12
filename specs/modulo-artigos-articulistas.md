@@ -4,7 +4,7 @@
 - **Fase WDLC:** Fase 3 (Desenvolvimento do Portal Público)
 - **Metodologia:** Spec-Driven Development (SDD) com ciclo TDD Mandatório
 - **Data:** 12 de Outubro de 2026
-- **Status:** Proposta para Aprovação
+- **Status:** Implementado e Validado (Green TDD)
 
 ---
 
@@ -175,32 +175,32 @@ class AuthorController extends Controller
 
 ### 4.1 Critérios de Aceitação (Checklist da Issue #5)
 
-- [ ] **Feed Geral de Artigos (`/artigos`):**
-  - [ ] Rota `/artigos` responde com HTTP 200 e layout oficial integrado.
-  - [ ] Paginação exibe até 9 artigos por página e preserva query strings nas URLs de paginação.
-  - [ ] Campo de busca textual filtra por título, resumo e conteúdo.
-  - [ ] Filtro por autor credenciado funcional.
-  - [ ] Filtro por categoria/tag temática (Teologia, Liderança, Família, Missões) funcional.
-  - [ ] Cards de artigo exibem autor, avatar/iniciais, tempo estimado de leitura e link para perfil do articulista.
-  - [ ] Empty state amigável exibido quando nenhum resultado for encontrado.
-  - [ ] Navbar destaca "Artigos" como item ativo com `aria-current="page"`.
+- [x] **Feed Geral de Artigos (`/artigos`):**
+  - [x] Rota `/artigos` responde com HTTP 200 e layout oficial integrado.
+  - [x] Paginação exibe até 9 artigos por página e preserva query strings nas URLs de paginação.
+  - [x] Campo de busca textual filtra por título, resumo e conteúdo.
+  - [x] Filtro por autor credenciado funcional.
+  - [x] Filtro por categoria/tag temática (Teologia, Liderança, Família, Missões) funcional.
+  - [x] Cards de artigo exibem autor, avatar/iniciais, tempo estimado de leitura e link para perfil do articulista.
+  - [x] Empty state amigável exibido quando nenhum resultado for encontrado.
+  - [x] Navbar destaca "Artigos" como item ativo com `aria-current="page"`.
 
-- [ ] **Leitura do Artigo (`/artigos/{slug}`):**
-  - [ ] Rota `/artigos/{slug}` responde com HTTP 200 para artigos publicados.
-  - [ ] Tipografia editorial legível com fontes da marca CBN (`Baker Signet` e `Humanist 521`).
-  - [ ] Exibe tempo de leitura, data formatada e categoria temática.
-  - [ ] Conteúdo sanitizado e formatado.
-  - [ ] Bloco do Autor completo ao final da matéria com foto, biografia e links sociais.
-  - [ ] Seção de artigos recomendados no rodapé (3 mais recentes, excluindo o atual).
-  - [ ] Botões sociais (WhatsApp, Facebook, Twitter/X, Copiar Link com fallback).
-  - [ ] Responde com HTTP 404 para artigos em rascunho, futuros ou slugs inexistentes.
+- [x] **Leitura do Artigo (`/artigos/{slug}`):**
+  - [x] Rota `/artigos/{slug}` responde com HTTP 200 para artigos publicados.
+  - [x] Tipografia editorial legível com fontes da marca CBN (`Baker Signet` e `Humanist 521`).
+  - [x] Exibe tempo de leitura, data formatada e categoria temática.
+  - [x] Conteúdo sanitizado e formatado.
+  - [x] Bloco do Autor completo ao final da matéria com foto, biografia e links sociais.
+  - [x] Seção de artigos recomendados no rodapé (3 mais recentes, excluindo o atual).
+  - [x] Botões sociais (WhatsApp, Facebook, Twitter/X, Copiar Link com fallback).
+  - [x] Responde com HTTP 404 para artigos em rascunho, futuros ou slugs inexistentes.
 
-- [ ] **Perfil Público do Articulista (`/autores/{id_ou_slug}`):**
-  - [ ] Rota resolve com sucesso tanto por slug quanto por ID numérico.
-  - [ ] Exibe foto de alta qualidade, titulação e biografia completa do autor.
-  - [ ] Lista todos os artigos publicados pelo articulista com paginação.
-  - [ ] Oculta artigos em rascunho ou com agendamento futuro do perfil do articulista.
-  - [ ] Responde com HTTP 404 para autores inexistentes.
+- [x] **Perfil Público do Articulista (`/autores/{id_ou_slug}`):**
+  - [x] Rota resolve com sucesso tanto por slug quanto por ID numérico.
+  - [x] Exibe foto de alta qualidade, titulação e biografia completa do autor.
+  - [x] Lista todos os artigos publicados pelo articulista com paginação.
+  - [x] Oculta artigos em rascunho ou com agendamento futuro do perfil do articulista.
+  - [x] Responde com HTTP 404 para autores inexistentes.
 
 ### 4.2 Plano de Verificação Automatizada (Testes TDD)
 

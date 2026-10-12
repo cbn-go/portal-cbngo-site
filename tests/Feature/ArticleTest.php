@@ -660,15 +660,15 @@ class ArticleTest extends TestCase
         // 1. No feed /artigos
         $responseFeed = $this->get(route('artigos.index'));
         $responseFeed->assertStatus(200);
-        $responseFeed->assertSee('href="' . route('artigos.index') . '"', false);
+        $responseFeed->assertSee('href="'.route('artigos.index').'"', false);
         $responseFeed->assertSee('aria-current="page"', false);
-        $responseFeed->assertDontSee('href="' . route('home') . '"' . "\n" . '                        class="text-cbn-black font-semibold border-b-2 border-cbn-black', false);
+        $responseFeed->assertDontSee('href="'.route('home').'"'."\n".'                        class="text-cbn-black font-semibold border-b-2 border-cbn-black', false);
 
         // 2. Na leitura /artigos/{slug}
         $responseShow = $this->get(route('artigos.show', $article->slug));
         $responseShow->assertStatus(200);
-        $responseShow->assertSee('href="' . route('artigos.index') . '"', false);
+        $responseShow->assertSee('href="'.route('artigos.index').'"', false);
         $responseShow->assertSee('aria-current="page"', false);
-        $responseShow->assertDontSee('href="' . route('home') . '"' . "\n" . '                        class="text-cbn-black font-semibold border-b-2 border-cbn-black', false);
+        $responseShow->assertDontSee('href="'.route('home').'"'."\n".'                        class="text-cbn-black font-semibold border-b-2 border-cbn-black', false);
     }
 }

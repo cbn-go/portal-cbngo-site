@@ -387,6 +387,22 @@ class HomeTest extends TestCase
             'published_at' => now()->subDay(),
         ]);
 
+        $author = Author::create([
+            'name' => 'Pr. Roberto Silveira',
+            'slug' => 'pr-roberto-silveira',
+        ]);
+
+        Article::create([
+            'author_id' => $author->id,
+            'title' => 'Reflexão Bíblica Pastoral',
+            'slug' => 'reflexao-biblica-pastoral',
+            'category' => 'Teologia',
+            'excerpt' => 'Resumo da reflexão bíblica pastoral.',
+            'content' => 'Conteúdo da reflexão bíblica pastoral.',
+            'is_published' => true,
+            'published_at' => now()->subDay(),
+        ]);
+
         $routesToTest = [
             '/quem-somos',
             '/igrejas',

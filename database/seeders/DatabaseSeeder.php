@@ -33,6 +33,11 @@ class DatabaseSeeder extends Seeder
             'slug' => 'pr-roberto-silveira',
             'role_title' => 'Pastor Titular & Presidente CBN-GO',
             'bio' => 'Ministro do evangelho, bacharel em Teologia pelo SETEBAN-GO e articulista sobre liderança eclesiástica.',
+            'avatar_url' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/cbngoias',
+                'email' => 'presidencia@cbngo.org.br',
+            ],
         ]);
 
         $author2 = Author::create([
@@ -40,6 +45,10 @@ class DatabaseSeeder extends Seeder
             'slug' => 'pr-carlos-eduardo-mendes',
             'role_title' => 'Coordenador Teológico',
             'bio' => 'Doutor em Teologia Sistemática e professor de Hermenêutica Bíblica.',
+            'avatar_url' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+            'social_links' => [
+                'email' => 'teologia@cbngo.org.br',
+            ],
         ]);
 
         $author3 = Author::create([
@@ -47,6 +56,11 @@ class DatabaseSeeder extends Seeder
             'slug' => 'pra-helena-albuquerque',
             'role_title' => 'Líder de Missões Estaduais',
             'bio' => 'Missionária e conferencista na área de capacitação familiar e ministério com mulheres.',
+            'avatar_url' => 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/cbngoias',
+                'email' => 'missoes@cbngo.org.br',
+            ],
         ]);
 
         // 3. Artigos e reflexões pastorais
@@ -54,8 +68,9 @@ class DatabaseSeeder extends Seeder
             'author_id' => $author1->id,
             'title' => 'Avivamento Bíblico e Missões no Século XXI',
             'slug' => 'avivamento-biblico-missoes-seculo-xxi',
+            'category' => 'Missões',
             'excerpt' => 'Como a igreja contemporânea em Goiás pode manter a chama do Espírito Santo aliada à fidelidade doutrinária e ao compromisso evangelístico irrevogável.',
-            'content' => 'O verdadeiro avivamento não se resume a momentos passageiros de emoção, mas traduz-se em arrependimento genuíno, temor ao Senhor e paixão pelas almas perdidas...',
+            'content' => "O verdadeiro avivamento não se resume a momentos passageiros de emoção, mas traduz-se em arrependimento genuíno, temor ao Senhor e paixão pelas almas perdidas.\n\nQuando o Espírito Santo opera de forma soberana em uma comunidade batista, Ele desperta crentes para a intercessão contínua, reconcilia relacionamentos rompidos e impulsiona a igreja a sair de suas quatro paredes rumo aos campos que já estão brancos para a ceifa.\n\nQue a CBN Goiás permaneça inabalável nesse compromisso com o Evangelho da graça.",
             'reading_time' => 6,
             'is_published' => true,
             'published_at' => now()->subDays(2),
@@ -65,8 +80,9 @@ class DatabaseSeeder extends Seeder
             'author_id' => $author2->id,
             'title' => 'Pastoreamento e Saúde Emocional do Líder Cristão',
             'slug' => 'pastoreamento-saude-emocional-lider-cristao',
+            'category' => 'Liderança',
             'excerpt' => 'Princípios indispensáveis para manter a integridade física, emocional e espiritual no exercício do ministério pastoral em tempos de sobrecarga.',
-            'content' => 'O apóstolo Paulo nos adverte: cuidai de vós mesmos e de todo o rebanho. Nenhum pastor pode oferecer aquilo que não possui em sua comunhão íntima com Cristo...',
+            'content' => "O apóstolo Paulo nos adverte com sabedoria: cuidai de vós mesmos e de todo o rebanho. Nenhum pastor pode oferecer aquilo que não possui em sua comunhão íntima com Cristo.\n\nEm um cenário de demandas ministeriais crescentes, a solidão do líder e o esgotamento silencioso têm atingido preciosos vocacionados. Cuidar da mente, estabelecer limites saudáveis e cultivar amizades transparentes no presbitério são imperativos de sobrevivência e fecundidade pastoral.",
             'reading_time' => 5,
             'is_published' => true,
             'published_at' => now()->subDays(5),
@@ -76,8 +92,9 @@ class DatabaseSeeder extends Seeder
             'author_id' => $author3->id,
             'title' => 'A Centralidade de Cristo na Vida Familiar',
             'slug' => 'centralidade-de-cristo-vida-familiar',
+            'category' => 'Família',
             'excerpt' => 'Edificando lares inabaláveis sobre os alicerces das Escrituras Sagradas, resgatando o culto doméstico e o discipulado de novas gerações.',
-            'content' => 'A família é o primeiro e mais importante campo missionário de todo discípulo de Jesus Cristo. Resgatar o altar doméstico é a prioridade urgente de nossas igrejas...',
+            'content' => "A família é o primeiro e mais importante campo missionário de todo discípulo de Jesus Cristo. Resgatar o altar doméstico é a prioridade urgente de nossas igrejas.\n\nQuando pais e mães ensinam com amor e testemunho prático os mandamentos de Deus, preparamos uma nova geração capaz de discernir a verdade em tempos de confusão cultural e moral.",
             'reading_time' => 4,
             'is_published' => true,
             'published_at' => now()->subDays(8),

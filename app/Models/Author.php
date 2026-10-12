@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property string $role_title
  * @property string|null $avatar_url
  * @property string|null $bio
+ * @property array<string, string>|null $social_links
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Article> $articles
@@ -34,6 +35,16 @@ class Author extends Model
         'role_title',
         'avatar_url',
         'bio',
+        'social_links',
+    ];
+
+    /**
+     * Os atributos convertidos para tipos nativos.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'social_links' => 'array',
     ];
 
     /**

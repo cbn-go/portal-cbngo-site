@@ -27,6 +27,7 @@ class ArticleFactory extends Factory
             'author_id' => Author::factory(),
             'title' => $title,
             'slug' => Str::slug($title).'-'.fake()->unique()->numberBetween(1000, 9999),
+            'category' => fake()->randomElement(['Teologia', 'Liderança', 'Família', 'Missões']),
             'excerpt' => fake()->paragraph(2),
             'content' => fake()->paragraphs(5, true),
             'reading_time' => fake()->numberBetween(3, 10),

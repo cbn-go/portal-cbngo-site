@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
@@ -34,10 +36,6 @@ Route::get('/igrejas', function () {
 Route::get('/noticias', [NewsController::class, 'index'])->name('noticias.index');
 Route::get('/noticias/{slug}', [NewsController::class, 'show'])->name('noticias.show');
 
-Route::get('/artigos', function () {
-    return view('placeholder', ['title' => 'Artigos e Reflexões Pastorais']);
-})->name('artigos.index');
-
-Route::get('/artigos/{slug}', function (string $slug) {
-    return view('placeholder', ['title' => 'Artigo Pastoral', 'slug' => $slug]);
-})->name('artigos.show');
+Route::get('/artigos', [ArticleController::class, 'index'])->name('artigos.index');
+Route::get('/artigos/{slug}', [ArticleController::class, 'show'])->name('artigos.show');
+Route::get('/autores/{author}', [AuthorController::class, 'show'])->name('autores.show');
