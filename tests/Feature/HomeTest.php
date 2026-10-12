@@ -377,6 +377,16 @@ class HomeTest extends TestCase
     {
         $this->withoutVite();
 
+        News::create([
+            'title' => 'Comunicado Oficial 2026',
+            'slug' => 'comunicado-oficial-2026',
+            'category' => 'Comunicado Oficial',
+            'excerpt' => 'Resumo do comunicado oficial.',
+            'content' => 'Conteúdo do comunicado oficial.',
+            'is_published' => true,
+            'published_at' => now()->subDay(),
+        ]);
+
         $routesToTest = [
             '/quem-somos',
             '/igrejas',

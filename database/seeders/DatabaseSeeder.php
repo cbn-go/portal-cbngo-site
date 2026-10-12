@@ -105,6 +105,11 @@ class DatabaseSeeder extends Seeder
             'content' => 'O avanço missionário em território goiano continua gerando frutos abençoados para a glória de Deus...',
             'church_name' => 'IBN Rio Verde',
             'city' => 'Rio Verde',
+            'gallery_images' => [
+                'https://images.unsplash.com/photo-1548625361-195972855734?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80',
+            ],
             'is_official' => false,
             'is_published' => true,
             'published_at' => now()->subDays(3),

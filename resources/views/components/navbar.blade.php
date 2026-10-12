@@ -1,8 +1,17 @@
 @props([
-    'active' => 'home',
+    'active' => null,
 ])
 
 @php
+    $activeKey = $active ?? match(true) {
+        request()->routeIs('noticias.*') => 'noticias',
+        request()->routeIs('artigos.*') => 'artigos',
+        request()->routeIs('igrejas*') => 'igrejas',
+        request()->routeIs('quem-somos*') => 'quem-somos',
+        request()->routeIs('contato*') => 'contato',
+        default => 'home',
+    };
+
     $navItems = [
         'home' => ['label' => 'Início', 'href' => route('home')],
         'quem-somos' => ['label' => 'Institucional', 'href' => route('quem-somos')],
@@ -38,7 +47,7 @@
             <nav class="hidden lg:flex items-center gap-8 text-sm font-medium" aria-label="Navegação principal">
                 @foreach ($navItems as $key => $item)
                     @php
-                        $isActive = ($active === $key);
+                        $isActive = ($activeKey === $key);
                         $linkClasses = $isActive
                             ? 'text-cbn-black font-semibold border-b-2 border-cbn-black pb-1'
                             : 'text-neutral-600 hover:text-cbn-black transition-colors';
@@ -105,7 +114,7 @@
         <nav class="flex flex-col space-y-1" aria-label="Navegação mobile">
             @foreach ($navItems as $key => $item)
                 @php
-                    $isActive = ($active === $key);
+                    $isActive = ($activeKey === $key);
                     $linkClasses = $isActive
                         ? 'text-cbn-black font-semibold border-b-2 border-cbn-black pb-1 bg-neutral-50'
                         : 'text-neutral-700 hover:text-cbn-black hover:bg-neutral-50';
