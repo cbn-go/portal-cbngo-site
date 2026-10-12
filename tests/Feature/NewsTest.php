@@ -434,16 +434,97 @@ class NewsTest extends TestCase
     }
 
     /**
-     * Valida que o navbar destaca 'Notícias' como item ativo na navegação.
+     * Valida que o filtro por comunicados oficiais funciona isoladamente na UI.
+     */
+    public function test_news_index_can_filter_by_only_official_announcements(): void
+    {
+        $this->withoutVite();
+
+        News::create([
+            'title' => 'Comunicado Oficial da Presidência',
+            'slug' => 'comunicado-presidencia',
+            'category' => 'Comunicado Oficial',
+            'excerpt' => 'Resumo oficial',
+            'content' => 'Conteúdo oficial',
+            'is_official' => true,
+            'is_published' => true,
+            'published_at' => now()->subDay(),
+        ]);
+
+        News::create([
+            'title' => 'Notícia Geral de Congregação',
+            'slug' => 'noticia-geral-congregacao',
+            'category' => 'Geral',
+            'excerpt' => 'Resumo geral',
+            'content' => 'Conteúdo geral',
+            'is_official' => false,
+            'is_published' => true,
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->get(route('noticias.index', ['apenas_oficiais' => '1']));
+
+        $response->assertStatus(200);
+        $response->assertSee('Comunicado Oficial da Presidência');
+        $response->assertDontSee('Notícia Geral de Congregação');
+    }
+
+    /**
+     * Valida que a paginação preserva os parâmetros da query string (ex: busca e filtros).
+     */
+    public function test_news_pagination_preserves_query_string_parameters(): void
+    {
+        $this->withoutVite();
+
+        for ($i = 1; $i <= 11; $i++) {
+            News::create([
+                'title' => "Assembleia Notícia {$i}",
+                'slug' => "assembleia-noticia-{$i}",
+                'category' => 'Geral',
+                'excerpt' => "Resumo {$i}",
+                'content' => "Conteúdo {$i}",
+                'city' => 'Goiânia',
+                'is_published' => true,
+                'published_at' => now()->subMinutes(12 - $i),
+            ]);
+        }
+
+        $response = $this->get(route('noticias.index', ['q' => 'Assembleia', 'cidade' => 'Goiânia']));
+
+        $response->assertStatus(200);
+        $response->assertSee('q=Assembleia', false);
+        $response->assertSee('page=2', false);
+    }
+
+    /**
+     * Valida que o navbar destaca 'Notícias' com aria-current="page" e não marca 'Início' indevidamente.
      */
     public function test_navbar_highlights_noticias_as_active_when_browsing_news(): void
     {
         $this->withoutVite();
 
-        $response = $this->get(route('noticias.index'));
+        $news = News::create([
+            'title' => 'Notícia Teste Ativo',
+            'slug' => 'noticia-teste-ativo',
+            'category' => 'Geral',
+            'excerpt' => 'Resumo',
+            'content' => 'Conteúdo',
+            'is_published' => true,
+            'published_at' => now()->subDay(),
+        ]);
 
-        $response->assertStatus(200);
-        $response->assertSee('border-b-2 border-cbn-black', false);
-        $response->assertSee('Notícias');
+        // 1. No feed /noticias
+        $responseFeed = $this->get(route('noticias.index'));
+        $responseFeed->assertStatus(200);
+        $responseFeed->assertSee('href="'.route('noticias.index').'"', false);
+        $responseFeed->assertSee('aria-current="page"', false);
+        $responseFeed->assertDontSee('href="'.route('home').'"'."\n".'                        class="text-cbn-black font-semibold border-b-2 border-cbn-black', false);
+
+        // 2. Nos detalhes /noticias/{slug}
+        $responseShow = $this->get(route('noticias.show', $news->slug));
+        $responseShow->assertStatus(200);
+        $responseShow->assertSee('href="'.route('noticias.index').'"', false);
+        $responseShow->assertSee('aria-current="page"', false);
+        $responseShow->assertDontSee('href="'.route('home').'"'."\n".'                        class="text-cbn-black font-semibold border-b-2 border-cbn-black', false);
     }
 }

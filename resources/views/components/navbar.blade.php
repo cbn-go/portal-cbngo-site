@@ -9,7 +9,8 @@
         request()->routeIs('igrejas*') => 'igrejas',
         request()->routeIs('quem-somos*') => 'quem-somos',
         request()->routeIs('contato*') => 'contato',
-        default => 'home',
+        request()->routeIs('home') => 'home',
+        default => null,
     };
 
     $navItems = [

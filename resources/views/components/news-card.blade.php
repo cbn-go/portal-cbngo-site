@@ -10,7 +10,7 @@
 
 <article {{ $attributes->merge(['class' => 'group flex flex-col bg-[#FFFDFB] border border-neutral-200/90 rounded overflow-hidden hover:border-neutral-400 hover:shadow-md transition-all duration-200']) }}>
     <a
-        href="/noticias/{{ $slug }}"
+        href="{{ route('noticias.show', $slug) }}"
         class="relative block aspect-video w-full overflow-hidden bg-neutral-100 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
     >
         @if ($image)
@@ -44,7 +44,7 @@
 
             <h3 class="font-brand-serif font-bold text-lg text-cbn-black leading-snug group-hover:text-cbn-orange transition-colors line-clamp-2">
                 <a
-                    href="/noticias/{{ $slug }}"
+                    href="{{ route('noticias.show', $slug) }}"
                     class="focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
                 >
                     {{ $title }}
@@ -60,7 +60,7 @@
 
         <div class="pt-5 mt-4 border-t border-neutral-100">
             <a
-                href="/noticias/{{ $slug }}"
+                href="{{ route('noticias.show', $slug) }}"
                 class="inline-flex items-center gap-1.5 text-xs font-bold text-cbn-orange hover:text-cbn-orange-mid tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
             >
                 <span>Ver o impacto</span>

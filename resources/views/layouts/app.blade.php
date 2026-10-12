@@ -54,7 +54,7 @@
         @yield('banner')
     @endif
 
-    <x-navbar />
+    <x-navbar :active="$activeNav ?? null" />
 
     <main id="main-content" class="flex-grow">
         @yield('content')

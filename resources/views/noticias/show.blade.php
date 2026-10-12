@@ -125,8 +125,34 @@
                     {{-- Copiar Link --}}
                     <button
                         type="button"
-                        x-data="{ copied: false }"
-                        @click="navigator.clipboard.writeText('{{ url()->current() }}'); copied = true; setTimeout(() => copied = false, 2500)"
+                        x-data="{
+                            copied: false,
+                            async copyLink() {
+                                const url = '{{ url()->current() }}';
+                                if (navigator.clipboard && window.isSecureContext) {
+                                    try {
+                                        await navigator.clipboard.writeText(url);
+                                        this.copied = true;
+                                        setTimeout(() => this.copied = false, 2500);
+                                        return;
+                                    } catch (e) {}
+                                }
+                                const el = document.createElement('textarea');
+                                el.value = url;
+                                el.setAttribute('readonly', '');
+                                el.style.position = 'absolute';
+                                el.style.left = '-9999px';
+                                document.body.appendChild(el);
+                                el.select();
+                                try {
+                                    document.execCommand('copy');
+                                    this.copied = true;
+                                    setTimeout(() => this.copied = false, 2500);
+                                } catch (err) {}
+                                document.body.removeChild(el);
+                            }
+                        }"
+                        @click="copyLink()"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded border border-neutral-300 text-neutral-700 hover:text-cbn-black hover:bg-neutral-50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
                         aria-label="Copiar link da notícia"
                     >

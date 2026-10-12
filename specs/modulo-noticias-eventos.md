@@ -4,7 +4,7 @@
 - **Fase WDLC:** Fase 3 (Desenvolvimento do Portal Público)
 - **Metodologia:** Spec-Driven Development (SDD) com ciclo TDD
 - **Data:** 12 de Outubro de 2026
-- **Status:** Proposta para Aprovação
+- **Status:** Implementada e Validada (Aprovada em Code Review)
 
 ---
 
@@ -173,43 +173,47 @@ class NewsController extends Controller
 
 ### 4.1 Critérios de Aceitação (Checklist da Issue #4)
 
-- [ ] **Feed Geral (`/noticias`):**
-  - [ ] Rota `/noticias` responde com HTTP 200 e layout oficial integrado.
-  - [ ] Paginação exibe até 9 notícias por página e mantém parâmetros de busca e filtros nas URLs dos botões de navegação.
-  - [ ] Campo de busca textual filtra eficientemente por título, resumo e conteúdo.
-  - [ ] Filtro por município goiano (`city`) selecionável e funcional.
-  - [ ] Filtro por congregação emissora (`church_name`) selecionável e funcional.
-  - [ ] Comunicados oficiais da diretoria possuem destaque visual e badge clara de distinção.
-  - [ ] Empty state amigável exibido quando nenhum resultado é retornado.
-  - [ ] Active state destacado no navbar para "Notícias".
+- [x] **Feed Geral (`/noticias`):**
+  - [x] Rota `/noticias` responde com HTTP 200 e layout oficial integrado.
+  - [x] Paginação exibe até 9 notícias por página e mantém parâmetros de busca e filtros nas URLs dos botões de navegação.
+  - [x] Campo de busca textual filtra eficientemente por título, resumo e conteúdo.
+  - [x] Filtro por município goiano (`city`) selecionável e funcional.
+  - [x] Filtro por congregação emissora (`church_name`) selecionável e funcional.
+  - [x] Filtro `apenas_oficiais` disponível na UI e no backend.
+  - [x] Comunicados oficiais da diretoria possuem destaque visual e badge clara de distinção.
+  - [x] Empty state amigável exibido quando nenhum resultado é retornado.
+  - [x] Active state destacado no navbar para "Notícias" com atributo `aria-current="page"`.
 
-- [ ] **Detalhes da Notícia (`/noticias/{slug}`):**
-  - [ ] Rota `/noticias/{slug}` responde com HTTP 200 para notícias publicadas.
-  - [ ] Exibe imagem de capa em alta resolução ou fallback elegante.
-  - [ ] Exibe metadados de publicação (data formatada em português, congregação de origem, cidade de Goiás).
-  - [ ] Exibe badge de Comunicado Oficial caso `is_official == true`.
-  - [ ] Conteúdo do artigo é formatado e protegido contra vulnerabilidades.
-  - [ ] Seção de galeria de fotos renderizada quando `gallery_images` estiver presente.
-  - [ ] Lightbox interativo funcional via Alpine.js com visualização em tela cheia, navegação entre fotos e fechamento via ESC / clique externo.
-  - [ ] Botões de compartilhamento social presentes e operantes (WhatsApp, Facebook, Twitter/X, Copiar Link com feedback de clipboard).
-  - [ ] Seção de notícias recomendadas / recentes no rodapé da página.
-  - [ ] Responde com 404 para matérias não publicadas, agendadas para o futuro ou slugs inválidos.
+- [x] **Detalhes da Notícia (`/noticias/{slug}`):**
+  - [x] Rota `/noticias/{slug}` responde com HTTP 200 para notícias publicadas.
+  - [x] Exibe imagem de capa em alta resolução ou fallback elegante.
+  - [x] Exibe metadados de publicação (data formatada em português, congregação de origem, cidade de Goiás).
+  - [x] Exibe badge de Comunicado Oficial caso `is_official == true`.
+  - [x] Conteúdo do artigo é formatado e protegido contra vulnerabilidades (`nl2br(e())`).
+  - [x] Seção de galeria de fotos renderizada quando `gallery_images` estiver presente.
+  - [x] Lightbox interativo funcional via Alpine.js com visualização em tela cheia, navegação entre fotos e fechamento via ESC / clique externo.
+  - [x] Botões de compartilhamento social presentes e operantes (WhatsApp, Facebook, Twitter/X, Copiar Link com feedback de clipboard e fallback).
+  - [x] Seção de notícias recomendadas / recentes no rodapé da página.
+  - [x] Responde com 404 para matérias não publicadas, agendadas para o futuro ou slugs inválidos.
 
 ### 4.2 Plano de Verificação Automatizada (Testes TDD)
 
-Será criado o arquivo `tests/Feature/NewsTest.php` com os seguintes testes unitários e de integração:
+Suite `tests/Feature/NewsTest.php` com 17 testes automatizados passando 100%:
 
 1. `test_news_index_displays_published_news_and_pagination()`: Valida renderização do feed e paginação de 9 itens.
 2. `test_news_index_hides_draft_and_future_news()`: Garante que rascunhos e notícias futuras não vazam para o feed.
 3. `test_news_index_can_search_by_title_and_content()`: Testa a busca textual por palavras-chave.
 4. `test_news_index_can_filter_by_city()`: Testa o filtro por cidade de Goiás.
 5. `test_news_index_can_filter_by_church()`: Testa o filtro por igreja emissora.
-6. `test_news_index_highlights_official_announcements()`: Valida identificadores e badges de comunicados oficiais.
-7. `test_news_index_shows_empty_state_when_no_results_match_filters()`: Valida empty state e botão de limpar filtros.
-8. `test_news_show_displays_published_news_details_and_metadata()`: Valida visualização da matéria, data formatada, cidade e igreja.
-9. `test_news_show_returns_404_for_unpublished_or_future_news()`: Testa barreira 404 para não publicadas.
-10. `test_news_show_returns_404_for_nonexistent_slug()`: Testa 404 para slug inexistente.
-11. `test_news_show_renders_photo_gallery_when_gallery_images_present()`: Valida marcação do lightbox e galeria de fotos.
-12. `test_news_show_renders_social_share_links_with_correct_encoded_urls()`: Testa links gerados para WhatsApp, Twitter, Facebook e botão de copiar link.
-13. `test_news_show_renders_related_news_excluding_current()`: Valida recomendação de notícias excluindo a atual.
-14. `test_navbar_highlights_noticias_as_active_when_browsing_news()`: Valida a navegação ativa no menu.
+6. `test_news_index_can_filter_by_only_official_announcements()`: Valida o filtro checkbox de apenas comunicados oficiais na UI.
+7. `test_news_index_highlights_official_announcements()`: Valida identificadores e badges de comunicados oficiais.
+8. `test_news_index_shows_empty_state_when_no_results_match_filters()`: Valida empty state e botão de limpar filtros.
+9. `test_news_pagination_preserves_query_string_parameters()`: Valida preservação de parâmetros como busca e cidade entre páginas.
+10. `test_news_show_displays_published_news_details_and_metadata()`: Valida visualização da matéria, data formatada, cidade e igreja.
+11. `test_news_show_returns_404_for_unpublished_or_future_news()`: Testa barreira 404 para não publicadas.
+12. `test_news_show_returns_404_for_nonexistent_slug()`: Testa 404 para slug inexistente.
+13. `test_news_show_renders_photo_gallery_when_gallery_images_present()`: Valida marcação do lightbox e galeria de fotos.
+14. `test_news_show_does_not_render_gallery_when_gallery_images_is_null_or_empty()`: Valida ausência da galeria quando não há fotos.
+15. `test_news_show_renders_social_share_links_with_correct_encoded_urls()`: Testa links gerados para WhatsApp, Twitter, Facebook e botão de copiar link.
+16. `test_news_show_renders_related_news_excluding_current()`: Valida recomendação de notícias excluindo a atual.
+17. `test_navbar_highlights_noticias_as_active_when_browsing_news()`: Valida estritamente `aria-current="page"` em Notícias no feed e detalhes.

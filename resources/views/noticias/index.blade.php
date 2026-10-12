@@ -72,6 +72,20 @@
                     </select>
                 </div>
 
+                {{-- Checkbox Comunicados Oficiais --}}
+                <div class="flex items-center shrink-0">
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700 select-none px-2 py-1.5 rounded hover:bg-neutral-50 transition">
+                        <input
+                            type="checkbox"
+                            name="apenas_oficiais"
+                            value="1"
+                            {{ $apenasOficiais ? 'checked' : '' }}
+                            class="rounded border-neutral-300 text-cbn-orange focus:ring-cbn-orange h-4 w-4"
+                        />
+                        <span>Somente oficiais</span>
+                    </label>
+                </div>
+
                 {{-- Botões de ação --}}
                 <div class="flex items-center gap-2 shrink-0">
                     <x-button variant="primary" size="md" type="submit" class="w-full lg:w-auto">
@@ -92,7 +106,7 @@
     </section>
 
     {{-- Listagem de Notícias --}}
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-10 sm:py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-10 sm:py-14">
         @if ($news->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 @foreach ($news as $item)
@@ -210,6 +224,6 @@
                 </div>
             </div>
         @endif
-    </main>
+    </div>
 </div>
 @endsection
