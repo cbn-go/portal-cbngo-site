@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
  * @property int $author_id
  * @property string $title
  * @property string $slug
+ * @property string $category
  * @property string $excerpt
  * @property string $content
  * @property int $reading_time
@@ -21,6 +22,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Author $author
+ *
+ * @method static Builder<Article> published()
  */
 class Article extends Model
 {
@@ -35,6 +38,7 @@ class Article extends Model
         'author_id',
         'title',
         'slug',
+        'category',
         'excerpt',
         'content',
         'reading_time',

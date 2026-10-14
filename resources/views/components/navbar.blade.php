@@ -5,7 +5,7 @@
 @php
     $activeKey = $active ?? match(true) {
         request()->routeIs('noticias.*') => 'noticias',
-        request()->routeIs('artigos.*') => 'artigos',
+        request()->routeIs('artigos.*') || request()->routeIs('autores.*') => 'artigos',
         request()->routeIs('igrejas*') => 'igrejas',
         request()->routeIs('quem-somos*') => 'quem-somos',
         request()->routeIs('contato*') => 'contato',
