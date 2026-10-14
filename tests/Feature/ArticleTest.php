@@ -670,5 +670,104 @@ class ArticleTest extends TestCase
         $responseShow->assertSee('href="'.route('artigos.index').'"', false);
         $responseShow->assertSee('aria-current="page"', false);
         $responseShow->assertDontSee('href="'.route('home').'"'."\n".'                        class="text-cbn-black font-semibold border-b-2 border-cbn-black', false);
+
+        // 3. No perfil do autor /autores/{slug}
+        $responseAuthor = $this->get(route('autores.show', $author->slug));
+        $responseAuthor->assertStatus(200);
+        $responseAuthor->assertSee('href="'.route('artigos.index').'"', false);
+        $responseAuthor->assertSee('aria-current="page"', false);
+        $responseAuthor->assertDontSee('href="'.route('home').'"'."\n".'                        class="text-cbn-black font-semibold border-b-2 border-cbn-black', false);
+    }
+
+    /**
+     * Valida que o perfil do autor pagina adequadamente com mais de 9 artigos e suporta navegação para page=2.
+     */
+    public function test_author_profile_paginates_articles_when_more_than_nine(): void
+    {
+        $this->withoutVite();
+
+        $author = Author::create([
+            'name' => 'Pr. Roberto Silveira',
+            'slug' => 'pr-roberto-silveira',
+            'role_title' => 'Pastor e Articulista',
+        ]);
+
+        for ($i = 1; $i <= 12; $i++) {
+            Article::create([
+                'author_id' => $author->id,
+                'title' => "Artigo de Série {$i}",
+                'slug' => "artigo-de-serie-{$i}",
+                'category' => 'Teologia',
+                'excerpt' => "Resumo {$i}",
+                'content' => "Conteúdo {$i}",
+                'reading_time' => 5,
+                'is_published' => true,
+                'published_at' => now()->subMinutes(13 - $i),
+            ]);
+        }
+
+        // Página 1: exibe os 9 mais recentes (12 até 4), não exibe artigo 3, tem link de paginação com page=2
+        $responsePage1 = $this->get(route('autores.show', $author->slug));
+        $responsePage1->assertStatus(200);
+        $responsePage1->assertSee('Artigo de Série 12');
+        $responsePage1->assertSee('Artigo de Série 4');
+        $responsePage1->assertDontSee('Artigo de Série 3');
+        $responsePage1->assertSee('page=2', false);
+
+        // Página 2: exibe os 3 restantes (3 até 1), não exibe artigo 12
+        $responsePage2 = $this->get(route('autores.show', [$author->slug, 'page' => 2]));
+        $responsePage2->assertStatus(200);
+        $responsePage2->assertSee('Artigo de Série 3');
+        $responsePage2->assertSee('Artigo de Série 1');
+        $responsePage2->assertDontSee('Artigo de Série 12');
+    }
+
+    /**
+     * Valida que esquemas maliciosos em social_links (ex: javascript:...) são descartados e links válidos são renderizados.
+     */
+    public function test_social_links_filter_disallowed_schemes_preventing_xss(): void
+    {
+        $this->withoutVite();
+
+        $author = Author::create([
+            'name' => 'Pr. Daniel Pereira',
+            'slug' => 'pr-daniel-pereira',
+            'role_title' => 'Pastor e Escritor',
+            'bio' => 'Biografia de teste.',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/prdaniel',
+                'xss' => 'javascript:alert(document.cookie)',
+                'data' => 'data:text/html,<script>alert(1)</script>',
+                'email' => 'daniel@cbngo.org.br',
+            ],
+        ]);
+
+        $article = Article::create([
+            'author_id' => $author->id,
+            'title' => 'Artigo com Autor com Links Seguros',
+            'slug' => 'artigo-com-autor-links-seguros',
+            'category' => 'Teologia',
+            'excerpt' => 'Resumo',
+            'content' => 'Conteúdo',
+            'reading_time' => 5,
+            'is_published' => true,
+            'published_at' => now()->subDay(),
+        ]);
+
+        // 1. No perfil do autor
+        $responseAuthor = $this->get(route('autores.show', $author->slug));
+        $responseAuthor->assertStatus(200);
+        $responseAuthor->assertSee('https://instagram.com/prdaniel');
+        $responseAuthor->assertSee('mailto:daniel@cbngo.org.br');
+        $responseAuthor->assertDontSee('javascript:', false);
+        $responseAuthor->assertDontSee('data:text/html', false);
+
+        // 2. Na leitura do artigo (bloco do autor)
+        $responseArticle = $this->get(route('artigos.show', $article->slug));
+        $responseArticle->assertStatus(200);
+        $responseArticle->assertSee('https://instagram.com/prdaniel');
+        $responseArticle->assertSee('mailto:daniel@cbngo.org.br');
+        $responseArticle->assertDontSee('javascript:', false);
+        $responseArticle->assertDontSee('data:text/html', false);
     }
 }

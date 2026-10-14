@@ -12,8 +12,11 @@ class AuthorController extends Controller
      */
     public function show(string $author): View
     {
-        $authorModel = Author::where('slug', $author)
-            ->orWhere('id', $author)
+        $authorModel = Author::query()
+            ->where(function ($query) use ($author) {
+                $query->where('slug', $author)
+                    ->orWhere('id', $author);
+            })
             ->firstOrFail();
 
         $articles = $authorModel->articles()

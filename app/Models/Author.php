@@ -56,4 +56,39 @@ class Author extends Model
     {
         return $this->hasMany(Article::class);
     }
+
+    /**
+     * Retorna os canais sociais sanitizados com verificação estrita de esquema (https, http, mailto).
+     *
+     * @return array<string, string>
+     */
+    public function getSafeSocialLinks(): array
+    {
+        if (! is_array($this->social_links)) {
+            return [];
+        }
+
+        $safe = [];
+        foreach ($this->social_links as $network => $link) {
+            $trimmed = trim((string) $link);
+
+            if (str_starts_with($trimmed, 'mailto:')) {
+                $safe[(string) $network] = $trimmed;
+
+                continue;
+            }
+
+            if (str_contains($trimmed, '@') && ! str_starts_with($trimmed, 'http://') && ! str_starts_with($trimmed, 'https://')) {
+                $safe[(string) $network] = 'mailto:'.$trimmed;
+
+                continue;
+            }
+
+            if (preg_match('/^https?:\/\//i', $trimmed)) {
+                $safe[(string) $network] = $trimmed;
+            }
+        }
+
+        return $safe;
+    }
 }

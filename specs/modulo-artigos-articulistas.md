@@ -198,13 +198,15 @@ class AuthorController extends Controller
 - [x] **Perfil Público do Articulista (`/autores/{id_ou_slug}`):**
   - [x] Rota resolve com sucesso tanto por slug quanto por ID numérico.
   - [x] Exibe foto de alta qualidade, titulação e biografia completa do autor.
-  - [x] Lista todos os artigos publicados pelo articulista com paginação.
+  - [x] Lista todos os artigos publicados pelo articulista com paginação funcional (>9 itens).
   - [x] Oculta artigos em rascunho ou com agendamento futuro do perfil do articulista.
   - [x] Responde com HTTP 404 para autores inexistentes.
+  - [x] Sanitização de `social_links` com allowlist estrita de esquemas (`http`, `https`, `mailto`), prevenindo XSS.
+  - [x] Destaca a aba 'Artigos' no navbar como ativo com `aria-current="page"`.
 
 ### 4.2 Plano de Verificação Automatizada (Testes TDD)
 
-Será criado o arquivo `tests/Feature/ArticleTest.php` com 19 testes automatizados:
+Suite `tests/Feature/ArticleTest.php` com 21 testes automatizados cobrindo o ciclo completo:
 
 1. `test_articles_index_displays_published_articles_and_pagination()`: Valida listagem e paginação de 9 artigos.
 2. `test_articles_index_hides_draft_and_future_articles()`: Garante barreira contra rascunhos e futuros.
@@ -224,4 +226,6 @@ Será criado o arquivo `tests/Feature/ArticleTest.php` com 19 testes automatizad
 16. `test_author_profile_returns_404_for_invalid_slug_or_id()`: Testa 404 para autor inexistente.
 17. `test_author_profile_displays_bio_credentials_and_published_articles()`: Valida perfil completo e listagem de artigos.
 18. `test_author_profile_hides_draft_articles_from_author_feed()`: Garante que rascunhos não vazam no perfil do autor.
-19. `test_navbar_highlights_artigos_as_active_when_browsing_articles()`: Valida `aria-current="page"` em Artigos no feed e na leitura.
+19. `test_navbar_highlights_artigos_as_active_when_browsing_articles()`: Valida `aria-current="page"` em Artigos no feed, na leitura e no perfil do autor.
+20. `test_author_profile_paginates_articles_when_more_than_nine()`: Valida que perfil do articulista pagina adequadamente com mais de 9 artigos e suporta `page=2`.
+21. `test_social_links_filter_disallowed_schemes_preventing_xss()`: Valida que esquemas maliciosos em `social_links` (ex: `javascript:...`) são descartados e links válidos são renderizados.

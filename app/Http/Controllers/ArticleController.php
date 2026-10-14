@@ -30,8 +30,10 @@ class ArticleController extends Controller
 
         if ($autor !== '') {
             $query->whereHas('author', function ($sub) use ($autor) {
-                $sub->where('slug', $autor)
-                    ->orWhere('id', $autor);
+                $sub->where(function ($q) use ($autor) {
+                    $q->where('slug', $autor)
+                        ->orWhere('id', $autor);
+                });
             });
         }
 
