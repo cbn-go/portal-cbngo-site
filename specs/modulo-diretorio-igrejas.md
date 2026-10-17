@@ -26,14 +26,18 @@ Desenvolver o diretório público de congregações batistas nacionais filiadas 
   - Endereço completo (`address`, `neighborhood`, `city`, `state`, `zip_code`) com links diretos de rota para **Google Maps** e **Waze** (utilizando coordenadas quando válidas ou endereço textual codificado via RFC 3986 como fallback).
   - Telefones de contato (`phone`), e-mail institucional validado (`getSafeEmail()`) e redes sociais da congregação (`social_links` sanitizados contra XSS).
   - Lista estruturada de horários regulares de cultos e reuniões de oração (`service_times`).
-  - Botão de interação "Ver no Mapa" (quando a igreja possuir coordenadas válidas) para focar/destacar o marcador correspondente no Mapa de Goiás.
-- **Mapa Interativo de Goiás — Presença da CBN-GO (Sub-issue 6.3):**
-  - Mapa interativo e responsivo do estado de Goiás (`id="mapa-goias"`, SVG vetorial estilizado com projeção geográfica calibrada para o *bounding box* de Goiás + controle reativo em Alpine.js).
-  - Exibição dos marcadores (`data-church-marker="{slug}"`) de **todas** as congregações ativas filtradas que possuem coordenadas válidas (`latitude` e `longitude`), sem corte de paginação, oferecendo visão estadual completa do filtro ativo.
-  - Sincronização com os filtros de busca (`q`) e cidade (`cidade`): o mapa exibe exclusivamente os marcadores das congregações que correspondem aos filtros ativos, além de resumo estatístico de presença (total de igrejas e municípios filtrados).
-  - Interatividade bidirecional: clicar em um marcador no mapa seleciona a congregação no painel lateral do mapa e, caso o card correspondente (`#igreja-{slug}`) esteja na página atual da listagem, destaca e rola suavemente até ele.
-  - Experiência responsiva em mobile e desktop (com controles de visualização/alternância que nunca bloqueiam a navegação pela listagem).
-  - Resiliência: congregações sem coordenadas válidas (`null` ou fora do *bounding box* geográfico de Goiás) são omitidas apenas da plotagem de pinos do mapa, permanecendo normalmente na listagem de cards sem quebrar a página.
+  - Botão/link de interação no card para filtrar ou visualizar o município no mapa estadual.
+- **Mapa Coroplético Municipal de Goiás — Presença da CBN-GO (Sub-issue 6.3):**
+  - Mapa coroplético interativo e responsivo dos municípios do estado de Goiás (~246 municípios da malha IBGE) em `id="mapa-goias"`, renderizado via **Leaflet** (`data-mapa="municipios"`, container `id="leaflet-mapa-goias"`) consumindo o asset estático `/geo/goias-municipios.geojson`.
+  - Destaque visual claro entre municípios **com presença** (cor de marca laranja CBN `#E56B20`) e municípios **sem presença** (cinza neutro `#E5E7EB`), sem pinos individuais (`data-church-marker`) no mapa estadual.
+  - Sincronização com os filtros de busca (`q`) e cidade (`cidade`): o controller injeta `presenceByCity` (`array<string, int>` com a contagem de congregações ativas filtradas por município, sem corte de paginação). Apenas os municípios com congregações no resultado filtrado recebem destaque "com presença"; os demais permanecem como "sem presença", mantendo a visão estadual completa.
+  - Interatividade municipal:
+    - Clicar em um município **com** igreja aplica o filtro `cidade` correspondente na listagem (`?cidade=Nome`).
+    - Clicar ou passar o cursor em um município **sem** igreja exibe a indicação `"Sem congregação filiada"`.
+    - Painel lateral com lista rápida dos municípios com presença no filtro atual (com contagem de igrejas e link direto para filtrar por `?cidade=Nome`).
+  - Legenda explícita (`Com congregação filiada` / `Sem congregação filiada`) e contadores de cobertura estadual (`X / 246 municípios` com presença e total de congregações filtradas).
+  - Experiência responsiva em mobile e desktop (com toggle `Expandir mapa` / `Recolher mapa` que nunca bloqueia a navegação pela listagem).
+  - Resiliência: congregações sem coordenadas válidas (`latitude`/`longitude` nulas ou fora do *bounding box* de Goiás) continuam contabilizadas na presença do seu município (`city`) e aparecem normalmente na listagem de cards com rotas Google Maps/Waze baseadas no endereço textual, sem quebrar a página nem o mapa.
 - **Modelagem, Factory & Seeder:**
   - Migration `create_churches_table`, Model `Church`, `ChurchFactory` e atualização do `DatabaseSeeder` com congregações representativas em Goiás.
 
@@ -41,6 +45,7 @@ Desenvolver o diretório público de congregações batistas nacionais filiadas 
 - Painel administrativo (CRUD de igrejas), que pertence ao escopo administrativo (`admin.cbngo.com.br`).
 - Geocodificação automática via chamadas HTTP externas em tempo de execução.
 - Páginas individuais para cada igreja (`/igrejas/{slug}`).
+- Pinos individuais por coordenada no mapa estadual ou mapa de calor contínuo por densidade (além do destaque coroplético com/sem presença e contagem no tooltip/painel).
 
 ---
 
@@ -78,32 +83,38 @@ Schema::create('churches', function (Blueprint $table) {
 ### 2.2 Métodos de Domínio em `App\Models\Church`
 
 - `scopeActive(Builder $query): Builder`
-- `hasValidCoordinates(): bool` — Verifica coordenadas numéricas dentro do *bounding box* geográfico de Goiás (`MIN_LAT = -19.60` a `MAX_LAT = -12.35`, `MIN_LNG = -53.30` a `MAX_LNG = -45.85`), unificado com a projeção do mapa.
-- `getMapPosition(): ?array{x: float, y: float}` — Projeta `(latitude, longitude)` em coordenadas percentuais `(x, y)` no mapa vetorial de Goiás usando os mesmos limites `MIN_LAT..MAX_LAT` e `MIN_LNG..MAX_LNG`.
+- `hasValidCoordinates(): bool` — Verifica coordenadas numéricas dentro do *bounding box* geográfico de Goiás (`MIN_LAT = -19.60` a `MAX_LAT = -12.35`, `MIN_LNG = -53.30` a `MAX_LNG = -45.85`) para priorizar coordenadas nas rotas externas Google Maps/Waze.
 - `getFullAddress(): string`
 - `getGoogleMapsUrl(): string`
 - `getWazeUrl(): string`
 - `getSafeEmail(): ?string` — Valida o e-mail institucional via `FILTER_VALIDATE_EMAIL` antes de compor links `mailto:`.
 - `getSafeSocialLinks(): array<string, string>`
 
-### 2.3 Rotas & Controller
+### 2.3 Rotas, Controller & Contrato do Mapa Coroplético
 
 Em `routes/web.php`:
 ```php
 Route::get('/igrejas', [ChurchController::class, 'index'])->name('igrejas');
 ```
 
-Os marcadores do mapa (`$mapChurches`) contêm todas as congregações ativas que atendem aos filtros atuais (`q` e `cidade`) e possuem coordenadas válidas (`hasValidCoordinates()`), enquanto `$churches` contém a listagem paginada (9 cards por página).
+No `ChurchController@index`:
+- `$churches`: listagem paginada (9 cards por página) das congregações ativas filtradas por `q` e `cidade`.
+- `$presenceByCity`: `array<string, int>` mapeando o nome do município (`city` com `trim`) para a quantidade de congregações ativas que atendem aos filtros atuais (`q` e `cidade`), ordenado por nome do município, sem corte de paginação.
+- `$totalMunicipalities`: constante `246` representando o total de municípios do Estado de Goiás (malha IBGE).
+- `<x-goias-map>` expõe:
+  - `id="mapa-goias"` com `data-mapa="municipios"`, `data-geojson-url="/geo/goias-municipios.geojson"`, `data-presence-by-city` (JSON de `$presenceByCity`) e `data-filter-base-url="{{ route('igrejas') }}"`.
+  - Legenda explícita de presença (`Com congregação filiada` e `Sem congregação filiada`) e contador `{{ count($presenceByCity) }} / 246 municípios`.
 
 ---
 
 ## 3. Casos de Borda & Falhas (Edge Cases)
 
-1. **Congregação sem coordenadas ou fora da faixa geográfica válida:** omitida dos marcadores do mapa (`hasValidCoordinates() === false`), mas listada normalmente nos cards com rotas baseadas no endereço textual codificado.
-2. **Congregação inativa (`is_active = false`):** omitida da listagem, do mapa e do dropdown de cidades.
+1. **Congregação sem coordenadas ou fora da faixa geográfica válida:** permanece contabilizada normalmente no município (`$presenceByCity`) e listada nos cards com rotas Google Maps/Waze baseadas no endereço textual codificado, sem quebrar o mapa.
+2. **Congregação inativa (`is_active = false`):** omitida da listagem, de `$presenceByCity` no mapa e do dropdown de cidades.
 3. **Congregação sem logotipo (`logo_url = null`):** exibe fallback visual institucional (`data-testid="church-logo-fallback"`).
 4. **Proteção XSS em `social_links` e validação de `email`:** `getSafeSocialLinks()` permite apenas esquemas `http://` e `https://`, e `getSafeEmail()` valida o endereço via `FILTER_VALIDATE_EMAIL`.
-5. **Busca ou filtro sem resultados:** exibe empty state amigável com botão de limpeza de filtros.
+5. **Busca ou filtro sem resultados:** exibe empty state amigável na listagem e o mapa mantém os 246 municípios em estado `"Sem congregação filiada"` (`0 / 246 municípios`).
+6. **Normalização de nomes de municípios no GeoJSON:** comparação no frontend normaliza acentos, caixa (`toLowerCase()`) e espaços extras (`trim()`) para garantir correspondência entre `feature.properties.name` do GeoJSON IBGE e as chaves de `presenceByCity`.
 
 ---
 
@@ -111,6 +122,7 @@ Os marcadores do mapa (`$mapChurches`) contêm todas as congregações ativas qu
 
 - [x] **6.1:** Página `/igrejas` com busca rápida por nome da igreja ou bairro e dropdown com as cidades goianas cadastradas.
 - [x] **6.2:** Cards detalhados das igrejas com nome, logotipo (ou fallback), pastor titular, endereço completo com rotas Google Maps/Waze, telefone, e-mail, redes sociais e horários regulares de cultos/oração.
-- [x] **6.3:** Mapa interativo de Goiás exibindo todas as congregações filtradas com coordenadas válidas, sincronizado com busca/cidade, clique em marcador vinculado ao card, responsivo em mobile/desktop e resiliente a congregações sem coordenadas.
+- [x] **6.3:** Mapa coroplético municipal de Goiás (GeoJSON IBGE + Leaflet) destacando municípios com e sem congregação filiada, legenda + contadores (`X / 246 municípios`), sincronizado com busca/cidade, clique em município filtrando a cidade e resiliente a congregações sem coordenadas.
 
 Suite `tests/Feature/ChurchDirectoryTest.php` cobrindo 100% dos critérios de aceitação (6.1, 6.2 e 6.3).
+

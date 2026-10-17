@@ -99,10 +99,13 @@
         </div>
     </section>
 
-    {{-- Mapa Interativo de Goiás Sincronizado com os Filtros (Sub-issue 6.3) --}}
+    {{-- Mapa Coroplético Municipal de Goiás Sincronizado com os Filtros (Sub-issue 6.3) --}}
     <x-goias-map
-        :map-churches="$mapChurches"
+        :presence-by-city="$presenceByCity"
+        :total-municipalities="$totalMunicipalities ?? 246"
         :total-count="$churches->total()"
+        :active-query="$q"
+        :active-city="$cidade"
     />
 
     {{-- Listagem de Cards Detalhados das Igrejas (Sub-issue 6.2) --}}

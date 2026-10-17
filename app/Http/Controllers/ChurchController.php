@@ -9,7 +9,12 @@ use Illuminate\View\View;
 class ChurchController extends Controller
 {
     /**
-     * Exibe o guia público e mapa interativo de congregações batistas nacionais filiadas à CBN Goiás.
+     * Total de municípios do Estado de Goiás segundo a malha municipal do IBGE.
+     */
+    private const TOTAL_GOIAS_MUNICIPALITIES = 246;
+
+    /**
+     * Exibe o guia público e mapa coroplético municipal de congregações batistas nacionais filiadas à CBN Goiás.
      */
     public function index(Request $request): View
     {
@@ -29,14 +34,21 @@ class ChurchController extends Controller
             $query->where('city', $cidade);
         }
 
-        $orderedQuery = $query->orderBy('city')->orderBy('name');
+        $orderedQuery = (clone $query)->orderBy('city')->orderBy('name');
 
         $churches = (clone $orderedQuery)->paginate(9)->withQueryString();
 
-        $mapChurches = (clone $orderedQuery)
-            ->get()
-            ->filter(fn (Church $church): bool => $church->hasValidCoordinates())
-            ->values();
+        /** @var array<string, int> $presenceByCity */
+        $presenceByCity = (clone $query)
+            ->whereNotNull('city')
+            ->where('city', '!=', '')
+            ->get(['city'])
+            ->map(fn (Church $church): string => trim((string) $church->city))
+            ->filter(fn (string $cityName): bool => $cityName !== '')
+            ->countBy()
+            ->sortKeys()
+            ->map(fn (int $count): int => $count)
+            ->all();
 
         $availableCities = Church::active()
             ->whereNotNull('city')
@@ -47,7 +59,8 @@ class ChurchController extends Controller
 
         return view('igrejas.index', [
             'churches' => $churches,
-            'mapChurches' => $mapChurches,
+            'presenceByCity' => $presenceByCity,
+            'totalMunicipalities' => self::TOTAL_GOIAS_MUNICIPALITIES,
             'availableCities' => $availableCities,
             'q' => $q,
             'cidade' => $cidade,

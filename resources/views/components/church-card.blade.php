@@ -47,15 +47,12 @@
                         {{ $church->city }} · {{ $church->state }}
                     </span>
 
-                    @if ($hasCoords)
-                        <button
-                            type="button"
-                            @click="focusChurchOnMap('{{ $church->slug }}')"
-                            class="inline-flex items-center gap-1 text-xs font-semibold text-cbn-orange hover:text-cbn-black transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded px-1.5 py-0.5"
-                        >
-                            <span>Ver no mapa</span>
-                        </button>
-                    @endif
+                    <a
+                        href="{{ route('igrejas', ['cidade' => $church->city]) }}"
+                        class="inline-flex items-center gap-1 text-xs font-semibold text-cbn-orange hover:text-cbn-black transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded px-1.5 py-0.5"
+                    >
+                        <span>Filtrar município</span>
+                    </a>
                 </div>
 
                 <h3 class="font-brand-serif font-bold text-xl text-cbn-black leading-snug">

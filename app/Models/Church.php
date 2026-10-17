@@ -35,7 +35,7 @@ class Church extends Model
     use HasFactory;
 
     /**
-     * Limites geográficos estendidos do estado de Goiás para validação e projeção no mapa.
+     * Limites geográficos estendidos do estado de Goiás para validação de coordenadas nas rotas externas.
      */
     private const MIN_LAT = -19.60;
 
@@ -113,32 +113,6 @@ class Church extends Model
             && $lat <= self::MAX_LAT
             && $lng >= self::MIN_LNG
             && $lng <= self::MAX_LNG;
-    }
-
-    /**
-     * Calcula a posição percentual (x, y de 8% a 92%) da congregação dentro do mapa de Goiás.
-     *
-     * @return array{x: float, y: float}|null
-     */
-    public function getMapPosition(): ?array
-    {
-        if (! $this->hasValidCoordinates()) {
-            return null;
-        }
-
-        $lat = (float) $this->latitude;
-        $lng = (float) $this->longitude;
-
-        $normalizedX = ($lng - self::MIN_LNG) / (self::MAX_LNG - self::MIN_LNG);
-        $normalizedY = (self::MAX_LAT - $lat) / (self::MAX_LAT - self::MIN_LAT);
-
-        $clampedX = max(0.08, min(0.92, 0.10 + ($normalizedX * 0.80)));
-        $clampedY = max(0.08, min(0.92, 0.08 + ($normalizedY * 0.84)));
-
-        return [
-            'x' => round($clampedX * 100, 2),
-            'y' => round($clampedY * 100, 2),
-        ];
     }
 
     /**

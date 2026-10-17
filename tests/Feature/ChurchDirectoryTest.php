@@ -33,15 +33,16 @@ class ChurchDirectoryTest extends TestCase
             ]);
         }
 
-        // Página 1: deve exibir os 9 primeiros cards em ordem alfabética (01 até 09), mantendo todas as 12 mapeadas no mapa estadual
+        // Página 1: deve exibir os 9 primeiros cards em ordem alfabética (01 até 09), mantendo todas as 12 contabilizadas no mapa municipal
         $response = $this->get(route('igrejas'));
 
         $response->assertStatus(200);
         $response->assertSee('id="igreja-igreja-batista-nacional-01"', false);
         $response->assertSee('id="igreja-igreja-batista-nacional-09"', false);
         $response->assertDontSee('id="igreja-igreja-batista-nacional-10"', false);
-        $response->assertSee('data-church-marker="igreja-batista-nacional-01"', false);
-        $response->assertSee('data-church-marker="igreja-batista-nacional-12"', false);
+        $response->assertSee('data-mapa="municipios"', false);
+        $response->assertViewHas('presenceByCity', ['Goiânia' => 12]);
+        $response->assertDontSee('data-church-marker=', false);
         $response->assertSee('page=2', false);
 
         // Página 2: deve exibir os 3 cards restantes (10 até 12) e ocultar o card 01 da página anterior
@@ -51,6 +52,7 @@ class ChurchDirectoryTest extends TestCase
         $responsePage2->assertSee('id="igreja-igreja-batista-nacional-10"', false);
         $responsePage2->assertSee('id="igreja-igreja-batista-nacional-12"', false);
         $responsePage2->assertDontSee('id="igreja-igreja-batista-nacional-01"', false);
+        $responsePage2->assertViewHas('presenceByCity', ['Goiânia' => 12]);
     }
 
     /**
@@ -92,7 +94,7 @@ class ChurchDirectoryTest extends TestCase
         $response->assertSee('IBN Ativa em Goiânia');
         $response->assertDontSee('IBN Inativa em Catalão');
         $response->assertDontSee('Catalão');
-        $response->assertDontSee('data-church-marker="ibn-inativa-catalao"', false);
+        $response->assertViewHas('presenceByCity', ['Goiânia' => 1]);
     }
 
     /**
@@ -232,6 +234,8 @@ class ChurchDirectoryTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Nenhuma congregação encontrada');
         $response->assertSee('Limpar filtros');
+        $response->assertViewHas('presenceByCity', []);
+        $response->assertSee('0 / 246 municípios');
     }
 
     /**
@@ -326,10 +330,11 @@ class ChurchDirectoryTest extends TestCase
     }
 
     /**
-     * Valida que o Mapa de Goiás é exibido com marcadores interativos para as congregações com coordenadas válidas
-     * e vincula cada marcador ao card correspondente na listagem (AC 6.3).
+     * Valida que o Mapa Coroplético Municipal de Goiás é renderizado com container Leaflet,
+     * asset GeoJSON dos 246 municípios do IBGE, legenda com/sem presença, contadores e payload presenceByCity,
+     * sem pinos individuais (AC 6.3).
      */
-    public function test_goias_map_renders_markers_for_churches_with_valid_coordinates(): void
+    public function test_goias_map_renders_choropleth_municipalities_and_legend(): void
     {
         $this->withoutVite();
 
@@ -343,6 +348,19 @@ class ChurchDirectoryTest extends TestCase
             'state' => 'GO',
             'latitude' => -16.6799000,
             'longitude' => -49.2550000,
+            'is_active' => true,
+        ]);
+
+        Church::create([
+            'name' => 'IBN Betel Goiânia',
+            'slug' => 'ibn-betel-goiania',
+            'pastor_name' => 'Pr. Marcos Vinícius',
+            'address' => 'Rua T-37, 1120',
+            'neighborhood' => 'Setor Bueno',
+            'city' => 'Goiânia',
+            'state' => 'GO',
+            'latitude' => -16.7032000,
+            'longitude' => -49.2665000,
             'is_active' => true,
         ]);
 
@@ -363,16 +381,31 @@ class ChurchDirectoryTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('id="mapa-goias"', false);
-        $response->assertSee('data-church-marker="ibn-sede-goiania"', false);
-        $response->assertSee('data-church-marker="ibn-anapolis"', false);
-        $response->assertSee('id="igreja-ibn-sede-goiania"', false);
-        $response->assertSee('id="igreja-ibn-anapolis"', false);
+        $response->assertSee('data-mapa="municipios"', false);
+        $response->assertSee('id="leaflet-mapa-goias"', false);
+        $response->assertSee('/geo/goias-municipios.geojson', false);
+        $response->assertSee('Com congregação filiada');
+        $response->assertSee('Sem congregação filiada');
+        $response->assertSee('2 / 246 municípios');
+        $response->assertDontSee('data-church-marker', false);
+        $response->assertViewHas('presenceByCity', [
+            'Anápolis' => 1,
+            'Goiânia' => 2,
+        ]);
+
+        // Verifica que o asset GeoJSON de municípios de Goiás existe e contém a malha municipal
+        $geojsonPath = public_path('geo/goias-municipios.geojson');
+        $this->assertFileExists($geojsonPath);
+        $decoded = json_decode((string) file_get_contents($geojsonPath), true);
+        $this->assertIsArray($decoded);
+        $this->assertSame('FeatureCollection', $decoded['type'] ?? null);
+        $this->assertCount(246, $decoded['features'] ?? []);
     }
 
     /**
-     * Valida que os filtros de busca e cidade sincronizam com os marcadores exibidos no Mapa de Goiás (AC 6.3).
+     * Valida que os filtros de busca e cidade sincronizam com presenceByCity no Mapa Municipal de Goiás (AC 6.3).
      */
-    public function test_goias_map_synchronizes_markers_with_search_and_city_filters(): void
+    public function test_goias_map_synchronizes_presence_by_city_with_search_and_city_filters(): void
     {
         $this->withoutVite();
 
@@ -405,13 +438,14 @@ class ChurchDirectoryTest extends TestCase
         $response = $this->get(route('igrejas', ['cidade' => 'Rio Verde']));
 
         $response->assertStatus(200);
-        $response->assertSee('data-church-marker="ibn-rio-verde-sudoeste"', false);
-        $response->assertDontSee('data-church-marker="ibn-goiania-sul"', false);
+        $response->assertViewHas('presenceByCity', ['Rio Verde' => 1]);
+        $response->assertSee('1 / 246 municípios');
+        $response->assertDontSee('data-church-marker', false);
     }
 
     /**
      * Valida que congregações sem coordenadas válidas (nulas ou fora do estado/globo)
-     * não quebram o mapa (omitidas do mapa) e continuam aparecendo normalmente na listagem com rotas de texto (AC 6.3).
+     * continuam contabilizadas na presença municipal e aparecem normalmente na listagem com rotas de texto (AC 6.3).
      */
     public function test_churches_without_valid_coordinates_do_not_break_map_and_appear_in_list(): void
     {
@@ -454,9 +488,13 @@ class ChurchDirectoryTest extends TestCase
         $response->assertSee('google.com/maps', false);
         $response->assertSee('waze.com/ul', false);
 
-        // Nenhuma delas gera marcador inválido no mapa
-        $response->assertDontSee('data-church-marker="ibn-sem-coordenadas"', false);
-        $response->assertDontSee('data-church-marker="ibn-coordenada-fora"', false);
+        // Ambas contam para a presença municipal por cidade no mapa coroplético
+        $response->assertViewHas('presenceByCity', [
+            'Formosa' => 1,
+            'Pirenópolis' => 1,
+        ]);
+        $response->assertSee('2 / 246 municípios');
+        $response->assertDontSee('data-church-marker', false);
     }
 
     /**
