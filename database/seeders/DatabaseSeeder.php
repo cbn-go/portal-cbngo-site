@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Article;
 use App\Models\Author;
+use App\Models\Church;
 use App\Models\News;
 use App\Models\UrgentNotice;
 use Illuminate\Database\Seeder;
@@ -143,6 +144,151 @@ class DatabaseSeeder extends Seeder
             'is_official' => true,
             'is_published' => true,
             'published_at' => now()->subDays(4),
+        ]);
+
+        // 5. Congregações Filiadas à CBN Goiás (Guia e Diretório Estadual)
+        Church::create([
+            'name' => 'Catedral Batista Nacional de Goiânia',
+            'slug' => 'catedral-batista-nacional-goiania',
+            'pastor_name' => 'Pr. Roberto Silveira',
+            'address' => 'Av. T-9, 2450',
+            'neighborhood' => 'Jardim América',
+            'city' => 'Goiânia',
+            'state' => 'GO',
+            'zip_code' => '74255-220',
+            'latitude' => -16.7156000,
+            'longitude' => -49.2834000,
+            'phone' => '(62) 3251-4000 / (62) 99911-2026',
+            'email' => 'secretaria@catedralcbngo.org.br',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/cbngoias',
+                'facebook' => 'https://facebook.com/cbngoias',
+                'youtube' => 'https://youtube.com/@cbngoias',
+            ],
+            'service_times' => [
+                ['day' => 'Domingo', 'time' => '09h00', 'label' => 'Escola Bíblica Dominical'],
+                ['day' => 'Domingo', 'time' => '19h00', 'label' => 'Culto de Celebração'],
+                ['day' => 'Quarta-feira', 'time' => '20h00', 'label' => 'Reunião de Oração e Palavra'],
+            ],
+            'is_active' => true,
+        ]);
+
+        Church::create([
+            'name' => 'Igreja Batista Nacional Betel',
+            'slug' => 'igreja-batista-nacional-betel-goiania',
+            'pastor_name' => 'Pr. Marcos Vinícius Rocha',
+            'address' => 'Rua T-37, 1120',
+            'neighborhood' => 'Setor Bueno',
+            'city' => 'Goiânia',
+            'state' => 'GO',
+            'zip_code' => '74230-025',
+            'latitude' => -16.7032000,
+            'longitude' => -49.2665000,
+            'phone' => '(62) 3285-1900',
+            'email' => 'contato@ibnbetelgo.org.br',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/cbngoias',
+            ],
+            'service_times' => [
+                ['day' => 'Domingo', 'time' => '18h30', 'label' => 'Culto da Família'],
+                ['day' => 'Quinta-feira', 'time' => '20h00', 'label' => 'Noite de Intercessão'],
+            ],
+            'is_active' => true,
+        ]);
+
+        Church::create([
+            'name' => 'Primeira Igreja Batista Nacional de Anápolis',
+            'slug' => 'primeira-ibn-anapolis',
+            'pastor_name' => 'Pr. Carlos Eduardo Mendes',
+            'address' => 'Rua Manoel D\'Abadia, 410',
+            'neighborhood' => 'Bairro Jundiaí',
+            'city' => 'Anápolis',
+            'state' => 'GO',
+            'zip_code' => '75110-420',
+            'latitude' => -16.3285000,
+            'longitude' => -48.9534000,
+            'phone' => '(62) 3324-5500',
+            'email' => 'secretaria@pibnanapolis.org.br',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/cbngoias',
+                'youtube' => 'https://youtube.com/@cbngoias',
+            ],
+            'service_times' => [
+                ['day' => 'Domingo', 'time' => '09h00', 'label' => 'Estudo Bíblico'],
+                ['day' => 'Domingo', 'time' => '19h00', 'label' => 'Culto de Adoração'],
+                ['day' => 'Terça-feira', 'time' => '19h30', 'label' => 'Tarde e Noite da Bênção (Oração)'],
+            ],
+            'is_active' => true,
+        ]);
+
+        Church::create([
+            'name' => 'Igreja Batista Nacional de Rio Verde',
+            'slug' => 'ibn-rio-verde',
+            'pastor_name' => 'Pr. Samuel Costa',
+            'address' => 'Av. Presidente Vargas, 1840',
+            'neighborhood' => 'Jardim Goiás',
+            'city' => 'Rio Verde',
+            'state' => 'GO',
+            'zip_code' => '75903-290',
+            'latitude' => -17.7923000,
+            'longitude' => -50.9192000,
+            'phone' => '(64) 3621-3344',
+            'email' => 'contato@ibnrioverde.org.br',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/cbngoias',
+            ],
+            'service_times' => [
+                ['day' => 'Domingo', 'time' => '19h00', 'label' => 'Culto de Celebração'],
+                ['day' => 'Quarta-feira', 'time' => '19h30', 'label' => 'Culto de Oração e Doutrina'],
+            ],
+            'is_active' => true,
+        ]);
+
+        Church::create([
+            'name' => 'Igreja Batista Nacional Filadélfia de Aparecida',
+            'slug' => 'ibn-filadelfia-aparecida',
+            'pastor_name' => 'Pr. Lucas Almeida',
+            'address' => 'Av. Independência, Qd. 14, Lt. 08',
+            'neighborhood' => 'Cidade Livre',
+            'city' => 'Aparecida de Goiânia',
+            'state' => 'GO',
+            'zip_code' => '74963-100',
+            'latitude' => -16.8233000,
+            'longitude' => -49.2439000,
+            'phone' => '(62) 3283-7788',
+            'email' => 'filadelfia@cbngo.org.br',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/cbngoias',
+                'facebook' => 'https://facebook.com/cbngoias',
+            ],
+            'service_times' => [
+                ['day' => 'Domingo', 'time' => '18h00', 'label' => 'Culto de Louvor e Adoração'],
+                ['day' => 'Quinta-feira', 'time' => '19h30', 'label' => 'Reunião de Oração'],
+            ],
+            'is_active' => true,
+        ]);
+
+        Church::create([
+            'name' => 'Igreja Batista Nacional Monte Horebe de Jataí',
+            'slug' => 'ibn-monte-horebe-jatai',
+            'pastor_name' => 'Pr. Ezequiel Tavares',
+            'address' => 'Rua Miranda de Carvalho, 915',
+            'neighborhood' => 'Setor Central',
+            'city' => 'Jataí',
+            'state' => 'GO',
+            'zip_code' => '75800-055',
+            'latitude' => -17.8814000,
+            'longitude' => -51.7144000,
+            'phone' => '(64) 3631-8090',
+            'email' => 'jatai@cbngo.org.br',
+            'social_links' => [
+                'instagram' => 'https://instagram.com/cbngoias',
+            ],
+            'service_times' => [
+                ['day' => 'Domingo', 'time' => '19h00', 'label' => 'Culto Dominical'],
+                ['day' => 'Quarta-feira', 'time' => '19h30', 'label' => 'Reunião de Oração'],
+            ],
+            'is_active' => true,
         ]);
     }
 }
