@@ -1,3 +1,5 @@
+@import 'leaflet/dist/leaflet.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,6 +7,29 @@
 /* Hide Alpine-controlled UI until Alpine initializes (avoids FOUC). */
 [x-cloak] {
     display: none !important;
+}
+
+#leaflet-mapa-goias {
+    background: linear-gradient(135deg, #FFFDFB 0%, #FAF7F2 60%, #F4EFE6 100%);
+}
+
+#leaflet-mapa-goias .leaflet-interactive {
+    transition: fill-opacity 150ms ease, stroke-width 150ms ease;
+}
+
+.cbn-map-tooltip {
+    font-family: inherit;
+    font-size: 0.75rem;
+    line-height: 1.35;
+}
+
+.cbn-map-tooltip-active {
+    color: #C2410C;
+    font-weight: 600;
+}
+
+.cbn-map-tooltip-empty {
+    color: #525252;
 }
 
 @font-face {
@@ -22,3 +47,4 @@
     font-style: normal;
     font-display: swap;
 }
+

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\ChurchController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
@@ -29,9 +30,7 @@ Route::get('/contato', function () {
     return view('placeholder', ['title' => 'Contato Institucional CBN-GO']);
 })->name('contato');
 
-Route::get('/igrejas', function () {
-    return view('placeholder', ['title' => 'Guia e Diretório de Igrejas Batistas Nacionais em Goiás']);
-})->name('igrejas');
+Route::get('/igrejas', [ChurchController::class, 'index'])->name('igrejas');
 
 Route::get('/noticias', [NewsController::class, 'index'])->name('noticias.index');
 Route::get('/noticias/{slug}', [NewsController::class, 'show'])->name('noticias.show');
