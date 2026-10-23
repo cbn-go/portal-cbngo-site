@@ -4,7 +4,7 @@
 - **Fase WDLC:** Fase 3 (Desenvolvimento do Portal Público)
 - **Metodologia:** Spec-Driven Development (SDD) com ciclo TDD Mandatório
 - **Data:** 23 de Outubro de 2026
-- **Status:** Em Desenvolvimento (Red TDD)
+- **Status:** Implementado e Validado (Green TDD)
 
 ---
 
@@ -90,6 +90,8 @@ Schema::create('documents', function (Blueprint $table) {
 - `scopeActive(Builder $query): Builder`
 - `getSafeFileUrl(): ?string` — aceita `http://`, `https://` ou caminho relativo iniciado por `/` (sem `//`); demais esquemas retornam `null`.
 
+**`App\Support\ContactLinks`:** `digits()`, `tel()`, `whatsapp()` e `maps()` geram os links de contato a partir do `config/cbngo.php` (usados em `/contato` e no `<x-footer>`).
+
 ### 2.3 Rotas & Controller
 
 Em `routes/web.php`:
@@ -121,12 +123,12 @@ No `InstitutionalController`:
 ## 4. Critérios de Aceitação & Plano de Verificação
 
 ### 4.1 Critérios de Aceitação (Checklist da Issue #7)
-- [ ] **7.1:** Página `/quem-somos`:
-  - [ ] História da CBN em Goiás e sua trajetória pioneira.
-  - [ ] Declaração Doutrinária e Pacto de Fé das Igrejas Batistas Nacionais.
-  - [ ] Estatuto e Regimento Interno disponíveis para consulta/download.
-- [ ] **7.2:** Página `/diretoria` com galeria da diretoria atual e órgãos da convenção.
-- [ ] **7.3:** Página `/contato` com dados oficiais da sede estadual (endereço, telefone, WhatsApp, expediente).
+- [x] **7.1:** Página `/quem-somos`:
+  - [x] História da CBN em Goiás e sua trajetória pioneira.
+  - [x] Declaração Doutrinária e Pacto de Fé das Igrejas Batistas Nacionais.
+  - [x] Estatuto e Regimento Interno disponíveis para consulta/download.
+- [x] **7.2:** Página `/diretoria` com galeria da diretoria atual e órgãos da convenção.
+- [x] **7.3:** Página `/contato` com dados oficiais da sede estadual (endereço, telefone, WhatsApp, expediente).
   - Formulário institucional: **fora do escopo** por decisão de produto (ver 1.3).
 
 ### 4.2 Plano de Verificação Automatizada (Testes TDD)
