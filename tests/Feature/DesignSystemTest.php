@@ -137,4 +137,48 @@ class DesignSystemTest extends TestCase
         $navbarHtml->assertSee('lg:hidden', false);
         $navbarHtml->assertDontSee('hidden lg:hidden', false);
     }
+
+    /**
+     * Valida que o componente x-media-placeholder renderiza as variantes esperadas com data-testid="media-placeholder".
+     */
+    public function test_media_placeholder_component_renders_variants_with_testid(): void
+    {
+        $cardPlaceholder = $this->blade('<x-media-placeholder variant="card" />');
+        $cardPlaceholder->assertSee('data-testid="media-placeholder"', false);
+        $cardPlaceholder->assertSee('Convenção Batista Nacional de Goiás');
+
+        $coverPlaceholder = $this->blade('<x-media-placeholder variant="cover" />');
+        $coverPlaceholder->assertSee('data-testid="media-placeholder"', false);
+
+        $avatarPlaceholder = $this->blade('<x-media-placeholder variant="avatar" initials="PR" />');
+        $avatarPlaceholder->assertSee('data-testid="media-placeholder"', false);
+        $avatarPlaceholder->assertSee('PR');
+
+        $logoPlaceholder = $this->blade('<x-media-placeholder variant="logo" />');
+        $logoPlaceholder->assertSee('data-testid="media-placeholder"', false);
+    }
+
+    /**
+     * Valida que o componente x-media-image renderiza img com src e srcset WebP quando há path válido.
+     */
+    public function test_media_image_component_renders_img_with_src_and_srcset(): void
+    {
+        config(['media.url' => 'https://midia.cbngo.org.br']);
+
+        $imageHtml = $this->blade('<x-media-image path="news/featured/banner.jpg" alt="Foto da Convenção" variant="card" />');
+        $imageHtml->assertSee('<img', false);
+        $imageHtml->assertSee('src="https://midia.cbngo.org.br/news/featured/banner.jpg"', false);
+        $imageHtml->assertSee('srcset="https://midia.cbngo.org.br/news/featured/banner-thumb.webp 400w', false);
+        $imageHtml->assertSee('alt="Foto da Convenção"', false);
+    }
+
+    /**
+     * Valida que o componente x-media-image renderiza x-media-placeholder quando path for nulo ou vazio.
+     */
+    public function test_media_image_component_renders_placeholder_when_path_is_null(): void
+    {
+        $imageHtml = $this->blade('<x-media-image :path="null" alt="Sem imagem" variant="card" />');
+        $imageHtml->assertDontSee('<img', false);
+        $imageHtml->assertSee('data-testid="media-placeholder"', false);
+    }
 }

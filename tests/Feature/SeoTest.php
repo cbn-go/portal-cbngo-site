@@ -334,6 +334,48 @@ class SeoTest extends TestCase
     }
 
     /**
+     * Valida que o sitemap inclui image:image e image:loc quando há imagem e omite quando não há.
+     */
+    public function test_sitemap_includes_image_loc_when_media_is_present(): void
+    {
+        config(['media.url' => 'https://midia.cbngo.org.br']);
+
+        $newsWithImage = News::factory()->create([
+            'slug' => 'noticia-com-foto',
+            'featured_image' => 'news/featured/foto1.jpg',
+            'status' => 'published',
+            'published_at' => now()->subDay(),
+        ]);
+
+        $newsWithoutImage = News::factory()->create([
+            'slug' => 'noticia-sem-foto',
+            'featured_image' => null,
+            'status' => 'published',
+            'published_at' => now()->subDay(),
+        ]);
+
+        $author = $this->createAuthor(['avatar' => 'authors/avatars/autor.jpg', 'slug' => 'autor-com-avatar']);
+        $article = Article::factory()->byAuthor($author)->create([
+            'slug' => 'artigo-com-capa',
+            'cover_image' => 'articles/covers/capa.jpg',
+            'status' => 'published',
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->get('/sitemap.xml');
+
+        $response->assertStatus(200);
+        $response->assertSee('xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"', false);
+        $response->assertSee('<image:loc>https://midia.cbngo.org.br/news/featured/foto1.jpg</image:loc>', false);
+        $response->assertSee('<image:loc>https://midia.cbngo.org.br/articles/covers/capa.jpg</image:loc>', false);
+        $response->assertSee('<image:loc>https://midia.cbngo.org.br/authors/avatars/autor.jpg</image:loc>', false);
+
+        $content = $response->getContent();
+        // A url da notícia sem foto não deve ter tag image:image no bloco da tag url
+        $this->assertMatchesRegularExpression('#<url>\s*<loc>[^<]*noticia-sem-foto</loc>\s*<lastmod>[^<]*</lastmod>\s*</url>#s', $content);
+    }
+
+    /**
      * Valida que o design system interno não é indexável.
      */
     public function test_design_system_is_not_indexable(): void

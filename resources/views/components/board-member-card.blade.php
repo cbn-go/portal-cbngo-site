@@ -2,26 +2,18 @@
     'member',
 ])
 
-@php
-    /** @var \App\Models\BoardMember $member */
-    $photoUrl = $member->getSafePhotoUrl();
-@endphp
-
 <article class="rounded-xl border border-neutral-200/90 bg-white p-6 shadow-sm hover:border-neutral-300 transition text-center flex flex-col items-center">
-    @if ($photoUrl !== null)
-        <img
-            src="{{ $photoUrl }}"
-            alt="Foto de {{ $member->name }}"
-            class="w-28 h-28 rounded-full object-cover border-4 border-white shadow ring-1 ring-neutral-200 bg-neutral-50"
-            loading="lazy"
-        />
-    @else
-        <div
+    <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow ring-1 ring-neutral-200 bg-neutral-50 shrink-0">
+        <x-media-image
+            :path="$member->photo"
+            :alt="'Foto de ' . $member->name"
+            variant="thumb"
+            fallback-variant="avatar"
+            :fallback-initials="$member->getInitials()"
             data-testid="board-member-initials"
-            class="w-28 h-28 rounded-full bg-cbn-orange/10 border border-cbn-orange/20 text-cbn-orange-ink-dark font-brand-serif font-bold text-3xl flex items-center justify-center"
-            aria-hidden="true"
-        >{{ $member->getInitials() }}</div>
-    @endif
+            class="w-full h-full rounded-full"
+        />
+    </div>
 
     <h3 class="mt-5 font-brand-serif font-bold text-lg text-cbn-black leading-snug">{{ $member->name }}</h3>
     <p class="mt-1 text-sm font-semibold text-cbn-orange-ink">{{ $member->role }}</p>

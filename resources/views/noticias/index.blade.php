@@ -122,21 +122,13 @@
                             href="{{ route('noticias.show', $item->slug) }}"
                             class="relative block aspect-video w-full overflow-hidden bg-neutral-100 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
                         >
-                            @if ($item->featured_image_url)
-                                <img
-                                    src="{{ $item->featured_image_url }}"
-                                    alt="{{ $item->title }}"
-                                    loading="lazy"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
-                            @else
-                                <div class="w-full h-full bg-gradient-to-br from-cbn-black via-neutral-800 to-cbn-black flex items-center justify-center p-6 text-white group-hover:scale-105 transition-transform duration-500">
-                                    <svg class="w-14 h-14 text-cbn-orange/50" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                        <rect width="48" height="48" rx="8" fill="currentColor" fill-opacity="0.1"/>
-                                        <path d="M24 10V38M14 20H34" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                            @endif
+                            <x-media-image
+                                :path="$item->featured_image"
+                                :alt="$item->title"
+                                variant="card"
+                                fallback-variant="card"
+                                class="group-hover:scale-105 transition-transform duration-500"
+                            />
 
                             <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
                                 <span class="bg-white/95 text-cbn-black text-[11px] font-bold tracking-wider uppercase px-2.5 py-1 rounded shadow-sm border border-neutral-200">

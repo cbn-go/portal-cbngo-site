@@ -182,30 +182,18 @@
             </div>
         </header>
 
-        {{-- Imagem de Capa em Alta Resolução --}}
-        @if ($news->featured_image_url)
-            <figure class="mb-10 rounded-lg overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-sm">
-                <img
-                    src="{{ $news->featured_image_url }}"
-                    alt="{{ $news->title }}"
-                    width="1200"
-                    height="500"
-                    fetchpriority="high"
-                    decoding="async"
-                    class="w-full h-auto max-h-[500px] object-cover"
-                />
-            </figure>
-        @else
-            <div class="mb-10 aspect-[21/9] w-full rounded-lg bg-gradient-to-br from-cbn-black via-neutral-900 to-cbn-black flex items-center justify-center p-8 text-white shadow-sm border border-neutral-200/60">
-                <div class="flex flex-col items-center gap-3">
-                    <svg class="w-16 h-16 text-cbn-orange/60" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <rect width="48" height="48" rx="8" fill="currentColor" fill-opacity="0.1"/>
-                        <path d="M24 10V38M14 20H34" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                    </svg>
-                    <span class="text-xs font-mono uppercase tracking-widest text-neutral-400">Convenção Batista Nacional de Goiás</span>
-                </div>
-            </div>
-        @endif
+        {{-- Imagem de Capa em Alta Resolução ou Placeholder Institucional --}}
+        <figure class="mb-10 rounded-lg overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-sm">
+            <x-media-image
+                :path="$news->featured_image"
+                :alt="$news->title"
+                variant="cover"
+                fallback-variant="cover"
+                loading="eager"
+                fetchpriority="high"
+                class="w-full h-auto max-h-[500px]"
+            />
+        </figure>
 
         {{-- Conteúdo HTML do RichEditor do painel, sanitizado novamente no portal (XSS Guard) --}}
         <div class="prose max-w-none text-neutral-800 text-base sm:text-lg leading-relaxed font-brand-sans space-y-5">
@@ -263,10 +251,10 @@
                             class="group relative aspect-square rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange transition"
                             aria-label="Ver foto {{ $index + 1 }} em tamanho ampliado"
                         >
-                            <img
-                                src="{{ $photoUrl }}"
-                                alt="Foto {{ $index + 1 }} - {{ $news->title }}"
-                                loading="lazy"
+                            <x-media-image
+                                :path="$photoUrl"
+                                :alt="'Foto ' . ($index + 1) . ' - ' . $news->title"
+                                variant="card"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                             <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -404,7 +392,7 @@
                         :slug="$related->slug"
                         :category="$related->category"
                         :date="$related->published_at"
-                        :image="$related->featured_image_url"
+                        :image="$related->featured_image"
                         :excerpt="$related->excerpt"
                     />
                 @endforeach

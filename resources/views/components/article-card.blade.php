@@ -52,18 +52,16 @@
     <div class="pt-6 mt-6 border-t border-neutral-100 flex items-center justify-between">
         @if ($authorSlug)
             <a href="{{ route('autores.show', $authorSlug) }}" class="flex items-center gap-3 group/author focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded p-1 -m-1">
-                @if ($authorAvatar)
-                    <img
-                        src="{{ $authorAvatar }}"
-                        alt="{{ $authorName }}"
-                        loading="lazy"
-                        class="w-10 h-10 rounded-full object-cover border border-neutral-200 group-hover/author:border-cbn-orange transition-colors"
+                <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-neutral-200 group-hover/author:border-cbn-orange transition-colors">
+                    <x-media-image
+                        :path="$authorAvatar"
+                        :alt="$authorName"
+                        variant="thumb"
+                        fallback-variant="avatar"
+                        :fallback-initials="substr($authorName, 0, 2)"
+                        class="w-full h-full rounded-full"
                     />
-                @else
-                    <div class="w-10 h-10 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-xs font-brand-serif shrink-0 group-hover/author:bg-cbn-orange-ink transition-colors">
-                        {{ strtoupper(substr($authorName, 0, 2)) }}
-                    </div>
-                @endif
+                </div>
                 <div>
                     <span class="block text-xs font-bold text-cbn-black leading-tight group-hover/author:text-cbn-orange-ink transition-colors">
                         {{ $authorName }}
@@ -75,18 +73,16 @@
             </a>
         @else
             <div class="flex items-center gap-3">
-                @if ($authorAvatar)
-                    <img
-                        src="{{ $authorAvatar }}"
-                        alt="{{ $authorName }}"
-                        loading="lazy"
-                        class="w-10 h-10 rounded-full object-cover border border-neutral-200"
+                <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-neutral-200">
+                    <x-media-image
+                        :path="$authorAvatar"
+                        :alt="$authorName"
+                        variant="thumb"
+                        fallback-variant="avatar"
+                        :fallback-initials="substr($authorName, 0, 2)"
+                        class="w-full h-full rounded-full"
                     />
-                @else
-                    <div class="w-10 h-10 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-xs font-brand-serif shrink-0">
-                        {{ strtoupper(substr($authorName, 0, 2)) }}
-                    </div>
-                @endif
+                </div>
                 <div>
                     <span class="block text-xs font-bold text-cbn-black leading-tight">
                         {{ $authorName }}
