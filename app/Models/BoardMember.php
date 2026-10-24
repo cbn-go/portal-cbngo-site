@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Media;
 use Database\Factories\BoardMemberFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,7 @@ use Illuminate\Support\Carbon;
  * @property string $role
  * @property string $group
  * @property string|null $region
- * @property string|null $photo_url
+ * @property string|null $photo
  * @property string|null $term_label
  * @property int $position
  * @property bool $is_active
@@ -55,7 +56,7 @@ class BoardMember extends Model
         'role',
         'group',
         'region',
-        'photo_url',
+        'photo',
         'term_label',
         'position',
         'is_active',
@@ -109,12 +110,10 @@ class BoardMember extends Model
     }
 
     /**
-     * Retorna a URL da foto apenas com esquema http/https (proteção XSS).
+     * Retorna a URL da foto no storage de mídia, ou null se ausente ou insegura (proteção XSS).
      */
     public function getSafePhotoUrl(): ?string
     {
-        $trimmed = trim((string) $this->photo_url);
-
-        return preg_match('/^https?:\/\//i', $trimmed) ? $trimmed : null;
+        return Media::url($this->photo);
     }
 }

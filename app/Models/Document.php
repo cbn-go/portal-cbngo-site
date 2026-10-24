@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Media;
 use Database\Factories\DocumentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,8 @@ use Illuminate\Support\Carbon;
  * @property string $slug
  * @property string|null $description
  * @property string $category
- * @property string $file_url
+ * @property string|null $file
+ * @property string|null $external_url
  * @property string $file_format
  * @property int $position
  * @property bool $is_active
@@ -36,7 +38,8 @@ class Document extends Model
         'slug',
         'description',
         'category',
-        'file_url',
+        'file',
+        'external_url',
         'file_format',
         'position',
         'is_active',
@@ -64,11 +67,16 @@ class Document extends Model
     }
 
     /**
-     * Retorna a URL do arquivo apenas com esquema http/https ou caminho relativo local (proteção XSS).
+     * Retorna a URL do documento: o arquivo no storage de mídia ou, sem arquivo, o link externo
+     * (apenas http/https ou caminho relativo local — proteção XSS).
      */
     public function getSafeFileUrl(): ?string
     {
-        $trimmed = trim($this->file_url);
+        if (trim((string) $this->file) !== '') {
+            return Media::url($this->file);
+        }
+
+        $trimmed = trim((string) $this->external_url);
 
         if (preg_match('/^https?:\/\//i', $trimmed)) {
             return $trimmed;

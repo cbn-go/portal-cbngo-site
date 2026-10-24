@@ -74,7 +74,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
                 <div class="space-y-0.5">
-                    <p class="font-medium text-cbn-black">{{ $church->address }}</p>
+                    <p class="font-medium text-cbn-black">{{ $church->getStreetAddress() }}</p>
                     <p class="text-neutral-600">
                         {{ $church->neighborhood }} — {{ $church->city }}/{{ $church->state }}
                         @if (! empty($church->zip_code))

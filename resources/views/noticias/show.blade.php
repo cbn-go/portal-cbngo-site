@@ -3,7 +3,7 @@
 @section('title', $news->title)
 @section('meta_description', $news->excerpt ?? '')
 @section('og_type', 'article')
-@section('og_image', $news->image_url ?? '')
+@section('og_image', $news->featured_image_url ?? '')
 @section('published_time', $news->published_at?->toIso8601String() ?? '')
 
 @push('structured-data')
@@ -72,22 +72,22 @@
                         </span>
                     @endif
 
-                    @if ($news->city)
+                    @if ($news->publisherCity())
                         <span class="inline-flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            {{ $news->city }}
+                            {{ $news->publisherCity() }}
                         </span>
                     @endif
 
-                    @if ($news->church_name)
+                    @if ($news->church)
                         <span class="inline-flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
-                            {{ $news->church_name }}
+                            {{ $news->publisherName() }}
                         </span>
                     @endif
                 </div>
@@ -183,10 +183,10 @@
         </header>
 
         {{-- Imagem de Capa em Alta Resolução --}}
-        @if ($news->image_url)
+        @if ($news->featured_image_url)
             <figure class="mb-10 rounded-lg overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-sm">
                 <img
-                    src="{{ $news->image_url }}"
+                    src="{{ $news->featured_image_url }}"
                     alt="{{ $news->title }}"
                     width="1200"
                     height="500"
@@ -207,18 +207,18 @@
             </div>
         @endif
 
-        {{-- Conteúdo Formatado e Sanitizado (XSS Guard) --}}
+        {{-- Conteúdo HTML do RichEditor do painel, sanitizado novamente no portal (XSS Guard) --}}
         <div class="prose max-w-none text-neutral-800 text-base sm:text-lg leading-relaxed font-brand-sans space-y-5">
-            {!! nl2br(e($news->content)) !!}
+            {!! \App\Support\Html::sanitize($news->content) !!}
         </div>
 
         {{-- Galeria de Fotos Interativa (Lightbox com Alpine.js) --}}
-        @if (!empty($news->gallery_images) && count($news->gallery_images) > 0)
+        @if (count($news->gallery_urls) > 0)
             <section
                 x-data="{
                     isOpen: false,
                     currentIndex: 0,
-                    images: {{ Js::from(array_values($news->gallery_images)) }},
+                    images: {{ Js::from($news->gallery_urls) }},
                     open(idx) {
                         this.currentIndex = idx;
                         this.isOpen = true;
@@ -250,13 +250,13 @@
                         </p>
                     </div>
                     <span class="text-xs text-neutral-500 font-medium">
-                        {{ count($news->gallery_images) }} {{ count($news->gallery_images) === 1 ? 'foto' : 'fotos' }}
+                        {{ count($news->gallery_urls) }} {{ count($news->gallery_urls) === 1 ? 'foto' : 'fotos' }}
                     </span>
                 </div>
 
                 {{-- Grid de Miniaturas --}}
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                    @foreach ($news->gallery_images as $index => $photoUrl)
+                    @foreach ($news->gallery_urls as $index => $photoUrl)
                         <button
                             type="button"
                             @click="open({{ $index }})"
@@ -404,7 +404,7 @@
                         :slug="$related->slug"
                         :category="$related->category"
                         :date="$related->published_at"
-                        :image="$related->image_url"
+                        :image="$related->featured_image_url"
                         :excerpt="$related->excerpt"
                     />
                 @endforeach

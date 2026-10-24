@@ -4,6 +4,7 @@
 - **Fase WDLC:** Integração Painel ↔ Portal Público
 - **Metodologia:** Spec-Driven Development (SDD) com ciclo TDD Mandatório
 - **Data:** 24 de Outubro de 2026
+- **Status:** Implementado e Validado (Green TDD)
 - **Dependências:** [cbn-go/portal-cbngo-admin#18](https://github.com/cbn-go/portal-cbngo-admin/issues/18) (schema) e [cbn-go/portal-cbngo-admin#19](https://github.com/cbn-go/portal-cbngo-admin/issues/19) (diretoria e documentos)
 
 ---

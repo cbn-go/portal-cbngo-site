@@ -26,11 +26,14 @@ class SitemapController extends Controller
     ];
 
     /**
-     * Gera o sitemap.xml com as rotas estáticas e os conteúdos publicados (cache de 1 hora).
+     * Gera o sitemap.xml com as rotas estáticas e os conteúdos publicados.
+     *
+     * O conteúdo é publicado pelo painel, que o portal não observa; por isso o cache tem TTL curto
+     * (config cbngo.sitemap.cache_ttl, 10 minutos por padrão) em vez de invalidação por evento.
      */
     public function index(): Response
     {
-        $entries = Cache::remember('sitemap.entries', 3600, fn () => $this->entries());
+        $entries = Cache::remember('sitemap.entries', (int) config('cbngo.sitemap.cache_ttl'), fn () => $this->entries());
 
         return response()
             ->view('sitemap', ['entries' => $entries])
@@ -73,7 +76,7 @@ class SitemapController extends Controller
                 $entries[] = ['loc' => route('artigos.show', $article->slug), 'lastmod' => $article->updated_at?->toAtomString()];
             });
 
-        Author::query()->whereIn('id', Article::published()->select('author_id'))->orderBy('name')->get(['id', 'slug', 'updated_at'])
+        Author::active()->whereIn('user_id', Article::published()->select('user_id'))->orderBy('slug')->get(['id', 'user_id', 'slug', 'updated_at'])
             ->each(function (Author $author) use (&$entries) {
                 $entries[] = ['loc' => route('autores.show', $author->slug), 'lastmod' => $author->updated_at?->toAtomString()];
             });

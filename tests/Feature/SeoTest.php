@@ -294,11 +294,13 @@ class SeoTest extends TestCase
         $this->assertSame(600, config('cbngo.sitemap.cache_ttl'));
 
         config(['cbngo.sitemap.cache_ttl' => 120]);
-        Cache::spy();
+
+        Cache::shouldReceive('remember')
+            ->once()
+            ->with('sitemap.entries', 120, \Mockery::type(\Closure::class))
+            ->andReturnUsing(fn (string $key, int $ttl, \Closure $callback) => $callback());
 
         $this->get('/sitemap.xml')->assertStatus(200);
-
-        Cache::shouldHaveReceived('remember')->once()->with('sitemap.entries', 120, \Mockery::type(\Closure::class));
     }
 
     /**

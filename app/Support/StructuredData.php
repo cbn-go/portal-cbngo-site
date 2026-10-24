@@ -49,7 +49,7 @@ class StructuredData
             '@type' => 'NewsArticle',
             'headline' => $news->title,
             'description' => Seo::description($news->excerpt),
-            'image' => [Seo::image($news->image_url)],
+            'image' => [Seo::image($news->featured_image_url)],
             'datePublished' => $news->published_at?->toIso8601String(),
             'dateModified' => ($news->updated_at ?? $news->published_at)?->toIso8601String(),
             'articleSection' => $news->category,
@@ -66,21 +66,23 @@ class StructuredData
      */
     public static function article(Article $article): array
     {
+        $author = $article->author;
+
         return [
             '@context' => 'https://schema.org',
             '@type' => 'Article',
             'headline' => $article->title,
             'description' => Seo::description($article->excerpt),
-            'image' => [Seo::image($article->author->avatar_url)],
+            'image' => [Seo::image($article->cover_image_url ?? $author?->avatar_url)],
             'datePublished' => $article->published_at?->toIso8601String(),
             'dateModified' => ($article->updated_at ?? $article->published_at)?->toIso8601String(),
             'articleSection' => $article->category,
             'mainEntityOfPage' => route('artigos.show', $article->slug),
-            'author' => [
+            'author' => $author ? [
                 '@type' => 'Person',
-                'name' => $article->author->name,
-                'url' => route('autores.show', $article->author->slug),
-            ],
+                'name' => $author->name,
+                'url' => route('autores.show', $author->slug),
+            ] : self::publisherReference(),
             'publisher' => self::publisherReference(),
         ];
     }

@@ -12,7 +12,7 @@ class AuthorController extends Controller
      */
     public function show(string $author): View
     {
-        $authorModel = Author::query()
+        $authorModel = Author::active()
             ->where(function ($query) use ($author) {
                 $query->where('slug', $author)
                     ->orWhere('id', $author);

@@ -101,7 +101,7 @@
                         :slug="$news->slug"
                         :category="$news->category"
                         :date="$news->published_at"
-                        :image="$news->image_url"
+                        :image="$news->featured_image_url"
                         :excerpt="$news->excerpt"
                     />
                 @endforeach
@@ -146,7 +146,7 @@
                     <x-article-card
                         :title="$article->title"
                         :slug="$article->slug"
-                        :author-name="$article->author->name ?? 'Articulista CBN-GO'"
+                        :author-name="$article->author->name ?? 'CBN Goiás'"
                         :author-slug="$article->author->slug ?? null"
                         :author-avatar="$article->author->avatar_url ?? null"
                         :category="$article->category ?? null"

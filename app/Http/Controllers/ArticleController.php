@@ -50,11 +50,11 @@ class ArticleController extends Controller
             ->orderBy('category')
             ->pluck('category');
 
-        $availableAuthors = Author::whereHas('articles', function ($sub) {
-            $sub->where('is_published', true)
-                ->whereNotNull('published_at')
-                ->where('published_at', '<=', now());
-        })->orderBy('name')->get(['id', 'name', 'slug']);
+        $availableAuthors = Author::active()
+            ->whereIn('user_id', Article::published()->select('user_id'))
+            ->get()
+            ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values();
 
         return view('artigos.index', [
             'articles' => $articles,

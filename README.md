@@ -39,6 +39,12 @@ Portal público institucional da **Convenção Batista Nacional do Estado de Goi
    php artisan key:generate
    ```
 
+   O portal lê o **banco MySQL compartilhado com o painel administrativo** ([cbn-go/portal-cbngo-admin](https://github.com/cbn-go/portal-cbngo-admin)), que é o dono do schema. O portal só lê (em produção, com um usuário que tem apenas `SELECT`) e **o deploy nunca executa `php artisan migrate`**. As imagens vêm do storage de mídia do painel (`MEDIA_URL`).
+
+   Para desenvolver, há duas opções:
+   - Apontar `DB_*` para o MySQL local do painel, depois de rodar `php artisan migrate:fresh --seed` lá.
+   - Usar SQLite sem o painel: defina `DB_CONNECTION=sqlite`, comente as demais linhas `DB_*` e rode `php artisan migrate --seed`. Esse comando carrega o espelho do schema do painel em `database/migrations/testing`, que é o mesmo usado pelos testes.
+
 4. Compile os assets do frontend:
    ```bash
    npm run build

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Church;
 use App\Models\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class NewsController extends Controller
@@ -18,7 +20,7 @@ class NewsController extends Controller
         $igreja = trim((string) $request->query('igreja', ''));
         $apenasOficiais = $request->boolean('apenas_oficiais');
 
-        $query = News::published();
+        $query = News::published()->with('church');
 
         if ($q !== '') {
             $query->where(function ($sub) use ($q) {
@@ -29,11 +31,11 @@ class NewsController extends Controller
         }
 
         if ($cidade !== '') {
-            $query->where('city', $cidade);
+            $query->whereHas('church', fn ($church) => $church->where('city', $cidade));
         }
 
         if ($igreja !== '') {
-            $query->where('church_name', $igreja);
+            $query->whereHas('church', fn ($church) => $church->where('slug', $igreja));
         }
 
         if ($apenasOficiais) {
@@ -42,19 +44,20 @@ class NewsController extends Controller
 
         $news = $query->latest('published_at')->paginate(9)->withQueryString();
 
-        $availableCities = News::published()
-            ->whereNotNull('city')
-            ->where('city', '!=', '')
-            ->distinct()
-            ->orderBy('city')
-            ->pluck('city');
+        $publishingChurches = Church::active()
+            ->whereIn('id', News::published()->whereNotNull('church_id')->select('church_id'))
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug', 'city']);
 
-        $availableChurches = News::published()
-            ->whereNotNull('church_name')
-            ->where('church_name', '!=', '')
-            ->distinct()
-            ->orderBy('church_name')
-            ->pluck('church_name');
+        $availableCities = $publishingChurches
+            ->pluck('city')
+            ->filter(fn (?string $city): bool => trim((string) $city) !== '')
+            ->unique()
+            ->sort()
+            ->values();
+
+        /** @var Collection<string, string> $availableChurches */
+        $availableChurches = $publishingChurches->pluck('name', 'slug');
 
         return view('noticias.index', [
             'news' => $news,
@@ -72,7 +75,7 @@ class NewsController extends Controller
      */
     public function show(string $slug): View
     {
-        $news = News::published()->where('slug', $slug)->firstOrFail();
+        $news = News::published()->with('church')->where('slug', $slug)->firstOrFail();
 
         $relatedNews = News::published()
             ->where('id', '!=', $news->id)
