@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
-@section('title', $article->title . ' — CBN Goiás')
+@section('title', $article->title)
+@section('meta_description', $article->excerpt ?? '')
+@section('og_type', 'article')
+@section('og_image', $article->author->avatar_url ?? '')
+@section('published_time', $article->published_at?->toIso8601String() ?? '')
+@section('author_name', $article->author->name)
+
+@push('structured-data')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::article($article)) !!}</script>
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::breadcrumbs([
+        ['name' => 'Início', 'url' => route('home')],
+        ['name' => 'Artigos', 'url' => route('artigos.index')],
+        ['name' => $article->title, 'url' => route('artigos.show', $article->slug)],
+    ])) !!}</script>
+@endpush
 
 @section('content')
 <article class="bg-[#FFFDFB] py-10 sm:py-16">
@@ -9,11 +23,11 @@
         <nav aria-label="Breadcrumb" class="mb-8">
             <ol class="flex items-center gap-2 text-xs sm:text-sm text-neutral-500 flex-wrap">
                 <li>
-                    <a href="{{ route('home') }}" class="hover:text-cbn-orange transition">Início</a>
+                    <a href="{{ route('home') }}" class="hover:text-cbn-orange-ink transition">Início</a>
                 </li>
                 <li aria-hidden="true">&rsaquo;</li>
                 <li>
-                    <a href="{{ route('artigos.index') }}" class="hover:text-cbn-orange transition">Artigos</a>
+                    <a href="{{ route('artigos.index') }}" class="hover:text-cbn-orange-ink transition">Artigos</a>
                 </li>
                 <li aria-hidden="true">&rsaquo;</li>
                 <li class="text-neutral-800 font-medium truncate max-w-xs sm:max-w-sm" aria-current="page">
@@ -28,7 +42,7 @@
                 <span class="bg-neutral-100 text-cbn-black text-xs font-bold tracking-wider uppercase px-3 py-1 rounded border border-neutral-200">
                     {{ $article->category }}
                 </span>
-                <span class="text-neutral-400 text-xs font-medium inline-flex items-center gap-1.5">
+                <span class="text-neutral-500 text-xs font-medium inline-flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -60,12 +74,12 @@
                             class="w-12 h-12 rounded-full object-cover border border-neutral-200 group-hover/author:border-cbn-orange transition-colors"
                         />
                     @else
-                        <div class="w-12 h-12 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-sm font-brand-serif shrink-0 group-hover/author:bg-cbn-orange transition-colors">
+                        <div class="w-12 h-12 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-sm font-brand-serif shrink-0 group-hover/author:bg-cbn-orange-ink transition-colors">
                             {{ strtoupper(substr($article->author->name, 0, 2)) }}
                         </div>
                     @endif
                     <div>
-                        <span class="block font-bold text-sm text-cbn-black group-hover/author:text-cbn-orange transition-colors">
+                        <span class="block font-bold text-sm text-cbn-black group-hover/author:text-cbn-orange-ink transition-colors">
                             {{ $article->author->name }}
                         </span>
                         <div class="flex items-center gap-2 text-xs text-neutral-500">
@@ -82,7 +96,7 @@
 
                 {{-- Compartilhamento Social Superior --}}
                 <div class="flex items-center gap-2">
-                    <span class="text-xs uppercase font-bold tracking-wider text-neutral-400 mr-1 hidden sm:inline">Compartilhar:</span>
+                    <span class="text-xs uppercase font-bold tracking-wider text-neutral-500 mr-1 hidden sm:inline">Compartilhar:</span>
                     
                     {{-- WhatsApp --}}
                     <a
@@ -193,9 +207,9 @@
 
                 <div class="space-y-3 flex-1">
                     <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-cbn-orange">Sobre o Autor</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-cbn-orange-ink">Sobre o Autor</span>
                         <h2 class="font-brand-serif font-bold text-2xl text-cbn-black">
-                            <a href="{{ route('autores.show', $article->author->slug) }}" class="hover:text-cbn-orange transition-colors">
+                            <a href="{{ route('autores.show', $article->author->slug) }}" class="hover:text-cbn-orange-ink transition-colors">
                                 {{ $article->author->name }}
                             </a>
                         </h2>
@@ -220,7 +234,7 @@
                                 @if (str_starts_with($link, 'mailto:'))
                                     <a
                                         href="{{ $link }}"
-                                        class="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-cbn-orange transition-colors"
+                                        class="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-cbn-orange-ink transition-colors"
                                     >
                                         <svg class="w-4 h-4 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -232,7 +246,7 @@
                                         href="{{ $link }}"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-cbn-orange transition-colors"
+                                        class="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-cbn-orange-ink transition-colors"
                                     >
                                         <span class="capitalize">{{ $network }}</span>
                                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -247,7 +261,7 @@
                     <div class="pt-2">
                         <a
                             href="{{ route('autores.show', $article->author->slug) }}"
-                            class="inline-flex items-center gap-1.5 text-xs font-bold text-cbn-orange hover:text-cbn-orange-mid transition"
+                            class="inline-flex items-center gap-1.5 text-xs font-bold text-cbn-orange-ink hover:text-cbn-orange-mid transition"
                         >
                             <span>Ver todos os artigos deste autor</span>
                             &rarr;
@@ -261,7 +275,7 @@
         <footer class="mt-12 pt-8 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4">
             <a
                 href="{{ route('artigos.index') }}"
-                class="inline-flex items-center gap-2 text-sm font-semibold text-cbn-orange hover:text-cbn-orange-mid transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
+                class="inline-flex items-center gap-2 text-sm font-semibold text-cbn-orange-ink hover:text-cbn-orange-mid transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
             >
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -287,7 +301,7 @@
                 </div>
                 <a
                     href="{{ route('artigos.index') }}"
-                    class="hidden sm:inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-cbn-orange hover:text-cbn-orange-mid transition"
+                    class="hidden sm:inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-cbn-orange-ink hover:text-cbn-orange-mid transition"
                 >
                     Ver todos &rarr;
                 </a>

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Quem Somos — CBN Goiás')
+@section('title', 'Quem Somos')
+@section('meta_description', 'História, missão, Declaração Doutrinária, Pacto de Fé e documentos oficiais da Convenção Batista Nacional do Estado de Goiás.')
 
 @section('content')
 <div class="bg-[#FFFDFB]">
@@ -10,7 +11,7 @@
             <div class="max-w-3xl space-y-4">
                 <div class="inline-flex items-center gap-2">
                     <span class="inline-block w-2 h-2 rounded-full bg-cbn-orange" aria-hidden="true"></span>
-                    <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange">Institucional</span>
+                    <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange-ink">Institucional</span>
                 </div>
                 <h1 class="font-brand-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-cbn-black tracking-tight">
                     Quem Somos
@@ -21,11 +22,11 @@
             </div>
 
             <nav class="mt-8 flex flex-wrap gap-2 text-sm" aria-label="Seções da página">
-                <a href="#historia" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange transition">História</a>
-                <a href="#missao" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange transition">Missão e visão</a>
-                <a href="#declaracao-doutrinaria" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange transition">Declaração Doutrinária</a>
-                <a href="#pacto" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange transition">Pacto de Fé</a>
-                <a href="#documentos" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange transition">Estatuto e Regimento</a>
+                <a href="#historia" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange-ink transition">História</a>
+                <a href="#missao" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange-ink transition">Missão e visão</a>
+                <a href="#declaracao-doutrinaria" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange-ink transition">Declaração Doutrinária</a>
+                <a href="#pacto" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange-ink transition">Pacto de Fé</a>
+                <a href="#documentos" class="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-neutral-700 hover:border-cbn-orange hover:text-cbn-orange-ink transition">Estatuto e Regimento</a>
             </nav>
         </div>
     </section>
@@ -34,7 +35,7 @@
     <section id="historia" class="scroll-mt-28 py-14 sm:py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div class="space-y-3">
-                <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange">Desde 1967</span>
+                <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange-ink">Desde 1967</span>
                 <h2 class="font-brand-serif font-bold text-2xl sm:text-3xl text-cbn-black">Nossa história</h2>
                 <p class="text-sm text-neutral-500">A trajetória pioneira dos batistas nacionais e sua presença em Goiás.</p>
             </div>
@@ -66,7 +67,7 @@
     <section id="declaracao-doutrinaria" class="scroll-mt-28 py-14 sm:py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 space-y-8">
             <div class="max-w-3xl space-y-3">
-                <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange">No que cremos</span>
+                <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange-ink">No que cremos</span>
                 <h2 class="font-brand-serif font-bold text-2xl sm:text-3xl text-cbn-black">Declaração Doutrinária</h2>
                 <p class="text-neutral-600 leading-relaxed">
                     Os fundamentos de fé compartilhados pelas Igrejas Batistas Nacionais.
@@ -100,7 +101,7 @@
     <section id="documentos" class="scroll-mt-28 py-14 sm:py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 space-y-8">
             <div class="max-w-3xl space-y-3">
-                <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange">Transparência</span>
+                <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange-ink">Transparência</span>
                 <h2 class="font-brand-serif font-bold text-2xl sm:text-3xl text-cbn-black">Documentos oficiais</h2>
                 <p class="text-neutral-600 leading-relaxed">Estatuto, Regimento Interno e demais documentos disponíveis para consulta e download.</p>
             </div>

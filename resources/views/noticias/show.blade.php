@@ -1,6 +1,19 @@
 @extends('layouts.app')
 
-@section('title', $news->title . ' — CBN Goiás')
+@section('title', $news->title)
+@section('meta_description', $news->excerpt ?? '')
+@section('og_type', 'article')
+@section('og_image', $news->image_url ?? '')
+@section('published_time', $news->published_at?->toIso8601String() ?? '')
+
+@push('structured-data')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::newsArticle($news)) !!}</script>
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::breadcrumbs([
+        ['name' => 'Início', 'url' => route('home')],
+        ['name' => 'Notícias', 'url' => route('noticias.index')],
+        ['name' => $news->title, 'url' => route('noticias.show', $news->slug)],
+    ])) !!}</script>
+@endpush
 
 @section('content')
 <article class="bg-[#FFFDFB] py-10 sm:py-14">
@@ -9,11 +22,11 @@
         <nav aria-label="Breadcrumb" class="mb-8">
             <ol class="flex items-center gap-2 text-xs sm:text-sm text-neutral-500 flex-wrap">
                 <li>
-                    <a href="{{ route('home') }}" class="hover:text-cbn-orange transition">Início</a>
+                    <a href="{{ route('home') }}" class="hover:text-cbn-orange-ink transition">Início</a>
                 </li>
                 <li aria-hidden="true">&rsaquo;</li>
                 <li>
-                    <a href="{{ route('noticias.index') }}" class="hover:text-cbn-orange transition">Notícias</a>
+                    <a href="{{ route('noticias.index') }}" class="hover:text-cbn-orange-ink transition">Notícias</a>
                 </li>
                 <li aria-hidden="true">&rsaquo;</li>
                 <li class="text-neutral-800 font-medium truncate max-w-xs sm:max-w-sm" aria-current="page">
@@ -29,7 +42,7 @@
                     {{ $news->category }}
                 </span>
                 @if ($news->is_official)
-                    <span class="bg-cbn-orange text-white text-xs font-bold tracking-wider uppercase px-3 py-1 rounded shadow-sm">
+                    <span class="bg-cbn-orange-ink text-white text-xs font-bold tracking-wider uppercase px-3 py-1 rounded shadow-sm">
                         Comunicado Oficial
                     </span>
                 @endif
@@ -81,7 +94,7 @@
 
                 {{-- Botões de Compartilhamento Social Superior --}}
                 <div class="flex items-center gap-2">
-                    <span class="text-xs uppercase font-bold tracking-wider text-neutral-400 mr-1 hidden sm:inline">Compartilhar:</span>
+                    <span class="text-xs uppercase font-bold tracking-wider text-neutral-500 mr-1 hidden sm:inline">Compartilhar:</span>
                     
                     {{-- WhatsApp --}}
                     <a
@@ -175,7 +188,11 @@
                 <img
                     src="{{ $news->image_url }}"
                     alt="{{ $news->title }}"
-                    class="w-full max-h-[500px] object-cover"
+                    width="1200"
+                    height="500"
+                    fetchpriority="high"
+                    decoding="async"
+                    class="w-full h-auto max-h-[500px] object-cover"
                 />
             </figure>
         @else
@@ -232,7 +249,7 @@
                             Registros fotográficos do evento e ação ministerial.
                         </p>
                     </div>
-                    <span class="text-xs text-neutral-400 font-medium">
+                    <span class="text-xs text-neutral-500 font-medium">
                         {{ count($news->gallery_images) }} {{ count($news->gallery_images) === 1 ? 'foto' : 'fotos' }}
                     </span>
                 </div>
@@ -333,7 +350,7 @@
         <footer class="mt-14 pt-8 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4">
             <a
                 href="{{ route('noticias.index') }}"
-                class="inline-flex items-center gap-2 text-sm font-semibold text-cbn-orange hover:text-cbn-orange-mid transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
+                class="inline-flex items-center gap-2 text-sm font-semibold text-cbn-orange-ink hover:text-cbn-orange-mid transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
             >
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -374,7 +391,7 @@
                 </div>
                 <a
                     href="{{ route('noticias.index') }}"
-                    class="hidden sm:inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-cbn-orange hover:text-cbn-orange-mid transition"
+                    class="hidden sm:inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-cbn-orange-ink hover:text-cbn-orange-mid transition"
                 >
                     Ver todas &rarr;
                 </a>

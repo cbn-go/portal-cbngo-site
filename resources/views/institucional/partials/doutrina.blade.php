@@ -15,7 +15,7 @@
 <ol class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     @foreach ($articles as $index => $article)
         <li class="rounded-xl border border-neutral-200/90 bg-white p-5 shadow-sm">
-            <span class="text-xs font-bold text-cbn-orange tracking-wider">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
+            <span class="text-xs font-bold text-cbn-orange-ink tracking-wider">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
             <h3 class="mt-1 font-brand-serif font-bold text-base text-cbn-black">{{ $article['title'] }}</h3>
             <p class="mt-2 text-sm text-neutral-600 leading-relaxed">{{ $article['text'] }}</p>
         </li>

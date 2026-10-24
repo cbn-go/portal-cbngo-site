@@ -42,7 +42,7 @@
                 </time>
             @endif
 
-            <h3 class="font-brand-serif font-bold text-lg text-cbn-black leading-snug group-hover:text-cbn-orange transition-colors line-clamp-2">
+            <h3 class="font-brand-serif font-bold text-lg text-cbn-black leading-snug group-hover:text-cbn-orange-ink transition-colors line-clamp-2">
                 <a
                     href="{{ route('noticias.show', $slug) }}"
                     class="focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
@@ -61,7 +61,7 @@
         <div class="pt-5 mt-4 border-t border-neutral-100">
             <a
                 href="{{ route('noticias.show', $slug) }}"
-                class="inline-flex items-center gap-1.5 text-xs font-bold text-cbn-orange hover:text-cbn-orange-mid tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
+                class="inline-flex items-center gap-1.5 text-xs font-bold text-cbn-orange-ink hover:text-cbn-orange-mid tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
             >
                 <span>Ver o impacto</span>
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

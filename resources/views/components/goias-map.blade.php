@@ -30,7 +30,7 @@
                 <div>
                     <div class="inline-flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-cbn-orange" aria-hidden="true"></span>
-                        <span class="text-xs font-bold uppercase tracking-wider text-cbn-orange">Presença Municipal CBN-GO</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-cbn-orange-ink">Presença Municipal CBN-GO</span>
                     </div>
                     <h2 class="font-brand-serif font-bold text-xl sm:text-2xl text-cbn-black mt-0.5">
                         Mapa Municipal de Congregações em Goiás
@@ -42,7 +42,7 @@
 
                 <div class="flex flex-wrap items-center gap-3 self-start sm:self-center">
                     <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FAF9F7] border border-neutral-200 text-xs font-semibold text-neutral-800">
-                        <span class="text-cbn-orange font-bold">{{ $citiesWithPresenceCount }} / {{ $totalMunicipalities }} municípios</span>
+                        <span class="text-cbn-orange-ink font-bold">{{ $citiesWithPresenceCount }} / {{ $totalMunicipalities }} municípios</span>
                         <span class="text-neutral-300" aria-hidden="true">|</span>
                         <span class="text-cbn-black font-bold">{{ $totalCount }}</span>
                         <span>{{ $totalCount === 1 ? 'igreja filtrada' : 'igrejas filtradas' }}</span>
@@ -78,7 +78,7 @@
                 @if ($activeCity !== '' || $activeQuery !== '')
                     <a
                         href="{{ route('igrejas') }}"
-                        class="font-semibold text-cbn-orange hover:underline"
+                        class="font-semibold text-cbn-orange-ink hover:underline"
                     >
                         Ver todos os municípios sem filtro
                     </a>
@@ -105,7 +105,7 @@
                                 <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-500">
                                     Municípios com Presença ({{ $citiesWithPresenceCount }})
                                 </h3>
-                                <span class="text-xs text-neutral-400">Clique para filtrar cidade</span>
+                                <span class="text-xs text-neutral-500">Clique para filtrar cidade</span>
                             </div>
 
                             <div class="max-h-[340px] overflow-y-auto pr-1 space-y-2">
@@ -132,7 +132,7 @@
                                             </span>
                                         </div>
 
-                                        <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold {{ $isCurrentCity ? 'bg-cbn-orange text-white' : 'bg-cbn-orange/15 text-cbn-orange' }}">
+                                        <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold {{ $isCurrentCity ? 'bg-cbn-orange-ink text-white' : 'bg-cbn-orange/15 text-cbn-orange-ink-dark' }}">
                                             {{ $churchCount }} {{ $churchCount === 1 ? 'igreja' : 'igrejas' }}
                                         </span>
                                     </a>
@@ -152,7 +152,7 @@
 
                     <div class="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
                         <span>Malha Municipal IBGE ({{ $totalMunicipalities }} municípios)</span>
-                        <a href="#lista-igrejas" class="font-semibold text-cbn-orange hover:underline">Ir para a listagem ↓</a>
+                        <a href="#lista-igrejas" class="font-semibold text-cbn-orange-ink hover:underline">Ir para a listagem ↓</a>
                     </div>
                 </div>
             </div>

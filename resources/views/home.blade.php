@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Página Inicial')
 
 @if ($urgentNotice)
     @section('banner')
@@ -16,12 +15,18 @@
 @section('content')
 {{-- Hero (layout Stitch — fundo claro institucional) --}}
 <section class="relative min-h-[560px] lg:min-h-[640px] flex items-center justify-center overflow-hidden border-b border-neutral-200">
-    <div
-        class="absolute inset-0 bg-cover bg-center scale-105"
-        style="background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1920&q=80')"
-        role="img"
-        aria-label="Comunidade reunida em solidariedade e cuidado"
-    ></div>
+    @php($heroImage = 'https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&q=70&w=')
+    <img
+        src="{{ $heroImage }}1280"
+        srcset="{{ $heroImage }}640 640w, {{ $heroImage }}1280 1280w, {{ $heroImage }}1920 1920w"
+        sizes="100vw"
+        width="1920"
+        height="1280"
+        alt="Comunidade reunida em solidariedade e cuidado"
+        fetchpriority="high"
+        decoding="async"
+        class="absolute inset-0 w-full h-full object-cover object-center scale-105"
+    />
     <div class="absolute inset-0 bg-gradient-to-r from-[#FFFDFB] via-[#FFFDFB]/95 to-[#FFFDFB]/80"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-[#FFFDFB]/75 via-transparent to-[#FFFDFB]"></div>
 
@@ -68,7 +73,7 @@
             <div>
                 <div class="flex items-center gap-2 mb-2">
                     <span class="w-2 h-2 rounded-full bg-cbn-orange" aria-hidden="true"></span>
-                    <span class="text-xs font-bold uppercase tracking-wider text-cbn-orange">Impacto em movimento</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-cbn-orange-ink">Impacto em movimento</span>
                 </div>
                 <h2 class="font-brand-serif font-bold text-2xl lg:text-3xl text-cbn-black tracking-tight">
                     Últimas Notícias e Comunicados
@@ -79,7 +84,7 @@
             </div>
             <a
                 href="{{ route('noticias.index') }}"
-                class="inline-flex items-center gap-1.5 text-sm font-semibold text-cbn-black hover:text-cbn-orange group transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
+                class="inline-flex items-center gap-1.5 text-sm font-semibold text-cbn-black hover:text-cbn-orange-ink group transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
             >
                 <span>Ver todas as notícias</span>
                 <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -114,7 +119,7 @@
 <section class="py-20 lg:py-24 bg-[#FAF9F7] border-b border-neutral-200" id="artigos">
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
         <div class="text-center max-w-2xl mx-auto mb-14">
-            <span class="inline-block text-xs font-bold uppercase tracking-wider text-cbn-orange mb-2">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-cbn-orange-ink mb-2">
                 Fé que gera cuidado
             </span>
             <h2 class="font-brand-serif font-bold text-3xl lg:text-4xl text-cbn-black tracking-tight">
@@ -126,7 +131,7 @@
             </p>
             <a
                 href="{{ route('artigos.index') }}"
-                class="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-cbn-black hover:text-cbn-orange transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
+                class="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-cbn-black hover:text-cbn-orange-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
             >
                 Ver todos os artigos
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -167,7 +172,7 @@
             <div class="bg-[#FAF9F7] border border-neutral-200 rounded-lg p-8 lg:p-10 flex flex-col justify-between hover:border-neutral-300 transition-all duration-200">
                 <div>
                     <div class="inline-flex items-center gap-2 mb-4">
-                        <span class="p-1.5 rounded bg-cbn-orange/10 text-cbn-orange">
+                        <span class="p-1.5 rounded bg-cbn-orange/10 text-cbn-orange-ink-dark">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                             </svg>
@@ -199,14 +204,14 @@
                     <x-button variant="secondary" size="sm" href="https://setebango.com.br" target="_blank" rel="noopener noreferrer">
                         Conheça o SETEBAN-GO
                     </x-button>
-                    <span class="text-xs font-medium text-cbn-orange bg-cbn-orange/10 px-3 py-1 rounded-full hidden sm:inline">Matrículas abertas</span>
+                    <span class="text-xs font-medium text-cbn-orange-ink-dark bg-cbn-orange/10 px-3 py-1 rounded-full hidden sm:inline">Matrículas abertas</span>
                 </div>
             </div>
 
             <div id="eventos" class="scroll-mt-24 bg-[#FAF9F7] border border-neutral-200 rounded-lg p-8 lg:p-10 flex flex-col justify-between hover:border-neutral-300 transition-all duration-200">
                 <div>
                     <div class="inline-flex items-center gap-2 mb-4">
-                        <span class="p-1.5 rounded bg-cbn-orange/10 text-cbn-orange">
+                        <span class="p-1.5 rounded bg-cbn-orange/10 text-cbn-orange-ink-dark">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
@@ -226,7 +231,7 @@
                         </div>
                         <div class="flex items-center justify-between text-xs gap-4">
                             <span class="text-neutral-500 font-medium">Foco</span>
-                            <span class="inline-flex items-center gap-1 font-semibold text-cbn-orange">
+                            <span class="inline-flex items-center gap-1 font-semibold text-cbn-orange-ink">
                                 <span class="w-1.5 h-1.5 rounded-full bg-cbn-orange" aria-hidden="true"></span>
                                 Comunhão com propósito social
                             </span>

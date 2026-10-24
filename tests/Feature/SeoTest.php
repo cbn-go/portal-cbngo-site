@@ -260,7 +260,7 @@ class SeoTest extends TestCase
 
         $xml = simplexml_load_string((string) $response->getContent());
         $this->assertNotFalse($xml);
-        $locations = collect($xml->url)->map(fn ($url) => (string) $url->loc)->all();
+        $locations = array_map(fn ($url) => (string) $url->loc, iterator_to_array($xml->url, false));
 
         foreach (['home', 'quem-somos', 'diretoria', 'contato', 'igrejas', 'noticias.index', 'artigos.index'] as $route) {
             $this->assertContains(route($route), $locations);

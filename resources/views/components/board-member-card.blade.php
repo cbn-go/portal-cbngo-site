@@ -18,13 +18,13 @@
     @else
         <div
             data-testid="board-member-initials"
-            class="w-28 h-28 rounded-full bg-cbn-orange/10 border border-cbn-orange/20 text-cbn-orange font-brand-serif font-bold text-3xl flex items-center justify-center"
+            class="w-28 h-28 rounded-full bg-cbn-orange/10 border border-cbn-orange/20 text-cbn-orange-ink-dark font-brand-serif font-bold text-3xl flex items-center justify-center"
             aria-hidden="true"
         >{{ $member->getInitials() }}</div>
     @endif
 
     <h3 class="mt-5 font-brand-serif font-bold text-lg text-cbn-black leading-snug">{{ $member->name }}</h3>
-    <p class="mt-1 text-sm font-semibold text-cbn-orange">{{ $member->role }}</p>
+    <p class="mt-1 text-sm font-semibold text-cbn-orange-ink">{{ $member->role }}</p>
 
     @if (! empty($member->region))
         <p class="mt-2 inline-flex items-center gap-1 text-xs text-neutral-600">
@@ -37,6 +37,6 @@
     @endif
 
     @if (! empty($member->term_label))
-        <p class="mt-3 text-[11px] uppercase tracking-wider text-neutral-400">{{ $member->term_label }}</p>
+        <p class="mt-3 text-[11px] uppercase tracking-wider text-neutral-500">{{ $member->term_label }}</p>
     @endif
 </article>

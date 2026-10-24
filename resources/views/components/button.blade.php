@@ -17,11 +17,11 @@
     $variantClasses = match ($variant) {
         'gold' => 'bg-cbn-gold text-cbn-black hover:bg-cbn-gold-light focus-visible:ring-cbn-gold shadow-sm hover:shadow',
         'secondary' => 'bg-cbn-black text-white hover:bg-cbn-black/90 focus-visible:ring-cbn-black',
-        'outline' => 'border-2 border-cbn-orange text-cbn-orange hover:bg-cbn-orange hover:text-white focus-visible:ring-cbn-orange',
+        'outline' => 'border-2 border-cbn-orange text-cbn-orange-ink hover:bg-cbn-orange-ink hover:text-white focus-visible:ring-cbn-orange',
         'outline-dark' => 'border-2 border-cbn-black text-cbn-black hover:bg-neutral-100 focus-visible:ring-cbn-black bg-transparent',
         'outline-gold' => 'border-2 border-cbn-gold text-cbn-gold-dark hover:bg-cbn-gold hover:text-cbn-black focus-visible:ring-cbn-gold',
         'ghost' => 'text-slate-700 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-300',
-        default => 'bg-cbn-orange text-white hover:bg-cbn-orange-mid focus-visible:ring-cbn-orange shadow-sm hover:shadow',
+        default => 'bg-cbn-orange-ink text-white hover:bg-cbn-orange-ink-dark focus-visible:ring-cbn-orange shadow-sm hover:shadow',
     };
 
     $classes = "{$baseClasses} {$sizeClasses} {$variantClasses}";

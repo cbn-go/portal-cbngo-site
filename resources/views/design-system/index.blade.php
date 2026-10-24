@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Design System Oficial')
+@section('robots', 'noindex, nofollow')
 
 @section('banner')
     <x-urgent-banner
