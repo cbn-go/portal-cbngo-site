@@ -250,9 +250,11 @@ class ChurchDirectoryTest extends TestCase
         Church::create([
             'name' => 'Catedral Batista Nacional de Goiânia',
             'slug' => 'catedral-batista-nacional-goiania',
-            'logo_url' => 'https://cbngo.org.br/images/igrejas/catedral-goiania.png',
+            'logo' => 'churches/logos/catedral-goiania.png',
             'pastor_name' => 'Pr. Roberto Silveira',
-            'address' => 'Av. T-9, 2450',
+            'address' => 'Av. T-9',
+            'number' => '2450',
+            'complement' => 'Quadra 12',
             'neighborhood' => 'Jardim América',
             'city' => 'Goiânia',
             'state' => 'GO',
@@ -279,11 +281,11 @@ class ChurchDirectoryTest extends TestCase
         $response->assertStatus(200);
         // Nome e logotipo
         $response->assertSee('Catedral Batista Nacional de Goiânia');
-        $response->assertSee('https://cbngo.org.br/images/igrejas/catedral-goiania.png');
+        $response->assertSee('https://midia.test/churches/logos/catedral-goiania.png');
         // Pastor titular
         $response->assertSee('Pr. Roberto Silveira');
         // Endereço completo e links de rota Google Maps / Waze
-        $response->assertSee('Av. T-9, 2450');
+        $response->assertSee('Av. T-9, 2450 – Quadra 12');
         $response->assertSee('Jardim América');
         $response->assertSee('74255-220');
         $response->assertSee('google.com/maps', false);
@@ -313,7 +315,7 @@ class ChurchDirectoryTest extends TestCase
         Church::create([
             'name' => 'IBN Monte Sião',
             'slug' => 'ibn-monte-siao',
-            'logo_url' => null,
+            'logo' => null,
             'pastor_name' => 'Pr. Ezequiel Tavares',
             'address' => 'Rua das Palmeiras, 120',
             'neighborhood' => 'Setor Central',

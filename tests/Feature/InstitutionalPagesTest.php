@@ -41,7 +41,8 @@ class InstitutionalPagesTest extends TestCase
             'title' => 'Regimento Interno da CBN',
             'slug' => 'regimento-interno',
             'category' => 'regimento',
-            'file_url' => 'https://cbngo.com.br/dados-abertos/regimento-interno.pdf',
+            'external_url' => 'https://cbngo.com.br/dados-abertos/regimento-interno.pdf',
+            'file_format' => 'Página',
             'position' => 2,
             'is_active' => true,
         ]);
@@ -51,7 +52,7 @@ class InstitutionalPagesTest extends TestCase
             'slug' => 'estatuto',
             'description' => 'Estatuto social vigente da convenção.',
             'category' => 'estatuto',
-            'file_url' => 'https://cbngo.com.br/dados-abertos/estatuto.pdf',
+            'file' => 'documents/files/estatuto.pdf',
             'position' => 1,
             'is_active' => true,
         ]);
@@ -60,7 +61,7 @@ class InstitutionalPagesTest extends TestCase
             'title' => 'Estatuto Revogado 2010',
             'slug' => 'estatuto-revogado-2010',
             'category' => 'estatuto',
-            'file_url' => 'https://cbngo.com.br/dados-abertos/estatuto-2010.pdf',
+            'file' => 'documents/files/estatuto-2010.pdf',
             'is_active' => false,
         ]);
 
@@ -69,7 +70,7 @@ class InstitutionalPagesTest extends TestCase
         $response->assertStatus(200);
         $response->assertSeeInOrder(['Estatuto da CBN', 'Regimento Interno da CBN']);
         $response->assertSee('Estatuto social vigente da convenção.');
-        $response->assertSee('href="https://cbngo.com.br/dados-abertos/estatuto.pdf"', false);
+        $response->assertSee('href="https://midia.test/documents/files/estatuto.pdf"', false);
         $response->assertSee('href="https://cbngo.com.br/dados-abertos/regimento-interno.pdf"', false);
         $response->assertSee('rel="noopener noreferrer"', false);
         $response->assertDontSee('Estatuto Revogado 2010');
@@ -99,21 +100,21 @@ class InstitutionalPagesTest extends TestCase
         Document::create([
             'title' => 'Documento Malicioso',
             'slug' => 'documento-malicioso',
-            'file_url' => 'javascript:alert(1)',
+            'external_url' => 'javascript:alert(1)',
             'is_active' => true,
         ]);
 
         Document::create([
             'title' => 'Documento Protocolo Relativo',
             'slug' => 'documento-protocolo-relativo',
-            'file_url' => '//evil.example.com/arquivo.pdf',
+            'external_url' => '//evil.example.com/arquivo.pdf',
             'is_active' => true,
         ]);
 
         Document::create([
             'title' => 'Documento Local',
             'slug' => 'documento-local',
-            'file_url' => '/docs/manual.pdf',
+            'external_url' => '/docs/manual.pdf',
             'is_active' => true,
         ]);
 
@@ -189,7 +190,7 @@ class InstitutionalPagesTest extends TestCase
             'name' => 'Pr. Roberto Silveira',
             'role' => 'Presidente',
             'group' => 'presidencia',
-            'photo_url' => 'https://images.example.com/roberto.jpg',
+            'photo' => 'board/photos/roberto.jpg',
             'term_label' => 'Gestão 2025–2027',
         ]);
 
@@ -198,13 +199,13 @@ class InstitutionalPagesTest extends TestCase
             'role' => 'Coordenadora Regional',
             'group' => 'coordenacao_regional',
             'region' => 'Região Sudoeste',
-            'photo_url' => 'javascript:alert(1)',
+            'photo' => 'javascript:alert(1)',
         ]);
 
         $response = $this->get(route('diretoria'));
 
         $response->assertStatus(200);
-        $response->assertSee('src="https://images.example.com/roberto.jpg"', false);
+        $response->assertSee('src="https://midia.test/board/photos/roberto.jpg"', false);
         $response->assertSee('Gestão 2025–2027');
         $response->assertSee('data-testid="board-member-initials"', false);
         $response->assertSee('>HA<', false);

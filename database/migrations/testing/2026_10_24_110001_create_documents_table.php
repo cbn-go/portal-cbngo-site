@@ -4,6 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/*
+ * Espelho do schema do painel administrativo (cbn-go/portal-cbngo-admin), usado apenas
+ * nos ambientes local e testing. Em produção, o portal lê o banco do painel e não migra nada.
+ *
+ * Origem: database/migrations/2026_10_24_110001_create_documents_table.php
+ */
 return new class extends Migration
 {
     /**
@@ -16,8 +22,9 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->string('category', 40)->default('outros');
-            $table->string('file_url');
+            $table->string('category', 40)->default('outros')->index();
+            $table->string('file')->nullable();
+            $table->string('external_url')->nullable();
             $table->string('file_format', 10)->default('PDF');
             $table->unsignedInteger('position')->default(0);
             $table->boolean('is_active')->default(true);

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Church;
 use App\Models\News;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,13 +20,13 @@ class NewsTest extends TestCase
 
         // Cria 12 notícias publicadas
         for ($i = 1; $i <= 12; $i++) {
-            News::create([
+            News::factory()->create([
                 'title' => "Notícia Publicada {$i}",
                 'slug' => "noticia-publicada-{$i}",
                 'category' => 'Geral',
                 'excerpt' => "Resumo da notícia {$i}",
                 'content' => "Conteúdo da notícia {$i}",
-                'is_published' => true,
+                'status' => 'published',
                 'published_at' => now()->subMinutes(13 - $i),
             ]);
         }
@@ -55,33 +56,33 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        News::create([
+        News::factory()->create([
             'title' => 'Notícia Rascunho Oculta',
             'slug' => 'noticia-rascunho-oculta',
             'category' => 'Geral',
             'excerpt' => 'Resumo rascunho',
             'content' => 'Conteúdo rascunho',
-            'is_published' => false,
+            'status' => 'draft',
             'published_at' => now()->subDay(),
         ]);
 
-        News::create([
+        News::factory()->create([
             'title' => 'Notícia Futura Oculta',
             'slug' => 'noticia-futura-oculta',
             'category' => 'Geral',
             'excerpt' => 'Resumo futuro',
             'content' => 'Conteúdo futuro',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->addDays(2),
         ]);
 
-        News::create([
+        News::factory()->create([
             'title' => 'Notícia Publicada Visível',
             'slug' => 'noticia-publicada-visivel',
             'category' => 'Geral',
             'excerpt' => 'Resumo visível',
             'content' => 'Conteúdo visível',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subHour(),
         ]);
 
@@ -100,23 +101,23 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        News::create([
+        News::factory()->create([
             'title' => 'Convocação para Assembleia Extraordinária',
             'slug' => 'convocacao-assembleia-extraordinaria',
             'category' => 'Comunicado Oficial',
             'excerpt' => 'Edital de convocação dos delegados',
             'content' => 'A diretoria da CBN Goiás convoca todos os pastores.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        News::create([
+        News::factory()->create([
             'title' => 'Cruzada Evangelística no Interior',
             'slug' => 'cruzada-evangelistica-interior',
             'category' => 'Missões',
             'excerpt' => 'Grande impacto evangelístico na praça central',
             'content' => 'Centenas de vidas foram alcançadas pelo evangelho.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(2),
         ]);
 
@@ -140,25 +141,26 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        News::create([
+        $anapolis = Church::factory()->create(['city' => 'Anápolis']);
+        $rioVerde = Church::factory()->create(['city' => 'Rio Verde']);
+
+        News::factory()->forChurch($anapolis)->create([
             'title' => 'Notícia de Anápolis',
             'slug' => 'noticia-anapolis',
             'category' => 'Geral',
             'excerpt' => 'Resumo Anápolis',
             'content' => 'Conteúdo Anápolis',
-            'city' => 'Anápolis',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        News::create([
+        News::factory()->forChurch($rioVerde)->create([
             'title' => 'Notícia de Rio Verde',
             'slug' => 'noticia-rio-verde',
             'category' => 'Geral',
             'excerpt' => 'Resumo Rio Verde',
             'content' => 'Conteúdo Rio Verde',
-            'city' => 'Rio Verde',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -169,35 +171,61 @@ class NewsTest extends TestCase
     }
 
     /**
+     * Valida que as opções de município e congregação vêm só de igrejas ativas com notícias publicadas.
+     */
+    public function test_news_index_filter_options_come_from_active_churches_with_published_news(): void
+    {
+        $this->withoutVite();
+
+        $withNews = Church::factory()->create(['name' => 'IBN Jardim América', 'city' => 'Goiânia']);
+        $withDraftOnly = Church::factory()->create(['name' => 'IBN Só Rascunho', 'city' => 'Catalão']);
+        $inactive = Church::factory()->create(['name' => 'IBN Desativada', 'city' => 'Itumbiara', 'is_active' => false]);
+
+        News::factory()->forChurch($withNews)->create();
+        News::factory()->forChurch($withDraftOnly)->draft()->create();
+        News::factory()->forChurch($inactive)->create();
+
+        $response = $this->get(route('noticias.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('<option value="'.$withNews->slug.'"', false);
+        $response->assertSee('<option value="Goiânia"', false);
+        $response->assertDontSee('IBN Só Rascunho');
+        $response->assertDontSee('<option value="Catalão"', false);
+        $response->assertDontSee('<option value="'.$inactive->slug.'"', false);
+    }
+
+    /**
      * Valida que o filtro por congregação emissora funciona corretamente.
      */
     public function test_news_index_can_filter_by_church(): void
     {
         $this->withoutVite();
 
-        News::create([
+        $central = Church::factory()->create(['name' => 'IBN Central Goiânia', 'slug' => 'ibn-central-goiania']);
+        $betel = Church::factory()->create(['name' => 'IBN Betel Anápolis', 'slug' => 'ibn-betel-anapolis']);
+
+        News::factory()->forChurch($central)->create([
             'title' => 'Notícia IBN Central',
             'slug' => 'noticia-ibn-central',
             'category' => 'Geral',
             'excerpt' => 'Resumo Central',
             'content' => 'Conteúdo Central',
-            'church_name' => 'IBN Central Goiânia',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        News::create([
+        News::factory()->forChurch($betel)->create([
             'title' => 'Notícia IBN Betel',
             'slug' => 'noticia-ibn-betel',
             'category' => 'Geral',
             'excerpt' => 'Resumo Betel',
             'content' => 'Conteúdo Betel',
-            'church_name' => 'IBN Betel Anápolis',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        $response = $this->get(route('noticias.index', ['igreja' => 'IBN Central Goiânia']));
+        $response = $this->get(route('noticias.index', ['igreja' => 'ibn-central-goiania']));
         $response->assertStatus(200);
         $response->assertSee('Notícia IBN Central');
         $response->assertDontSee('Notícia IBN Betel');
@@ -210,14 +238,14 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        News::create([
+        News::factory()->create([
             'title' => 'Diretoria Executiva Homologa Resoluções 2026',
             'slug' => 'diretoria-homologa-resolucoes-2026',
             'category' => 'Comunicado Oficial',
             'excerpt' => 'Resoluções normativas aprovadas em reunião ministerial.',
             'content' => 'A diretoria da CBN-GO esteve reunida na sede estadual.',
             'is_official' => true,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -249,17 +277,17 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        $news = News::create([
+        $church = Church::factory()->create(['name' => 'Sede Estadual CBN-GO', 'city' => 'Goiânia']);
+
+        $news = News::factory()->forChurch($church)->create([
             'title' => 'Convenção Estadual 2026 Anuncia Programação Geral',
             'slug' => 'convencao-estadual-2026-anuncia-programacao',
             'category' => 'Eventos',
             'excerpt' => 'Programação oficial para o evento de celebração dos batistas nacionais em Goiás.',
-            'content' => 'A Convenção Batista Nacional do Estado de Goiás tem a honra de convidar todas as igrejas.',
-            'image_url' => 'https://cbngo.org.br/images/banner-convencao.jpg',
-            'church_name' => 'Sede Estadual CBN-GO',
-            'city' => 'Goiânia',
+            'content' => '<p>A Convenção Batista Nacional do Estado de Goiás tem a honra de convidar todas as igrejas.</p>',
+            'featured_image' => 'news/featured/banner-convencao.jpg',
             'is_official' => true,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -270,8 +298,47 @@ class NewsTest extends TestCase
         $response->assertSee('Sede Estadual CBN-GO');
         $response->assertSee('Goiânia');
         $response->assertSee('Comunicado Oficial');
-        $response->assertSee('https://cbngo.org.br/images/banner-convencao.jpg');
-        $response->assertSee('A Convenção Batista Nacional do Estado de Goiás tem a honra de convidar todas as igrejas.');
+        $response->assertSee('https://midia.test/news/featured/banner-convencao.jpg');
+        $response->assertSee('<p>A Convenção Batista Nacional do Estado de Goiás tem a honra de convidar todas as igrejas.</p>', false);
+    }
+
+    /**
+     * Valida que notícia sem igreja emissora (church_id nulo) é exibida como notícia da CBN-GO Estadual.
+     */
+    public function test_news_without_church_is_attributed_to_cbn_goias(): void
+    {
+        $this->withoutVite();
+
+        $news = News::factory()->create(['title' => 'Comunicado da Estadual', 'church_id' => null]);
+
+        $this->get(route('noticias.index'))
+            ->assertStatus(200)
+            ->assertSee('Comunicado da Estadual')
+            ->assertSee('CBN Goiás');
+
+        $this->get(route('noticias.show', $news->slug))->assertStatus(200);
+    }
+
+    /**
+     * Valida que o HTML do RichEditor é renderizado e sanitizado como defesa em profundidade.
+     */
+    public function test_news_show_renders_sanitized_html_content(): void
+    {
+        $this->withoutVite();
+
+        $news = News::factory()->create([
+            'content' => '<h2>Programação</h2><p>Culto às <strong>19h</strong>.</p>'
+                .'<script>alert("xss")</script><img src="x" onerror="alert(1)"><a href="javascript:alert(1)">link</a>',
+        ]);
+
+        $response = $this->get(route('noticias.show', $news->slug));
+
+        $response->assertStatus(200);
+        $response->assertSee('<h2>Programação</h2>', false);
+        $response->assertSee('<strong>19h</strong>', false);
+        $response->assertDontSee('alert("xss")', false);
+        $response->assertDontSee('onerror', false);
+        $response->assertDontSee('javascript:alert(1)', false);
     }
 
     /**
@@ -281,23 +348,23 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        $draft = News::create([
+        $draft = News::factory()->create([
             'title' => 'Notícia Rascunho Inacessível',
             'slug' => 'noticia-rascunho-inacessivel',
             'category' => 'Geral',
             'excerpt' => 'Resumo rascunho',
             'content' => 'Conteúdo rascunho',
-            'is_published' => false,
+            'status' => 'draft',
             'published_at' => now()->subDay(),
         ]);
 
-        $future = News::create([
+        $future = News::factory()->create([
             'title' => 'Notícia Futura Inacessível',
             'slug' => 'noticia-futura-inacessivel',
             'category' => 'Geral',
             'excerpt' => 'Resumo futuro',
             'content' => 'Conteúdo futuro',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->addDays(3),
         ]);
 
@@ -306,6 +373,30 @@ class NewsTest extends TestCase
 
         $responseFuture = $this->get(route('noticias.show', $future->slug));
         $responseFuture->assertStatus(404);
+    }
+
+    /**
+     * Valida que nenhum status diferente de "published" (nem publicado sem data) é exibido no portal.
+     */
+    public function test_news_with_non_published_status_never_appear(): void
+    {
+        $this->withoutVite();
+
+        $hidden = [
+            News::factory()->draft()->create(['title' => 'Oculta Rascunho']),
+            News::factory()->pendingReview()->create(['title' => 'Oculta Pendente de Revisão']),
+            News::factory()->archived()->create(['title' => 'Oculta Arquivada']),
+            News::factory()->create(['title' => 'Oculta Sem Data', 'published_at' => null]),
+        ];
+
+        $index = $this->get(route('noticias.index'));
+        $home = $this->get(route('home'));
+
+        foreach ($hidden as $news) {
+            $index->assertDontSee($news->title);
+            $home->assertDontSee($news->title);
+            $this->get(route('noticias.show', $news->slug))->assertStatus(404);
+        }
     }
 
     /**
@@ -320,23 +411,23 @@ class NewsTest extends TestCase
     }
 
     /**
-     * Valida que a galeria de fotos e o lightbox são renderizados quando gallery_images estiver presente.
+     * Valida que a galeria de fotos e o lightbox são renderizados quando gallery estiver presente.
      */
-    public function test_news_show_renders_photo_gallery_when_gallery_images_present(): void
+    public function test_news_show_renders_photo_gallery_when_gallery_present(): void
     {
         $this->withoutVite();
 
-        $news = News::create([
+        $news = News::factory()->create([
             'title' => 'Celebração com Galeria de Imagens',
             'slug' => 'celebracao-com-galeria-imagens',
             'category' => 'Eventos',
             'excerpt' => 'Resumo do evento',
             'content' => 'Conteúdo do evento com fotos registradas.',
-            'gallery_images' => [
-                'https://cbngo.org.br/fotos/foto1.jpg',
-                'https://cbngo.org.br/fotos/foto2.jpg',
+            'gallery' => [
+                'news/gallery/foto1.jpg',
+                'news/gallery/foto2.jpg',
             ],
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -344,26 +435,26 @@ class NewsTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Galeria de Fotos');
-        $response->assertSee('https://cbngo.org.br/fotos/foto1.jpg');
-        $response->assertSee('https://cbngo.org.br/fotos/foto2.jpg');
+        $response->assertSee('https://midia.test/news/gallery/foto1.jpg');
+        $response->assertSee('https://midia.test/news/gallery/foto2.jpg');
         $response->assertSee('x-data', false); // Lightbox interativo Alpine
     }
 
     /**
-     * Valida que a seção de galeria não é renderizada quando gallery_images for nulo ou vazio.
+     * Valida que a seção de galeria não é renderizada quando gallery for nulo ou vazio.
      */
-    public function test_news_show_does_not_render_gallery_when_gallery_images_is_null_or_empty(): void
+    public function test_news_show_does_not_render_gallery_when_gallery_is_null_or_empty(): void
     {
         $this->withoutVite();
 
-        $news = News::create([
+        $news = News::factory()->create([
             'title' => 'Notícia sem Fotos Extras',
             'slug' => 'noticia-sem-fotos-extras',
             'category' => 'Geral',
             'excerpt' => 'Resumo sem fotos',
             'content' => 'Conteúdo comum.',
-            'gallery_images' => null,
-            'is_published' => true,
+            'gallery' => null,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -380,13 +471,13 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        $news = News::create([
+        $news = News::factory()->create([
             'title' => 'Assembleia Geral & Comunhão dos Pastores',
             'slug' => 'assembleia-geral-comunhao-pastores',
             'category' => 'Comunicado Oficial',
             'excerpt' => 'Resumo oficial',
             'content' => 'Conteúdo oficial.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -406,23 +497,23 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        $newsTarget = News::create([
+        $newsTarget = News::factory()->create([
             'title' => 'Notícia Principal em Foco',
             'slug' => 'noticia-principal-em-foco',
             'category' => 'Geral',
             'excerpt' => 'Resumo foco',
             'content' => 'Conteúdo foco.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        $newsOther = News::create([
+        $newsOther = News::factory()->create([
             'title' => 'Outra Notícia para Recomendação',
             'slug' => 'outra-noticia-para-recomendacao',
             'category' => 'Geral',
             'excerpt' => 'Resumo outra',
             'content' => 'Conteúdo outra.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(2),
         ]);
 
@@ -440,25 +531,25 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        News::create([
+        News::factory()->create([
             'title' => 'Comunicado Oficial da Presidência',
             'slug' => 'comunicado-presidencia',
             'category' => 'Comunicado Oficial',
             'excerpt' => 'Resumo oficial',
             'content' => 'Conteúdo oficial',
             'is_official' => true,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        News::create([
+        News::factory()->create([
             'title' => 'Notícia Geral de Congregação',
             'slug' => 'noticia-geral-congregacao',
             'category' => 'Geral',
             'excerpt' => 'Resumo geral',
             'content' => 'Conteúdo geral',
             'is_official' => false,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -476,15 +567,16 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
+        $church = Church::factory()->create(['city' => 'Goiânia']);
+
         for ($i = 1; $i <= 11; $i++) {
-            News::create([
+            News::factory()->forChurch($church)->create([
                 'title' => "Assembleia Notícia {$i}",
                 'slug' => "assembleia-noticia-{$i}",
                 'category' => 'Geral',
                 'excerpt' => "Resumo {$i}",
                 'content' => "Conteúdo {$i}",
-                'city' => 'Goiânia',
-                'is_published' => true,
+                'status' => 'published',
                 'published_at' => now()->subMinutes(12 - $i),
             ]);
         }
@@ -503,13 +595,13 @@ class NewsTest extends TestCase
     {
         $this->withoutVite();
 
-        $news = News::create([
+        $news = News::factory()->create([
             'title' => 'Notícia Teste Ativo',
             'slug' => 'noticia-teste-ativo',
             'category' => 'Geral',
             'excerpt' => 'Resumo',
             'content' => 'Conteúdo',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 

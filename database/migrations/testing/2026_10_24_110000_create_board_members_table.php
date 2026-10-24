@@ -4,6 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/*
+ * Espelho do schema do painel administrativo (cbn-go/portal-cbngo-admin), usado apenas
+ * nos ambientes local e testing. Em produção, o portal lê o banco do painel e não migra nada.
+ *
+ * Origem: database/migrations/2026_10_24_110000_create_board_members_table.php
+ */
 return new class extends Migration
 {
     /**
@@ -17,13 +23,14 @@ return new class extends Migration
             $table->string('role');
             $table->string('group', 40);
             $table->string('region')->nullable();
-            $table->string('photo_url')->nullable();
             $table->string('term_label', 60)->nullable();
+            $table->string('photo')->nullable();
             $table->unsignedInteger('position')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             $table->index(['is_active', 'group', 'position']);
+            $table->index('term_label');
         });
     }
 

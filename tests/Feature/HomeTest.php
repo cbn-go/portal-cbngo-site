@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Article;
-use App\Models\Author;
 use App\Models\News;
 use App\Models\UrgentNotice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class HomeTest extends TestCase
@@ -62,15 +62,15 @@ class HomeTest extends TestCase
     {
         $this->withoutVite();
 
-        UrgentNotice::create([
+        UrgentNotice::factory()->create([
             'title' => 'Comunicado de Assembleia Extraordinária',
-            'message' => 'Convocação oficial para a Assembleia Geral da CBN-GO em Anápolis.',
-            'link' => 'https://cbngo.org.br/edital-2026',
-            'link_text' => 'Ler Edital',
-            'type' => 'critical',
+            'content' => 'Convocação oficial para a Assembleia Geral da CBN-GO em Anápolis.',
+            'action_url' => 'https://cbngo.org.br/edital-2026',
+            'action_label' => 'Ler Edital',
+            'priority' => 'urgent',
             'is_active' => true,
             'starts_at' => now()->subDay(),
-            'ends_at' => now()->addDays(2),
+            'expires_at' => now()->addDays(2),
         ]);
 
         $response = $this->get('/');
@@ -90,24 +90,24 @@ class HomeTest extends TestCase
         $this->withoutVite();
 
         // Aviso inativo
-        UrgentNotice::create([
+        UrgentNotice::factory()->create([
             'title' => 'Aviso Inativo',
-            'message' => 'Este aviso não deve aparecer porque está inativo.',
+            'content' => 'Este aviso não deve aparecer porque está inativo.',
             'is_active' => false,
         ]);
 
         // Aviso expirado
-        UrgentNotice::create([
+        UrgentNotice::factory()->create([
             'title' => 'Aviso Expirado',
-            'message' => 'Este aviso não deve aparecer porque já expirou.',
+            'content' => 'Este aviso não deve aparecer porque já expirou.',
             'is_active' => true,
-            'ends_at' => now()->subMinute(),
+            'expires_at' => now()->subMinute(),
         ]);
 
         // Aviso futuro
-        UrgentNotice::create([
+        UrgentNotice::factory()->create([
             'title' => 'Aviso Futuro',
-            'message' => 'Este aviso não deve aparecer porque ainda não entrou em vigência.',
+            'content' => 'Este aviso não deve aparecer porque ainda não entrou em vigência.',
             'is_active' => true,
             'starts_at' => now()->addHour(),
         ]);
@@ -128,43 +128,43 @@ class HomeTest extends TestCase
     {
         $this->withoutVite();
 
-        News::create([
+        News::factory()->create([
             'title' => 'Notícia Antiga Fora do Top 3',
             'slug' => 'noticia-antiga-fora-do-top-3',
             'category' => 'Geral',
             'excerpt' => 'Resumo da notícia antiga.',
             'content' => 'Conteúdo detalhado da notícia antiga.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(10),
         ]);
 
-        News::create([
+        News::factory()->create([
             'title' => 'Retiro Estadual de Pastores 2026',
             'slug' => 'retiro-estadual-de-pastores-2026',
             'category' => 'Eventos',
             'excerpt' => 'Encontro de comunhão e edificação pastoral em Pirenópolis.',
             'content' => 'Conteúdo detalhado do retiro.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(3),
         ]);
 
-        News::create([
+        News::factory()->create([
             'title' => 'Nova Congregação Inaugurada em Rio Verde',
             'slug' => 'nova-congregacao-inaugurada-em-rio-verde',
             'category' => 'Missões',
             'excerpt' => 'Avanço missionário da CBN Goiás no sudoeste do estado.',
             'content' => 'Conteúdo detalhado da inauguração.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(2),
         ]);
 
-        News::create([
+        News::factory()->create([
             'title' => 'Comunicado Oficial da Diretoria da CBN-GO',
             'slug' => 'comunicado-oficial-da-diretoria-cbn-go',
             'category' => 'Comunicado Oficial',
             'excerpt' => 'Orientações pastorais sobre o ano eclesiástico de 2026.',
             'content' => 'Conteúdo completo do comunicado.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -186,23 +186,23 @@ class HomeTest extends TestCase
     {
         $this->withoutVite();
 
-        News::create([
+        News::factory()->create([
             'title' => 'Notícia Não Publicada em Rascunho',
             'slug' => 'noticia-rascunho',
             'category' => 'Geral',
             'excerpt' => 'Resumo rascunho.',
             'content' => 'Conteúdo rascunho.',
-            'is_published' => false,
+            'status' => 'draft',
             'published_at' => now()->subDay(),
         ]);
 
-        News::create([
+        News::factory()->create([
             'title' => 'Notícia com Publicação Agendada Futura',
             'slug' => 'noticia-futura',
             'category' => 'Geral',
             'excerpt' => 'Resumo futuro.',
             'content' => 'Conteúdo futuro.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->addDays(2),
         ]);
 
@@ -220,53 +220,53 @@ class HomeTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
-            'role_title' => 'Pastor e Teólogo',
+            'pastoral_title' => 'Pastor e Teólogo',
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Antigo Fora do Top 3',
             'slug' => 'artigo-antigo-fora-top-3',
             'excerpt' => 'Resumo artigo antigo.',
             'content' => 'Conteúdo artigo antigo.',
             'reading_time' => 4,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(15),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'A Centralidade de Cristo na Vida Comunitária',
             'slug' => 'centralidade-de-cristo-vida-comunitaria',
             'excerpt' => 'Reflexão sobre os fundamentos eclesiásticos da renovação espiritual.',
             'content' => 'Conteúdo completo do artigo sobre Cristo.',
             'reading_time' => 6,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(3),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Pastoreamento e Saúde Emocional do Líder',
             'slug' => 'pastoreamento-saude-emocional-lider',
             'excerpt' => 'Cuidando de quem cuida do rebanho em Goiás.',
             'content' => 'Conteúdo completo sobre pastoreamento.',
             'reading_time' => 5,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(2),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Avivamento Bíblico e Missões no Século XXI',
             'slug' => 'avivamento-biblico-missoes-seculo-xxi',
             'excerpt' => 'Princípios para a expansão do Reino de Deus com integridade doutrinária.',
             'content' => 'Conteúdo completo sobre avivamento.',
             'reading_time' => 7,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -289,28 +289,28 @@ class HomeTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Carlos Mendes',
             'slug' => 'pr-carlos-mendes',
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Rascunho Não Publicado',
             'slug' => 'artigo-rascunho',
             'excerpt' => 'Resumo rascunho.',
             'content' => 'Conteúdo.',
-            'is_published' => false,
+            'status' => 'draft',
             'published_at' => now()->subDay(),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo com Data Futura',
             'slug' => 'artigo-futuro',
             'excerpt' => 'Resumo futuro.',
             'content' => 'Conteúdo.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->addDays(2),
         ]);
 
@@ -377,29 +377,29 @@ class HomeTest extends TestCase
     {
         $this->withoutVite();
 
-        News::create([
+        News::factory()->create([
             'title' => 'Comunicado Oficial 2026',
             'slug' => 'comunicado-oficial-2026',
             'category' => 'Comunicado Oficial',
             'excerpt' => 'Resumo do comunicado oficial.',
             'content' => 'Conteúdo do comunicado oficial.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Reflexão Bíblica Pastoral',
             'slug' => 'reflexao-biblica-pastoral',
             'category' => 'Teologia',
             'excerpt' => 'Resumo da reflexão bíblica pastoral.',
             'content' => 'Conteúdo da reflexão bíblica pastoral.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -432,22 +432,24 @@ class HomeTest extends TestCase
     }
 
     /**
-     * Valida que avisos urgentes são priorizados por data de vigência mais recente (starts_at).
+     * Valida que, entre avisos de mesma prioridade, vence o de vigência mais recente (starts_at).
      */
     public function test_urgent_banner_prioritizes_latest_starts_at_when_multiple_are_active(): void
     {
         $this->withoutVite();
 
-        UrgentNotice::create([
+        UrgentNotice::factory()->create([
             'title' => 'Aviso Antigo',
-            'message' => 'Mensagem do aviso mais antigo.',
+            'content' => 'Mensagem do aviso mais antigo.',
+            'priority' => 'normal',
             'is_active' => true,
             'starts_at' => now()->subDays(5),
         ]);
 
-        UrgentNotice::create([
+        UrgentNotice::factory()->create([
             'title' => 'Aviso Recente',
-            'message' => 'Mensagem do aviso mais recente em vigor.',
+            'content' => 'Mensagem do aviso mais recente em vigor.',
+            'priority' => 'normal',
             'is_active' => true,
             'starts_at' => now()->subHour(),
         ]);
@@ -457,5 +459,85 @@ class HomeTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Mensagem do aviso mais recente em vigor.');
         $response->assertDontSee('Mensagem do aviso mais antigo.');
+    }
+
+    /**
+     * Valida que o aviso de maior prioridade vence, mesmo sendo mais antigo (urgent > high > normal).
+     */
+    public function test_urgent_banner_prioritizes_highest_priority(): void
+    {
+        $this->withoutVite();
+
+        UrgentNotice::factory()->create(['content' => 'Aviso urgente antigo.', 'priority' => 'urgent', 'starts_at' => now()->subDays(3)]);
+        UrgentNotice::factory()->create(['content' => 'Aviso alto recente.', 'priority' => 'high', 'starts_at' => now()->subHour()]);
+        UrgentNotice::factory()->create(['content' => 'Aviso normal recente.', 'priority' => 'normal', 'starts_at' => now()->subMinute()]);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('Aviso urgente antigo.')
+            ->assertDontSee('Aviso alto recente.')
+            ->assertDontSee('Aviso normal recente.');
+    }
+
+    /**
+     * Valida o mapeamento de prioridade do painel para o estilo visual do banner.
+     */
+    #[DataProvider('noticePriorityProvider')]
+    public function test_urgent_banner_maps_priority_to_banner_type(string $priority, string $expectedClass): void
+    {
+        $this->withoutVite();
+
+        UrgentNotice::factory()->create(['priority' => $priority]);
+
+        $this->get('/')->assertStatus(200)->assertSee($expectedClass, false);
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function noticePriorityProvider(): array
+    {
+        return [
+            'normal → info' => ['normal', 'bg-cbn-navy'],
+            'high → warning' => ['high', 'from-cbn-gold-dark'],
+            'urgent → critical' => ['urgent', 'bg-cbn-red'],
+        ];
+    }
+
+    /**
+     * Valida que o HTML do aviso (não sanitizado pelo painel) é exibido apenas como texto.
+     */
+    public function test_urgent_banner_renders_notice_content_as_plain_text(): void
+    {
+        $this->withoutVite();
+
+        UrgentNotice::factory()->create([
+            'content' => '<p>Culto <strong>adiado</strong>.</p><script>alert("xss")</script>',
+            'action_url' => 'javascript:alert(1)',
+            'action_label' => null,
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertSee('Culto adiado.');
+        $response->assertDontSee('<strong>adiado</strong>', false);
+        $response->assertDontSee('alert("xss")', false);
+        $response->assertDontSee('javascript:alert(1)', false);
+    }
+
+    /**
+     * Valida que o rótulo do link cai em "Saiba mais" quando o painel não o preencheu.
+     */
+    public function test_urgent_banner_link_label_falls_back_to_saiba_mais(): void
+    {
+        $this->withoutVite();
+
+        UrgentNotice::factory()->create(['action_url' => 'https://cbngo.org.br/agenda', 'action_label' => null]);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('https://cbngo.org.br/agenda')
+            ->assertSee('Saiba mais');
     }
 }

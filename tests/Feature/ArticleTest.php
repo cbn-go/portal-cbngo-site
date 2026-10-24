@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Article;
 use App\Models\Author;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,22 +19,22 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
-            'role_title' => 'Pastor e Teólogo',
+            'pastoral_title' => 'Pastor e Teólogo',
         ]);
 
         for ($i = 1; $i <= 12; $i++) {
-            Article::create([
-                'author_id' => $author->id,
+            Article::factory()->create([
+                'user_id' => $author->user_id,
                 'title' => "Artigo Teológico {$i}",
                 'slug' => "artigo-teologico-{$i}",
                 'category' => 'Teologia',
                 'excerpt' => "Resumo do artigo {$i}",
                 'content' => "Conteúdo do artigo {$i}",
                 'reading_time' => 5,
-                'is_published' => true,
+                'status' => 'published',
                 'published_at' => now()->subMinutes(13 - $i),
             ]);
         }
@@ -63,42 +64,42 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Carlos Mendes',
             'slug' => 'pr-carlos-mendes',
-            'role_title' => 'Professor de Hermenêutica',
+            'pastoral_title' => 'Professor de Hermenêutica',
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Rascunho Oculto',
             'slug' => 'artigo-rascunho-oculto',
             'category' => 'Teologia',
             'excerpt' => 'Resumo rascunho',
             'content' => 'Conteúdo rascunho',
-            'is_published' => false,
+            'status' => 'draft',
             'published_at' => now()->subDay(),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Futuro Oculto',
             'slug' => 'artigo-futuro-oculto',
             'category' => 'Teologia',
             'excerpt' => 'Resumo futuro',
             'content' => 'Conteúdo futuro',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->addDays(2),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Publicado Visível',
             'slug' => 'artigo-publicado-visivel',
             'category' => 'Teologia',
             'excerpt' => 'Resumo visível',
             'content' => 'Conteúdo visível',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subHour(),
         ]);
 
@@ -117,30 +118,30 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Avivamento Bíblico e Oração',
             'slug' => 'avivamento-biblico-oracao',
             'category' => 'Teologia',
             'excerpt' => 'Princípios para a busca do Espírito Santo',
             'content' => 'A oração contínua gera avivamento duradouro.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Liderança Servidora na Igreja Local',
             'slug' => 'lideranca-servidora-igreja',
             'category' => 'Liderança',
             'excerpt' => 'O exemplo cristocêntrico de autoridade',
             'content' => 'Pastores devem liderar com humildade de coração.',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(2),
         ]);
 
@@ -164,35 +165,35 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $authorA = Author::create([
+        $authorA = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        $authorB = Author::create([
+        $authorB = $this->createAuthor([
             'name' => 'Pra. Helena Albuquerque',
             'slug' => 'pra-helena-albuquerque',
         ]);
 
-        Article::create([
-            'author_id' => $authorA->id,
+        Article::factory()->create([
+            'user_id' => $authorA->user_id,
             'title' => 'Artigo do Pastor Roberto',
             'slug' => 'artigo-pr-roberto',
             'category' => 'Teologia',
             'excerpt' => 'Resumo Roberto',
             'content' => 'Conteúdo Roberto',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        Article::create([
-            'author_id' => $authorB->id,
+        Article::factory()->create([
+            'user_id' => $authorB->user_id,
             'title' => 'Artigo da Pastora Helena',
             'slug' => 'artigo-pra-helena',
             'category' => 'Família',
             'excerpt' => 'Resumo Helena',
             'content' => 'Conteúdo Helena',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -209,30 +210,30 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Reflexão sobre Doutrina Bíblica',
             'slug' => 'reflexao-doutrina-biblica',
             'category' => 'Teologia',
             'excerpt' => 'Resumo teológico',
             'content' => 'Conteúdo teológico',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'O Lar Cristão e os Desafios Atuais',
             'slug' => 'lar-cristao-desafios-atuais',
             'category' => 'Família',
             'excerpt' => 'Resumo familiar',
             'content' => 'Conteúdo familiar',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -263,20 +264,20 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
         for ($i = 1; $i <= 11; $i++) {
-            Article::create([
-                'author_id' => $author->id,
+            Article::factory()->create([
+                'user_id' => $author->user_id,
                 'title' => "Artigo sobre Pastoreamento {$i}",
                 'slug' => "artigo-pastoreamento-{$i}",
                 'category' => 'Liderança',
                 'excerpt' => "Resumo {$i}",
                 'content' => "Conteúdo {$i}",
-                'is_published' => true,
+                'status' => 'published',
                 'published_at' => now()->subMinutes(12 - $i),
             ]);
         }
@@ -296,22 +297,22 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
-            'role_title' => 'Presidente da CBN-GO',
+            'pastoral_title' => 'Presidente da CBN-GO',
             'bio' => 'Pastor com mais de 25 anos de ministério pastoral.',
         ]);
 
-        $article = Article::create([
-            'author_id' => $author->id,
+        $article = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'A Importância da Oração no Ministério',
             'slug' => 'importancia-da-oracao-no-ministerio',
             'category' => 'Teologia',
             'excerpt' => 'Sem oração não há autoridade ministerial genuína.',
             'content' => "A oração é a respiração da alma cristã.\n\nSem ela, qualquer esforço eclesiástico é vão.",
             'reading_time' => 7,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(2),
         ]);
 
@@ -332,11 +333,11 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Carlos Eduardo Mendes',
             'slug' => 'pr-carlos-eduardo-mendes',
-            'role_title' => 'Coordenador Teológico do SETEBAN-GO',
-            'avatar_url' => 'https://cbngo.org.br/images/autores/pr-carlos.jpg',
+            'pastoral_title' => 'Coordenador Teológico do SETEBAN-GO',
+            'avatar' => 'https://cbngo.org.br/images/autores/pr-carlos.jpg',
             'bio' => 'Doutor em Teologia e professor de hermenêutica bíblica.',
             'social_links' => [
                 'instagram' => 'https://instagram.com/prcarlosmendes',
@@ -344,15 +345,15 @@ class ArticleTest extends TestCase
             ],
         ]);
 
-        $article = Article::create([
-            'author_id' => $author->id,
+        $article = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Hermenêutica para Tempos de Crise',
             'slug' => 'hermeneutica-para-tempos-de-crise',
             'category' => 'Teologia',
             'excerpt' => 'Como interpretar com fidelidade o texto sagrado.',
             'content' => 'O texto bíblico nunca pode significar o que nunca significou.',
             'reading_time' => 6,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -375,30 +376,30 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        $draft = Article::create([
-            'author_id' => $author->id,
+        $draft = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Rascunho',
             'slug' => 'artigo-rascunho-404',
             'category' => 'Teologia',
             'excerpt' => 'Resumo rascunho',
             'content' => 'Conteúdo rascunho',
-            'is_published' => false,
+            'status' => 'draft',
             'published_at' => now()->subDay(),
         ]);
 
-        $future = Article::create([
-            'author_id' => $author->id,
+        $future = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Futuro',
             'slug' => 'artigo-futuro-404',
             'category' => 'Teologia',
             'excerpt' => 'Resumo futuro',
             'content' => 'Conteúdo futuro',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->addDays(3),
         ]);
 
@@ -427,19 +428,19 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        $article = Article::create([
-            'author_id' => $author->id,
+        $article = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Teologia & Práxis na Igreja Contemporânea',
             'slug' => 'teologia-praxis-igreja-contemporanea',
             'category' => 'Teologia',
             'excerpt' => 'Resumo teológico',
             'content' => 'Conteúdo teológico',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -459,30 +460,30 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        $target = Article::create([
-            'author_id' => $author->id,
+        $target = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Principal em Leitura',
             'slug' => 'artigo-principal-em-leitura',
             'category' => 'Teologia',
             'excerpt' => 'Resumo principal',
             'content' => 'Conteúdo principal',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        $other = Article::create([
-            'author_id' => $author->id,
+        $other = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Outro Artigo Pastoral Recomendado',
             'slug' => 'outro-artigo-pastoral-recomendado',
             'category' => 'Liderança',
             'excerpt' => 'Resumo recomendado',
             'content' => 'Conteúdo recomendado',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(2),
         ]);
 
@@ -500,10 +501,10 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
-            'role_title' => 'Pastor Titular e Presidente da CBN-GO',
+            'pastoral_title' => 'Pastor Titular e Presidente da CBN-GO',
             'bio' => 'Ministro do evangelho e bacharel em Teologia.',
         ]);
 
@@ -522,10 +523,10 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pra. Helena Albuquerque',
             'slug' => 'pra-helena-albuquerque',
-            'role_title' => 'Líder de Missões Estaduais',
+            'pastoral_title' => 'Líder de Missões Estaduais',
         ]);
 
         $response = $this->get(route('autores.show', $author->id));
@@ -533,6 +534,94 @@ class ArticleTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Pra. Helena Albuquerque');
         $response->assertSee('Líder de Missões Estaduais');
+    }
+
+    /**
+     * Valida que nenhum status diferente de "published" (nem publicado sem data) é exibido no portal.
+     */
+    public function test_articles_with_non_published_status_never_appear(): void
+    {
+        $this->withoutVite();
+
+        $author = $this->createAuthor(['slug' => 'autor-com-pendencias']);
+
+        $hidden = [
+            Article::factory()->byAuthor($author)->draft()->create(['title' => 'Oculto Rascunho']),
+            Article::factory()->byAuthor($author)->pendingReview()->create(['title' => 'Oculto Pendente de Revisão']),
+            Article::factory()->byAuthor($author)->archived()->create(['title' => 'Oculto Arquivado']),
+            Article::factory()->byAuthor($author)->create(['title' => 'Oculto Sem Data', 'published_at' => null]),
+        ];
+
+        $index = $this->get(route('artigos.index'));
+        $profile = $this->get(route('autores.show', $author->slug));
+        $home = $this->get(route('home'));
+
+        foreach ($hidden as $article) {
+            $index->assertDontSee($article->title);
+            $profile->assertDontSee($article->title);
+            $home->assertDontSee($article->title);
+            $this->get(route('artigos.show', $article->slug))->assertStatus(404);
+        }
+    }
+
+    /**
+     * Valida que o perfil de um usuário desativado no painel não é exibido nem aparece nos filtros.
+     */
+    public function test_author_of_inactive_user_is_hidden(): void
+    {
+        $this->withoutVite();
+
+        $author = $this->createAuthor(['name' => 'Pr. Usuário Desativado', 'slug' => 'pr-desativado', 'is_active' => false]);
+        Article::factory()->byAuthor($author)->create();
+
+        $this->get(route('autores.show', $author->slug))->assertStatus(404);
+        $this->get(route('autores.show', $author->id))->assertStatus(404);
+        $this->get(route('artigos.index'))->assertDontSee('<option value="pr-desativado"', false);
+    }
+
+    /**
+     * Valida que o título pastoral cai em "Articulista CBN-GO" quando o painel não o preencheu.
+     */
+    public function test_author_role_title_falls_back_when_pastoral_title_is_empty(): void
+    {
+        $this->withoutVite();
+
+        $author = $this->createAuthor(['name' => 'Ir. Marta Lopes', 'pastoral_title' => null]);
+
+        $this->get(route('autores.show', $author->slug))
+            ->assertStatus(200)
+            ->assertSee('Ir. Marta Lopes')
+            ->assertSee('Articulista CBN-GO');
+    }
+
+    /**
+     * Valida que capa do artigo e avatar do autor são montados a partir do MEDIA_URL.
+     */
+    public function test_article_cover_and_author_avatar_use_media_url(): void
+    {
+        $this->withoutVite();
+
+        $author = $this->createAuthor(['avatar' => 'authors/avatars/marta.jpg']);
+        $article = Article::factory()->byAuthor($author)->create(['cover_image' => 'articles/covers/graca.jpg']);
+
+        $this->get(route('artigos.show', $article->slug))
+            ->assertStatus(200)
+            ->assertSee('https://midia.test/articles/covers/graca.jpg')
+            ->assertSee('https://midia.test/authors/avatars/marta.jpg');
+    }
+
+    /**
+     * Valida que artigo de usuário sem perfil de autor ainda é exibido, atribuído à CBN Goiás.
+     */
+    public function test_article_without_author_profile_is_attributed_to_cbn_goias(): void
+    {
+        $this->withoutVite();
+
+        $user = User::factory()->create();
+        $article = Article::factory()->create(['user_id' => $user->id, 'title' => 'Artigo Sem Perfil']);
+
+        $this->get(route('artigos.index'))->assertStatus(200)->assertSee('Artigo Sem Perfil');
+        $this->get(route('artigos.show', $article->slug))->assertStatus(200)->assertSee('CBN Goiás');
     }
 
     /**
@@ -556,32 +645,32 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
-            'role_title' => 'Pastor e Articulista',
+            'pastoral_title' => 'Pastor e Articulista',
             'bio' => 'Biografia detalhada do pastor Roberto.',
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo 1 do Pastor Roberto',
             'slug' => 'artigo-1-pastor-roberto',
             'category' => 'Teologia',
             'excerpt' => 'Resumo 1',
             'content' => 'Conteúdo 1',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo 2 do Pastor Roberto',
             'slug' => 'artigo-2-pastor-roberto',
             'category' => 'Liderança',
             'excerpt' => 'Resumo 2',
             'content' => 'Conteúdo 2',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDays(2),
         ]);
 
@@ -600,30 +689,30 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Rascunho Não Publicado',
             'slug' => 'artigo-rascunho-invisivel',
             'category' => 'Teologia',
             'excerpt' => 'Resumo rascunho',
             'content' => 'Conteúdo rascunho',
-            'is_published' => false,
+            'status' => 'draft',
             'published_at' => now()->subDay(),
         ]);
 
-        Article::create([
-            'author_id' => $author->id,
+        Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Publicado Visível',
             'slug' => 'artigo-publicado-visivel-autor',
             'category' => 'Teologia',
             'excerpt' => 'Resumo visível',
             'content' => 'Conteúdo visível',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -641,19 +730,19 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
         ]);
 
-        $article = Article::create([
-            'author_id' => $author->id,
+        $article = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo Teste Ativo',
             'slug' => 'artigo-teste-ativo',
             'category' => 'Teologia',
             'excerpt' => 'Resumo',
             'content' => 'Conteúdo',
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
@@ -686,22 +775,22 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
-            'role_title' => 'Pastor e Articulista',
+            'pastoral_title' => 'Pastor e Articulista',
         ]);
 
         for ($i = 1; $i <= 12; $i++) {
-            Article::create([
-                'author_id' => $author->id,
+            Article::factory()->create([
+                'user_id' => $author->user_id,
                 'title' => "Artigo de Série {$i}",
                 'slug' => "artigo-de-serie-{$i}",
                 'category' => 'Teologia',
                 'excerpt' => "Resumo {$i}",
                 'content' => "Conteúdo {$i}",
                 'reading_time' => 5,
-                'is_published' => true,
+                'status' => 'published',
                 'published_at' => now()->subMinutes(13 - $i),
             ]);
         }
@@ -729,10 +818,10 @@ class ArticleTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Daniel Pereira',
             'slug' => 'pr-daniel-pereira',
-            'role_title' => 'Pastor e Escritor',
+            'pastoral_title' => 'Pastor e Escritor',
             'bio' => 'Biografia de teste.',
             'social_links' => [
                 'instagram' => 'https://instagram.com/prdaniel',
@@ -742,15 +831,15 @@ class ArticleTest extends TestCase
             ],
         ]);
 
-        $article = Article::create([
-            'author_id' => $author->id,
+        $article = Article::factory()->create([
+            'user_id' => $author->user_id,
             'title' => 'Artigo com Autor com Links Seguros',
             'slug' => 'artigo-com-autor-links-seguros',
             'category' => 'Teologia',
             'excerpt' => 'Resumo',
             'content' => 'Conteúdo',
             'reading_time' => 5,
-            'is_published' => true,
+            'status' => 'published',
             'published_at' => now()->subDay(),
         ]);
 
