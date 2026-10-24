@@ -1,0 +1,138 @@
+<?php
+
+namespace App\Support;
+
+use App\Models\Article;
+use App\Models\News;
+
+class StructuredData
+{
+    /**
+     * Organização publicada em todas as páginas como Organization + ReligiousOrganization.
+     *
+     * @return array<string, mixed>
+     */
+    public static function organization(): array
+    {
+        $contact = (array) config('cbngo.contact');
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => ['Organization', 'ReligiousOrganization'],
+            '@id' => url('/').'#organizacao',
+            'name' => config('cbngo.organization.name'),
+            'alternateName' => config('cbngo.organization.short_name'),
+            'url' => url('/'),
+            'logo' => asset('images/brand/cbn-go.png'),
+            'email' => $contact['email'] ?? null,
+            'telephone' => $contact['phone'] ?? null,
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $contact['address'] ?? null,
+                'addressLocality' => 'Goiânia',
+                'addressRegion' => 'GO',
+                'addressCountry' => 'BR',
+            ],
+            'sameAs' => array_values((array) config('cbngo.social')),
+        ];
+    }
+
+    /**
+     * Notícia publicada como NewsArticle.
+     *
+     * @return array<string, mixed>
+     */
+    public static function newsArticle(News $news): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'NewsArticle',
+            'headline' => $news->title,
+            'description' => Seo::description($news->excerpt),
+            'image' => [Seo::image($news->image_url)],
+            'datePublished' => $news->published_at?->toIso8601String(),
+            'dateModified' => ($news->updated_at ?? $news->published_at)?->toIso8601String(),
+            'articleSection' => $news->category,
+            'mainEntityOfPage' => route('noticias.show', $news->slug),
+            'author' => self::publisherReference(),
+            'publisher' => self::publisherReference(),
+        ];
+    }
+
+    /**
+     * Artigo pastoral publicado como Article, com o articulista como autor.
+     *
+     * @return array<string, mixed>
+     */
+    public static function article(Article $article): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $article->title,
+            'description' => Seo::description($article->excerpt),
+            'image' => [Seo::image($article->author->avatar_url)],
+            'datePublished' => $article->published_at?->toIso8601String(),
+            'dateModified' => ($article->updated_at ?? $article->published_at)?->toIso8601String(),
+            'articleSection' => $article->category,
+            'mainEntityOfPage' => route('artigos.show', $article->slug),
+            'author' => [
+                '@type' => 'Person',
+                'name' => $article->author->name,
+                'url' => route('autores.show', $article->author->slug),
+            ],
+            'publisher' => self::publisherReference(),
+        ];
+    }
+
+    /**
+     * Trilha de navegação como BreadcrumbList.
+     *
+     * @param  array<int, array{name: string, url: string}>  $items
+     * @return array<string, mixed>
+     */
+    public static function breadcrumbs(array $items): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => array_map(fn (array $item, int $index) => [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $item['name'],
+                'item' => $item['url'],
+            ], $items, array_keys($items)),
+        ];
+    }
+
+    /**
+     * Serializa o JSON-LD escapando <, > e & para que conteúdo do banco não feche a tag <script>.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function toJson(array $data): string
+    {
+        return (string) json_encode(
+            $data,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR
+        );
+    }
+
+    /**
+     * Referência resumida à organização usada como publisher.
+     *
+     * @return array<string, mixed>
+     */
+    private static function publisherReference(): array
+    {
+        return [
+            '@type' => 'Organization',
+            '@id' => url('/').'#organizacao',
+            'name' => config('cbngo.organization.name'),
+            'logo' => [
+                '@type' => 'ImageObject',
+                'url' => asset('images/brand/cbn-go.png'),
+            ],
+        ];
+    }
+}

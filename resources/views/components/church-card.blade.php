@@ -28,7 +28,7 @@
             @else
                 <div
                     data-testid="church-logo-fallback"
-                    class="w-14 h-14 rounded-xl bg-cbn-orange/10 border border-cbn-orange/20 text-cbn-orange flex items-center justify-center shrink-0"
+                    class="w-14 h-14 rounded-xl bg-cbn-orange/10 border border-cbn-orange/20 text-cbn-orange-ink-dark flex items-center justify-center shrink-0"
                     aria-hidden="true"
                 >
                     <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -49,7 +49,7 @@
 
                     <a
                         href="{{ route('igrejas', ['cidade' => $church->city]) }}"
-                        class="inline-flex items-center gap-1 text-xs font-semibold text-cbn-orange hover:text-cbn-black transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded px-1.5 py-0.5"
+                        class="inline-flex items-center gap-1 text-xs font-semibold text-cbn-orange-ink hover:text-cbn-black transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded px-1.5 py-0.5"
                     >
                         <span>Filtrar município</span>
                     </a>
@@ -89,7 +89,7 @@
                     href="{{ $church->getGoogleMapsUrl() }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-neutral-300 bg-white text-xs font-semibold text-neutral-800 hover:border-cbn-orange hover:text-cbn-orange transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-neutral-300 bg-white text-xs font-semibold text-neutral-800 hover:border-cbn-orange hover:text-cbn-orange-ink transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
                 >
                     <svg class="w-3.5 h-3.5 text-cbn-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -101,7 +101,7 @@
                     href="{{ $church->getWazeUrl() }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-neutral-300 bg-white text-xs font-semibold text-neutral-800 hover:border-cbn-orange hover:text-cbn-orange transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-neutral-300 bg-white text-xs font-semibold text-neutral-800 hover:border-cbn-orange hover:text-cbn-orange-ink transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
                 >
                     <svg class="w-3.5 h-3.5 text-cbn-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -155,7 +155,7 @@
                     </svg>
                     <a
                         href="mailto:{{ $safeEmail }}"
-                        class="text-neutral-700 hover:text-cbn-orange underline decoration-neutral-300 hover:decoration-cbn-orange transition truncate"
+                        class="text-neutral-700 hover:text-cbn-orange-ink underline decoration-neutral-300 hover:decoration-cbn-orange transition truncate"
                     >
                         {{ $safeEmail }}
                     </a>
@@ -170,7 +170,7 @@
                         href="{{ $url }}"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-cbn-orange hover:text-white text-neutral-700 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
+                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-cbn-orange-ink hover:text-white text-neutral-700 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
                     >
                         <span>{{ ucfirst($network) }}</span>
                     </a>

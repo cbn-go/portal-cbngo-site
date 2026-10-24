@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Diretoria — CBN Goiás')
+@section('title', 'Diretoria')
+@section('meta_description', 'Conheça a diretoria atual da Convenção Batista Nacional do Estado de Goiás: presidência, secretaria, tesouraria, conselho fiscal e coordenadores regionais.')
 
 @section('content')
 <div class="bg-[#FFFDFB]">
@@ -10,7 +11,7 @@
             <div class="max-w-3xl space-y-4">
                 <div class="inline-flex items-center gap-2">
                     <span class="inline-block w-2 h-2 rounded-full bg-cbn-orange" aria-hidden="true"></span>
-                    <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange">Institucional</span>
+                    <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange-ink">Institucional</span>
                 </div>
                 <h1 class="font-brand-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-cbn-black tracking-tight">
                     Diretoria e Órgãos da Convenção

@@ -12,7 +12,7 @@
 
 <article {{ $attributes->merge(['class' => 'group relative flex flex-col justify-between bg-white border border-neutral-200/90 rounded p-7 hover:shadow-md hover:border-neutral-300 transition-all duration-200']) }}>
     <div>
-        <div class="flex items-center justify-between gap-2 text-xs text-neutral-400 mb-4">
+        <div class="flex items-center justify-between gap-2 text-xs text-neutral-500 mb-4">
             <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -33,7 +33,7 @@
             @endif
         </div>
 
-        <h3 class="font-brand-serif font-bold text-xl text-cbn-black leading-snug group-hover:text-cbn-orange transition-colors line-clamp-2">
+        <h3 class="font-brand-serif font-bold text-xl text-cbn-black leading-snug group-hover:text-cbn-orange-ink transition-colors line-clamp-2">
             <a
                 href="{{ route('artigos.show', $slug) }}"
                 class="focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
@@ -60,12 +60,12 @@
                         class="w-10 h-10 rounded-full object-cover border border-neutral-200 group-hover/author:border-cbn-orange transition-colors"
                     />
                 @else
-                    <div class="w-10 h-10 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-xs font-brand-serif shrink-0 group-hover/author:bg-cbn-orange transition-colors">
+                    <div class="w-10 h-10 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-xs font-brand-serif shrink-0 group-hover/author:bg-cbn-orange-ink transition-colors">
                         {{ strtoupper(substr($authorName, 0, 2)) }}
                     </div>
                 @endif
                 <div>
-                    <span class="block text-xs font-bold text-cbn-black leading-tight group-hover/author:text-cbn-orange transition-colors">
+                    <span class="block text-xs font-bold text-cbn-black leading-tight group-hover/author:text-cbn-orange-ink transition-colors">
                         {{ $authorName }}
                     </span>
                     <span class="block text-[11px] text-neutral-500 leading-tight">
@@ -101,7 +101,7 @@
         <a
             href="{{ route('artigos.show', $slug) }}"
             aria-label="Ler artigo: {{ $title }}"
-            class="text-neutral-400 hover:text-cbn-orange transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded p-1"
+            class="text-neutral-500 hover:text-cbn-orange-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded p-1"
         >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>

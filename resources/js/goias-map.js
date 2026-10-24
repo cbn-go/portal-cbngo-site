@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 /**
  * Normaliza o nome do município para comparação resiliente (trim + lowercase).

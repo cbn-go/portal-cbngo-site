@@ -40,7 +40,7 @@
                     src="{{ asset('images/brand/cbn-go.png') }}"
                     alt="CBN | GO — Convenção Batista Nacional Goiás"
                     width="180"
-                    height="69"
+                    height="74"
                     class="h-12 sm:h-14 w-auto"
                 />
             </a>
@@ -66,7 +66,7 @@
             <div class="hidden sm:flex items-center gap-3">
                 <a
                     href="{{ route('igrejas') }}"
-                    class="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-neutral-800 hover:text-cbn-orange px-3 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded-sm"
+                    class="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-neutral-800 hover:text-cbn-orange-ink px-3 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded-sm"
                 >
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 21v-8m0 0V5.5L7 9v4m5-4l5 3.5V13m-10 8h10"/>

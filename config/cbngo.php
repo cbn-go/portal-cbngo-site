@@ -29,4 +29,24 @@ return [
         'youtube' => 'https://youtube.com/@cbngoias',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Identidade e SEO (Issue #8)
+    |--------------------------------------------------------------------------
+    |
+    | Usados pelas metatags (<x-seo>) e pelos dados estruturados Schema.org.
+    |
+    */
+
+    'organization' => [
+        'name' => 'Convenção Batista Nacional do Estado de Goiás',
+        'short_name' => 'CBN Goiás',
+    ],
+
+    'seo' => [
+        'default_description' => 'Portal oficial da Convenção Batista Nacional do Estado de Goiás: notícias, artigos pastorais, diretório de igrejas e informações institucionais da CBN-GO.',
+        // TODO substituir por arte própria de compartilhamento (1200×630).
+        'default_image' => 'images/brand/cbn-go.png',
+    ],
+
 ];

@@ -22,6 +22,10 @@ export default {
                     // 3.2 Institucionais — protagonistas do portal
                     orange: '#F43517',
                     'orange-mid': '#F36529',
+                    // Tom acessível (WCAG AA ≥ 4.5:1 sobre branco) para textos pequenos e botões;
+                    // o #F43517 fica nos detalhes decorativos e sobre fundos escuros (Issue #8).
+                    'orange-ink': '#D42D12',
+                    'orange-ink-dark': '#B02510',
                     gold: '#EFA162',
                     'gold-light': '#F1D6A9',
                     'gold-dark': '#F36529',

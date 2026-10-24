@@ -5,18 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'CBN Goiás') }} - @yield('title', 'Convenção Batista Nacional do Estado de Goiás')</title>
+    @php
+        // Seções curtas (@section('x', $valor)) chegam escapadas; decodificamos para o <x-seo> escapar uma única vez.
+        $seoSection = fn (string $name): string => trim(html_entity_decode($__env->yieldContent($name), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    @endphp
+    <x-seo
+        :title="$seoSection('title')"
+        :description="$seoSection('meta_description')"
+        :type="$seoSection('og_type')"
+        :image="$seoSection('og_image')"
+        :robots="$seoSection('robots')"
+        :published-time="$seoSection('published_time')"
+        :author="$seoSection('author_name')"
+    />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::organization()) !!}</script>
+    @stack('structured-data')
+
+    {{-- Isotipo (chama + globo) extraído do arquivo oficial CBN_ESTADUAIS.ai. --}}
+    <link rel="icon" type="image/png" sizes="64x64" href="{{ asset('images/brand/cbn-go-icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
+    {{-- Pré-carrega as fontes da marca para evitar troca tardia de fonte (CLS). --}}
+    <link rel="preload" href="{{ Vite::asset('resources/assets/fonts/humanist-521.ttf') }}" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="{{ Vite::asset('resources/assets/fonts/baker-signet.ttf') }}" as="font" type="font/ttf" crossorigin>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex flex-col min-h-full font-sans text-cbn-black antialiased bg-[#FFFDFB] selection:bg-cbn-orange-mid/15 selection:text-cbn-black">
     <a
         href="#main-content"
-        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-cbn-orange focus:text-white focus:font-bold focus:rounded-md focus:shadow-lg focus:outline-none"
+        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-cbn-orange-ink focus:text-white focus:font-bold focus:rounded-md focus:shadow-lg focus:outline-none"
     >
         Pular para o conteúdo principal
     </a>
