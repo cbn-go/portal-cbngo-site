@@ -67,18 +67,16 @@
                     href="{{ route('autores.show', $article->author->slug) }}"
                     class="flex items-center gap-3.5 group/author focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded p-1 -m-1"
                 >
-                    @if ($article->author->avatar_url)
-                        <img
-                            src="{{ $article->author->avatar_url }}"
-                            alt="{{ $article->author->name }}"
-                            loading="lazy"
-                            class="w-12 h-12 rounded-full object-cover border border-neutral-200 group-hover/author:border-cbn-orange transition-colors"
+                    <div class="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-neutral-200 group-hover/author:border-cbn-orange transition-colors">
+                        <x-media-image
+                            :path="$article->author->avatar"
+                            :alt="$article->author->name"
+                            variant="thumb"
+                            fallback-variant="avatar"
+                            :fallback-initials="substr($article->author->name, 0, 2)"
+                            class="w-full h-full rounded-full"
                         />
-                    @else
-                        <div class="w-12 h-12 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-sm font-brand-serif shrink-0 group-hover/author:bg-cbn-orange-ink transition-colors">
-                            {{ strtoupper(substr($article->author->name, 0, 2)) }}
-                        </div>
-                    @endif
+                    </div>
                     <div>
                         <span class="block font-bold text-sm text-cbn-black group-hover/author:text-cbn-orange-ink transition-colors">
                             {{ $article->author->name }}
@@ -196,20 +194,17 @@
             </div>
         </header>
 
-        {{-- Imagem de Capa --}}
-        @if ($article->cover_image_url)
-            <figure class="mb-10 rounded-lg overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-sm">
-                <img
-                    src="{{ $article->cover_image_url }}"
-                    alt="{{ $article->title }}"
-                    width="1200"
-                    height="500"
-                    fetchpriority="high"
-                    decoding="async"
-                    class="w-full h-auto max-h-[500px] object-cover"
-                />
-            </figure>
-        @endif
+        {{-- Imagem de Capa ou Placeholder Institucional --}}
+        <figure class="mb-10 rounded-lg overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-sm">
+            <x-media-image
+                :path="$article->cover_image"
+                :alt="$article->title"
+                variant="cover"
+                fallback-variant="cover"
+                fetchpriority="high"
+                class="w-full h-auto max-h-[500px]"
+            />
+        </figure>
 
         {{-- Conteúdo HTML do RichEditor do painel, sanitizado novamente no portal (XSS Guard) --}}
         <div class="prose prose-lg max-w-none text-neutral-800 text-lg leading-relaxed font-brand-sans space-y-6">
@@ -220,18 +215,16 @@
         @if ($article->author)
         <div class="mt-16 pt-10 border-t border-neutral-200">
             <div class="bg-neutral-50 border border-neutral-200/90 rounded-xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start">
-                @if ($article->author->avatar_url)
-                    <img
-                        src="{{ $article->author->avatar_url }}"
-                        alt="{{ $article->author->name }}"
-                        loading="lazy"
-                        class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-white shadow-sm shrink-0"
+                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-white shadow-sm shrink-0">
+                    <x-media-image
+                        :path="$article->author->avatar"
+                        :alt="$article->author->name"
+                        variant="thumb"
+                        fallback-variant="avatar"
+                        :fallback-initials="substr($article->author->name, 0, 2)"
+                        class="w-full h-full rounded-full"
                     />
-                @else
-                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-2xl font-brand-serif shadow-sm shrink-0">
-                        {{ strtoupper(substr($article->author->name, 0, 2)) }}
-                    </div>
-                @endif
+                </div>
 
                 <div class="space-y-3 flex-1">
                     <div>

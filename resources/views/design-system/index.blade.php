@@ -189,6 +189,29 @@
             <h3 class="text-lg font-bold text-slate-900 font-brand-serif">Paginação (&lt;x-pagination&gt;)</h3>
             <x-pagination :currentPage="2" :totalPages="5" prevUrl="?page=1" nextUrl="?page=3" />
         </div>
+
+        <!-- Mídia e Placeholders do Design System (Issue #20) -->
+        <div class="space-y-6">
+            <h3 class="text-lg font-bold text-slate-900 font-brand-serif">Placeholders e Imagens Responsivas (&lt;x-media-placeholder&gt; / &lt;x-media-image&gt;)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                <div class="space-y-2">
+                    <span class="text-xs font-semibold text-slate-600 block">Variante Card (16:9)</span>
+                    <x-media-placeholder variant="card" class="rounded-lg overflow-hidden" />
+                </div>
+                <div class="space-y-2">
+                    <span class="text-xs font-semibold text-slate-600 block">Variante Cover (21:9)</span>
+                    <x-media-placeholder variant="cover" class="rounded-lg overflow-hidden" />
+                </div>
+                <div class="space-y-2 flex flex-col items-center">
+                    <span class="text-xs font-semibold text-slate-600 block">Variante Avatar (Círculo)</span>
+                    <x-media-placeholder variant="avatar" initials="PR" class="w-16 h-16 text-lg" />
+                </div>
+                <div class="space-y-2 flex flex-col items-center">
+                    <span class="text-xs font-semibold text-slate-600 block">Variante Logo (Quadrado)</span>
+                    <x-media-placeholder variant="logo" class="w-16 h-16" />
+                </div>
+            </div>
+        </div>
     </section>
 </div>
 @endsection

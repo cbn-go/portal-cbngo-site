@@ -42,4 +42,52 @@ class Media
             array_map(fn (mixed $path): ?string => is_string($path) ? self::url($path) : null, $paths ?? []),
         ));
     }
+
+    /**
+     * Retorna a URL da variante WebP para o tamanho especificado (thumb, card, cover).
+     *
+     * Regra do painel: para caminho relativo "news/featured/abc.jpg", a variante é "news/featured/abc-{size}.webp".
+     * Documentos (PDF, DOC), URLs externas completas, caminhos inseguros ou tamanhos inválidos retornam null.
+     */
+    public static function variant(?string $path, string $size): ?string
+    {
+        $path = trim((string) $path);
+
+        if ($path === '' || ! in_array($size, ['thumb', 'card', 'cover'], true)) {
+            return null;
+        }
+
+        // Não aplica variante a URLs absolutas (ex: externas) ou esquemas inseguros
+        if (preg_match('/^[a-z][a-z0-9+.\-]*:/i', $path) || str_starts_with($path, '//')) {
+            return null;
+        }
+
+        // Verifica se é uma extensão de imagem suportada
+        if (! preg_match('/\.(jpe?g|png|webp|gif|bmp|tiff)$/i', $path)) {
+            return null;
+        }
+
+        $webpPath = preg_replace('/\.[a-zA-Z0-9]+$/', "-{$size}.webp", $path);
+
+        return self::url($webpPath);
+    }
+
+    /**
+     * Monta a string do atributo srcset contendo as variantes WebP disponíveis com seus descritores de largura.
+     *
+     * @param  array<string, string>  $sizesMap  Tamanho => descritor (ex: ['thumb' => '400w', 'card' => '800w', 'cover' => '1600w'])
+     */
+    public static function srcset(?string $path, array $sizesMap = ['thumb' => '400w', 'card' => '800w', 'cover' => '1600w']): ?string
+    {
+        $sources = [];
+
+        foreach ($sizesMap as $size => $descriptor) {
+            $variantUrl = self::variant($path, (string) $size);
+            if ($variantUrl !== null) {
+                $sources[] = "{$variantUrl} {$descriptor}";
+            }
+        }
+
+        return count($sources) > 0 ? implode(', ', $sources) : null;
+    }
 }

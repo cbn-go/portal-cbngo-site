@@ -29,19 +29,15 @@
         <div class="bg-white border border-neutral-200/90 rounded-2xl p-6 sm:p-10 shadow-sm mb-12 sm:mb-16">
             <div class="flex flex-col md:flex-row gap-6 sm:gap-8 items-start">
                 {{-- Avatar ou Monograma com Fallback --}}
-                <div class="shrink-0">
-                    @if ($author->avatar_url)
-                        <img
-                            src="{{ $author->avatar_url }}"
-                            alt="{{ $author->name }}"
-                            loading="lazy"
-                            class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow-md ring-1 ring-neutral-200"
-                        />
-                    @else
-                        <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-cbn-black text-white flex items-center justify-center font-bold text-3xl sm:text-4xl font-brand-serif shadow-md ring-1 ring-neutral-200">
-                            {{ strtoupper(substr($author->name, 0, 2)) }}
-                        </div>
-                    @endif
+                <div class="shrink-0 w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white shadow-md ring-1 ring-neutral-200">
+                    <x-media-image
+                        :path="$author->avatar"
+                        :alt="$author->name"
+                        variant="thumb"
+                        fallback-variant="avatar"
+                        :fallback-initials="substr($author->name, 0, 2)"
+                        class="w-full h-full rounded-full"
+                    />
                 </div>
 
                 {{-- Dados e Biografia --}}

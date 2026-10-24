@@ -18,24 +18,15 @@
     <div class="space-y-5">
         {{-- Topo do Card: Logotipo, Cidade e Nome da Congregação --}}
         <div class="flex items-start gap-4">
-            @if (! empty($church->logo_url))
-                <img
-                    src="{{ $church->logo_url }}"
-                    alt="Logotipo {{ $church->name }}"
-                    class="w-14 h-14 rounded-xl object-cover border border-neutral-200 shrink-0 bg-neutral-50"
-                    loading="lazy"
+            <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-neutral-200 bg-neutral-50" data-testid="church-logo-fallback">
+                <x-media-image
+                    :path="$church->logo"
+                    :alt="'Logotipo ' . $church->name"
+                    variant="thumb"
+                    fallback-variant="logo"
+                    class="w-full h-full object-cover"
                 />
-            @else
-                <div
-                    data-testid="church-logo-fallback"
-                    class="w-14 h-14 rounded-xl bg-cbn-orange/10 border border-cbn-orange/20 text-cbn-orange-ink-dark flex items-center justify-center shrink-0"
-                    aria-hidden="true"
-                >
-                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 3v3m0 0l-7 5v10h14V11l-7-5zm-3 15v-5a3 3 0 016 0v5" />
-                    </svg>
-                </div>
-            @endif
+            </div>
 
             <div class="min-w-0 flex-1">
                 <div class="flex flex-wrap items-center gap-2 mb-1.5">

@@ -84,4 +84,58 @@ class MediaTest extends TestCase
             'instagram' => 'https://instagram.com/cbngo',
         ], $author->getSafeSocialLinks());
     }
+
+    /**
+     * Valida que Media::variant gera as URLs das variantes WebP nos tamanhos thumb, card e cover.
+     */
+    public function test_media_variant_generates_webp_urls_for_thumb_card_and_cover(): void
+    {
+        config(['media.url' => 'https://midia.cbngo.org.br']);
+
+        $this->assertSame(
+            'https://midia.cbngo.org.br/news/featured/abc-thumb.webp',
+            Media::variant('news/featured/abc.jpg', 'thumb')
+        );
+        $this->assertSame(
+            'https://midia.cbngo.org.br/news/featured/abc-card.webp',
+            Media::variant('/news/featured/abc.png', 'card')
+        );
+        $this->assertSame(
+            'https://midia.cbngo.org.br/articles/covers/foto.teste-cover.webp',
+            Media::variant('articles/covers/foto.teste.jpeg', 'cover')
+        );
+    }
+
+    /**
+     * Valida que Media::variant retorna null para caminhos vazios, inseguros, não-imagens ou URLs externas.
+     */
+    public function test_media_variant_returns_null_for_empty_unsafe_or_external_urls(): void
+    {
+        config(['media.url' => 'https://midia.cbngo.org.br']);
+
+        $this->assertNull(Media::variant(null, 'card'));
+        $this->assertNull(Media::variant('', 'card'));
+        $this->assertNull(Media::variant('javascript:alert(1)', 'thumb'));
+        $this->assertNull(Media::variant('https://cdn.example.com/banner.jpg', 'card'));
+        $this->assertNull(Media::variant('documents/files/estatuto.pdf', 'card'));
+        $this->assertNull(Media::variant('news/featured/abc.jpg', 'tamanho_invalido'));
+    }
+
+    /**
+     * Valida que Media::srcset monta a lista de variantes WebP com descritores de largura.
+     */
+    public function test_media_srcset_generates_srcset_string_with_descriptors(): void
+    {
+        config(['media.url' => 'https://midia.cbngo.org.br']);
+
+        $srcset = Media::srcset('news/featured/abc.jpg');
+
+        $this->assertSame(
+            'https://midia.cbngo.org.br/news/featured/abc-thumb.webp 400w, https://midia.cbngo.org.br/news/featured/abc-card.webp 800w, https://midia.cbngo.org.br/news/featured/abc-cover.webp 1600w',
+            $srcset
+        );
+
+        $this->assertNull(Media::srcset(null));
+        $this->assertNull(Media::srcset('https://external.com/photo.jpg'));
+    }
 }

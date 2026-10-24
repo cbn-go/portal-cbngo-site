@@ -60,25 +60,37 @@ class SitemapController extends Controller
     /**
      * Monta as entradas do sitemap.
      *
-     * @return array<int, array{loc: string, lastmod: string|null}>
+     * @return array<int, array{loc: string, lastmod: string|null, image: string|null}>
      */
     private function entries(): array
     {
-        $entries = array_map(fn (string $route) => ['loc' => route($route), 'lastmod' => null], self::STATIC_ROUTES);
+        $entries = array_map(fn (string $route) => ['loc' => route($route), 'lastmod' => null, 'image' => null], self::STATIC_ROUTES);
 
-        News::published()->latest('published_at')->get(['slug', 'updated_at'])
+        News::published()->latest('published_at')->get(['slug', 'featured_image', 'updated_at'])
             ->each(function (News $news) use (&$entries) {
-                $entries[] = ['loc' => route('noticias.show', $news->slug), 'lastmod' => $news->updated_at?->toAtomString()];
+                $entries[] = [
+                    'loc' => route('noticias.show', $news->slug),
+                    'lastmod' => $news->updated_at?->toAtomString(),
+                    'image' => $news->featured_image_url,
+                ];
             });
 
-        Article::published()->latest('published_at')->get(['slug', 'updated_at'])
+        Article::published()->latest('published_at')->get(['slug', 'cover_image', 'updated_at'])
             ->each(function (Article $article) use (&$entries) {
-                $entries[] = ['loc' => route('artigos.show', $article->slug), 'lastmod' => $article->updated_at?->toAtomString()];
+                $entries[] = [
+                    'loc' => route('artigos.show', $article->slug),
+                    'lastmod' => $article->updated_at?->toAtomString(),
+                    'image' => $article->cover_image_url,
+                ];
             });
 
-        Author::active()->whereIn('user_id', Article::published()->select('user_id'))->orderBy('slug')->get(['id', 'user_id', 'slug', 'updated_at'])
+        Author::active()->whereIn('user_id', Article::published()->select('user_id'))->orderBy('slug')->get(['id', 'user_id', 'slug', 'avatar', 'updated_at'])
             ->each(function (Author $author) use (&$entries) {
-                $entries[] = ['loc' => route('autores.show', $author->slug), 'lastmod' => $author->updated_at?->toAtomString()];
+                $entries[] = [
+                    'loc' => route('autores.show', $author->slug),
+                    'lastmod' => $author->updated_at?->toAtomString(),
+                    'image' => $author->avatar_url,
+                ];
             });
 
         return $entries;
