@@ -1,4 +1,10 @@
-<footer class="w-full bg-neutral-950 text-neutral-300 border-t border-neutral-800" id="contato">
+@php
+    $contact = config('cbngo.contact');
+    $social = config('cbngo.social');
+    $whatsappUrl = \App\Support\ContactLinks::whatsapp((string) $contact['whatsapp']);
+@endphp
+
+<footer class="w-full bg-neutral-950 text-neutral-300 border-t border-neutral-800">
     <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 pb-12 border-b border-neutral-800/80">
             <div class="lg:col-span-2 space-y-4">
@@ -21,7 +27,7 @@
                     </span>
                     <div class="flex items-center gap-3">
                         <a
-                            href="https://instagram.com/cbngoias"
+                            href="{{ $social['instagram'] }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="Instagram da CBN Goiás"
@@ -33,7 +39,7 @@
                             <span class="sr-only">Instagram</span>
                         </a>
                         <a
-                            href="https://facebook.com/cbngoias"
+                            href="{{ $social['facebook'] }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="Facebook da CBN Goiás"
@@ -45,7 +51,7 @@
                             <span class="sr-only">Facebook</span>
                         </a>
                         <a
-                            href="https://youtube.com/@cbngoias"
+                            href="{{ $social['youtube'] }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="Canal do YouTube da CBN Goiás"
@@ -57,7 +63,7 @@
                             <span class="sr-only">YouTube</span>
                         </a>
                         <a
-                            href="https://wa.me/5562999999999"
+                            href="{{ $whatsappUrl }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="WhatsApp da CBN Goiás"
@@ -117,17 +123,20 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <span>Sede Administrativa CBN-GO<br>Goiânia, Goiás — Brasil</span>
+                        <span>{{ $contact['address'] }}</span>
                     </p>
                     <p class="flex items-center gap-2">
                         <svg class="w-4 h-4 text-cbn-orange shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
-                        <a href="mailto:contato@cbngo.com.br" class="hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded transition">contato@cbngo.com.br</a>
+                        <a href="mailto:{{ $contact['email'] }}" class="hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded transition">{{ $contact['email'] }}</a>
                     </p>
                     <p class="text-xs text-neutral-500 pt-1">
-                        Atendimento: Seg. a Sex. das 08h às 17h
+                        Atendimento: {{ $contact['office_hours'] }}
                     </p>
+                    <a href="{{ route('contato') }}" class="inline-block text-xs font-semibold text-cbn-orange hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">
+                        Todos os canais de contato &rarr;
+                    </a>
                 </address>
             </div>
         </div>

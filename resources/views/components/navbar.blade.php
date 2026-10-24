@@ -7,7 +7,7 @@
         request()->routeIs('noticias.*') => 'noticias',
         request()->routeIs('artigos.*') || request()->routeIs('autores.*') => 'artigos',
         request()->routeIs('igrejas*') => 'igrejas',
-        request()->routeIs('quem-somos*') => 'quem-somos',
+        request()->routeIs('quem-somos*') || request()->routeIs('diretoria*') => 'quem-somos',
         request()->routeIs('contato*') => 'contato',
         request()->routeIs('home') => 'home',
         default => null,
