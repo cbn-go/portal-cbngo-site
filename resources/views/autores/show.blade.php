@@ -132,7 +132,7 @@
                             :slug="$article->slug"
                             :author-name="$author->name"
                             :author-slug="$author->slug"
-                            :author-avatar="$author->avatar_url"
+                            :author-avatar="$author->avatar"
                             :category="$article->category"
                             :reading-time="$article->reading_time"
                             :excerpt="$article->excerpt"

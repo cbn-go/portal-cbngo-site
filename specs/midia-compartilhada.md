@@ -5,7 +5,7 @@
 - **Fase WDLC:** Integração Painel ↔ Portal Público (Mídia Compartilhada)
 - **Metodologia:** Spec-Driven Development (SDD) com ciclo TDD Mandatório
 - **Data:** 24 de Outubro de 2026
-- **Status:** Proposta para Aprovação
+- **Status:** Aprovada e Implementada
 
 ---
 
@@ -122,14 +122,18 @@ Renderização:
 
 1. **Uploads recém-feitos onde as variantes ainda não terminaram de processar no painel:**
    O atributo `src` do `<img>` aponta sempre para o arquivo original gerado imediatamente (`Media::url($path)`). O navegador usará `src` como fallback caso o srcset ainda resulte em 404 momentâneo ou não suporte WebP.
-2. **Caminhos com múltiplas extensões ou sem extensão (ex.: `path/to/image.min.jpg`):**
+2. **Caminhos absolutos do próprio storage de mídia (`MEDIA_URL/...`):**
+   `Media::variant()` e `Media::srcset()` reconhecem URLs que começam com `config('media.url')` e extraem o caminho relativo interno para gerar corretamente as variantes WebP.
+3. **Caminhos com múltiplas extensões ou sem extensão (ex.: `path/to/image.min.jpg`):**
    O regex de substituição deve capturar a última extensão após o último ponto: `preg_replace('/\.[a-zA-Z0-9]+$/', "-{$size}.webp", $path)`.
-3. **Valores nulos, vazios ou strings maliciosas (`javascript:...`, `data:...`):**
+4. **Valores nulos, vazios ou strings maliciosas (`javascript:...`, `data:...`):**
    `Media::variant()` e `Media::srcset()` retornam estritamente `null`.
-4. **URLs absolutas completas de servidores externos:**
+5. **URLs absolutas completas de servidores externos:**
    Se uma imagem já possuir URL externa absoluta (ex.: `https://images.unsplash.com/...`), variantes não são calculadas e `Media::variant()` retorna null; `x-media-image` exibe a imagem sem `srcset` quebrado.
-5. **Artigo ou notícia sem imagem:**
+6. **Artigo ou notícia sem imagem:**
    Não exibe imagem quebrada; exibe `x-media-placeholder` com padrão institucional consistente e não emite tag `image:image` no `sitemap.xml`.
+7. **LCP e prioridade de carregamento:**
+   Imagens de capa principais no detalhe de notícia e artigo utilizam `loading="eager"` e `fetchpriority="high"` para evitar atrasos na métrica LCP.
 
 ---
 

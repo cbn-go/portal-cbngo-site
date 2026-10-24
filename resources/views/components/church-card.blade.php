@@ -18,12 +18,13 @@
     <div class="space-y-5">
         {{-- Topo do Card: Logotipo, Cidade e Nome da Congregação --}}
         <div class="flex items-start gap-4">
-            <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-neutral-200 bg-neutral-50" data-testid="church-logo-fallback">
+            <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-neutral-200 bg-neutral-50">
                 <x-media-image
                     :path="$church->logo"
                     :alt="'Logotipo ' . $church->name"
                     variant="thumb"
                     fallback-variant="logo"
+                    data-testid="church-logo-fallback"
                     class="w-full h-full object-cover"
                 />
             </div>

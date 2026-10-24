@@ -101,7 +101,7 @@
                         :slug="$news->slug"
                         :category="$news->category"
                         :date="$news->published_at"
-                        :image="$news->featured_image_url"
+                        :image="$news->featured_image"
                         :excerpt="$news->excerpt"
                     />
                 @endforeach
@@ -148,7 +148,7 @@
                         :slug="$article->slug"
                         :author-name="$article->author?->name ?? 'CBN Goiás'"
                         :author-slug="$article->author?->slug"
-                        :author-avatar="$article->author?->avatar_url"
+                        :author-avatar="$article->author?->avatar"
                         :category="$article->category ?? null"
                         :reading-time="$article->reading_time"
                         :excerpt="$article->excerpt"

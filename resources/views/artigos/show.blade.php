@@ -201,6 +201,7 @@
                 :alt="$article->title"
                 variant="cover"
                 fallback-variant="cover"
+                loading="eager"
                 fetchpriority="high"
                 class="w-full h-auto max-h-[500px]"
             />
@@ -336,7 +337,7 @@
                         :slug="$related->slug"
                         :author-name="$related->author?->name ?? 'CBN Goiás'"
                         :author-slug="$related->author?->slug"
-                        :author-avatar="$related->author?->avatar_url"
+                        :author-avatar="$related->author?->avatar"
                         :category="$related->category"
                         :reading-time="$related->reading_time"
                         :excerpt="$related->excerpt"

@@ -354,11 +354,21 @@ class SeoTest extends TestCase
             'published_at' => now()->subDay(),
         ]);
 
+        $author = $this->createAuthor(['avatar' => 'authors/avatars/autor.jpg', 'slug' => 'autor-com-avatar']);
+        $article = Article::factory()->byAuthor($author)->create([
+            'slug' => 'artigo-com-capa',
+            'cover_image' => 'articles/covers/capa.jpg',
+            'status' => 'published',
+            'published_at' => now()->subDay(),
+        ]);
+
         $response = $this->get('/sitemap.xml');
 
         $response->assertStatus(200);
         $response->assertSee('xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"', false);
         $response->assertSee('<image:loc>https://midia.cbngo.org.br/news/featured/foto1.jpg</image:loc>', false);
+        $response->assertSee('<image:loc>https://midia.cbngo.org.br/articles/covers/capa.jpg</image:loc>', false);
+        $response->assertSee('<image:loc>https://midia.cbngo.org.br/authors/avatars/autor.jpg</image:loc>', false);
 
         $content = $response->getContent();
         // A url da notícia sem foto não deve ter tag image:image no bloco da tag url

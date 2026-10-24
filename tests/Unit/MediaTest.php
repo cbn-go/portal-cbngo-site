@@ -86,7 +86,7 @@ class MediaTest extends TestCase
     }
 
     /**
-     * Valida que Media::variant gera as URLs das variantes WebP nos tamanhos thumb, card e cover.
+     * Valida que Media::variant gera as URLs das variantes WebP nos tamanhos thumb, card e cover, inclusive a partir de URLs do próprio MEDIA_URL.
      */
     public function test_media_variant_generates_webp_urls_for_thumb_card_and_cover(): void
     {
@@ -103,6 +103,12 @@ class MediaTest extends TestCase
         $this->assertSame(
             'https://midia.cbngo.org.br/articles/covers/foto.teste-cover.webp',
             Media::variant('articles/covers/foto.teste.jpeg', 'cover')
+        );
+
+        // Suporte para URL já prefixada com MEDIA_URL
+        $this->assertSame(
+            'https://midia.cbngo.org.br/news/featured/abc-card.webp',
+            Media::variant('https://midia.cbngo.org.br/news/featured/abc.jpg', 'card')
         );
     }
 

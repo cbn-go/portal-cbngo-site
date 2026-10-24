@@ -104,7 +104,7 @@
                         :slug="$article->slug"
                         :author-name="$article->author?->name ?? 'CBN Goiás'"
                         :author-slug="$article->author?->slug"
-                        :author-avatar="$article->author?->avatar_url"
+                        :author-avatar="$article->author?->avatar"
                         :category="$article->category"
                         :reading-time="$article->reading_time"
                         :excerpt="$article->excerpt"

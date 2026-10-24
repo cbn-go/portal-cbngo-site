@@ -5,6 +5,13 @@ namespace App\Support;
 class Media
 {
     /**
+     * Tamanhos de variantes WebP gerados pelo painel administrativo.
+     *
+     * @var array<int, string>
+     */
+    public const SIZES = ['thumb', 'card', 'cover'];
+
+    /**
      * Monta a URL pública de um arquivo do storage de mídia compartilhado com o painel.
      *
      * O painel salva caminhos relativos (ex.: news/featured/abc.jpg); a URL final é MEDIA_URL/{caminho}.
@@ -53,13 +60,22 @@ class Media
     {
         $path = trim((string) $path);
 
-        if ($path === '' || ! in_array($size, ['thumb', 'card', 'cover'], true)) {
+        if ($path === '' || ! in_array($size, self::SIZES, true)) {
             return null;
         }
 
-        // Não aplica variante a URLs absolutas (ex: externas) ou esquemas inseguros
-        if (preg_match('/^[a-z][a-z0-9+.\-]*:/i', $path) || str_starts_with($path, '//')) {
+        if (str_starts_with($path, '//')) {
             return null;
+        }
+
+        // Se for URL absoluta, só aceita se for do próprio storage de mídia (MEDIA_URL)
+        if (preg_match('/^[a-z][a-z0-9+.\-]*:/i', $path)) {
+            $mediaBaseUrl = rtrim((string) config('media.url'), '/');
+            if ($mediaBaseUrl !== '' && str_starts_with($path, $mediaBaseUrl.'/')) {
+                $path = substr($path, strlen($mediaBaseUrl) + 1);
+            } else {
+                return null;
+            }
         }
 
         // Verifica se é uma extensão de imagem suportada

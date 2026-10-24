@@ -2,19 +2,15 @@
     'member',
 ])
 
-@php
-    /** @var \App\Models\BoardMember $member */
-    $photoUrl = $member->getSafePhotoUrl();
-@endphp
-
 <article class="rounded-xl border border-neutral-200/90 bg-white p-6 shadow-sm hover:border-neutral-300 transition text-center flex flex-col items-center">
-    <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow ring-1 ring-neutral-200 bg-neutral-50 shrink-0" data-testid="board-member-initials">
+    <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow ring-1 ring-neutral-200 bg-neutral-50 shrink-0">
         <x-media-image
             :path="$member->photo"
             :alt="'Foto de ' . $member->name"
             variant="thumb"
             fallback-variant="avatar"
             :fallback-initials="$member->getInitials()"
+            data-testid="board-member-initials"
             class="w-full h-full rounded-full"
         />
     </div>

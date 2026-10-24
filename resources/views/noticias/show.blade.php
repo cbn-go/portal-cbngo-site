@@ -189,6 +189,7 @@
                 :alt="$news->title"
                 variant="cover"
                 fallback-variant="cover"
+                loading="eager"
                 fetchpriority="high"
                 class="w-full h-auto max-h-[500px]"
             />
@@ -250,10 +251,10 @@
                             class="group relative aspect-square rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange transition"
                             aria-label="Ver foto {{ $index + 1 }} em tamanho ampliado"
                         >
-                            <img
-                                src="{{ $photoUrl }}"
-                                alt="Foto {{ $index + 1 }} - {{ $news->title }}"
-                                loading="lazy"
+                            <x-media-image
+                                :path="$photoUrl"
+                                :alt="'Foto ' . ($index + 1) . ' - ' . $news->title"
+                                variant="card"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                             <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -391,7 +392,7 @@
                         :slug="$related->slug"
                         :category="$related->category"
                         :date="$related->published_at"
-                        :image="$related->featured_image_url"
+                        :image="$related->featured_image"
                         :excerpt="$related->excerpt"
                     />
                 @endforeach

@@ -1,7 +1,6 @@
 @props([
     'variant' => 'card', // card | cover | avatar | logo
     'initials' => null,
-    'label' => null,
 ])
 
 @php
