@@ -320,6 +320,47 @@ class NewsTest extends TestCase
     }
 
     /**
+     * Valida que notícia vinculada a uma igreja inativa permanece publicada com fallback para CBN Goiás
+     * e não vaza o nome da igreja inativa nem responde aos filtros da igreja inativa.
+     */
+    public function test_news_of_inactive_church_falls_back_to_cbn_goias_and_is_not_filtered_by_inactive_church(): void
+    {
+        $this->withoutVite();
+
+        $inactiveChurch = Church::factory()->create([
+            'name' => 'IBN Congregação Inativa',
+            'slug' => 'ibn-congregacao-inativa',
+            'city' => 'Porangatu',
+            'is_active' => false,
+        ]);
+
+        $news = News::factory()->forChurch($inactiveChurch)->create([
+            'title' => 'Notícia de Congregação Desativada',
+            'slug' => 'noticia-congregacao-desativada',
+        ]);
+
+        $this->get(route('noticias.index'))
+            ->assertStatus(200)
+            ->assertSee('Notícia de Congregação Desativada')
+            ->assertSee('CBN Goiás')
+            ->assertDontSee('IBN Congregação Inativa');
+
+        $this->get(route('noticias.show', $news->slug))
+            ->assertStatus(200)
+            ->assertSee('Notícia de Congregação Desativada')
+            ->assertSee('CBN Goiás')
+            ->assertDontSee('IBN Congregação Inativa');
+
+        $this->get(route('noticias.index', ['igreja' => 'ibn-congregacao-inativa']))
+            ->assertStatus(200)
+            ->assertDontSee('Notícia de Congregação Desativada');
+
+        $this->get(route('noticias.index', ['cidade' => 'Porangatu']))
+            ->assertStatus(200)
+            ->assertDontSee('Notícia de Congregação Desativada');
+    }
+
+    /**
      * Valida que o HTML do RichEditor é renderizado e sanitizado como defesa em profundidade.
      */
     public function test_news_show_renders_sanitized_html_content(): void

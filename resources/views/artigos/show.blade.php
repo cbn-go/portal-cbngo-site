@@ -5,7 +5,7 @@
 @section('og_type', 'article')
 @section('og_image', $article->cover_image_url ?? $article->author?->avatar_url ?? '')
 @section('published_time', $article->published_at?->toIso8601String() ?? '')
-@section('author_name', $article->author->name ?? \App\Models\News::STATE_PUBLISHER)
+@section('author_name', $article->author?->name ?? \App\Models\News::STATE_PUBLISHER)
 
 @push('structured-data')
     <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::article($article)) !!}</script>
@@ -341,9 +341,9 @@
                     <x-article-card
                         :title="$related->title"
                         :slug="$related->slug"
-                        :author-name="$related->author->name ?? 'CBN Goiás'"
-                        :author-slug="$related->author->slug ?? null"
-                        :author-avatar="$related->author->avatar_url ?? null"
+                        :author-name="$related->author?->name ?? 'CBN Goiás'"
+                        :author-slug="$related->author?->slug"
+                        :author-avatar="$related->author?->avatar_url"
                         :category="$related->category"
                         :reading-time="$related->reading_time"
                         :excerpt="$related->excerpt"

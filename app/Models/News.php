@@ -90,13 +90,13 @@ class News extends Model
     ];
 
     /**
-     * Igreja emissora; nula para notícias da CBN-GO Estadual.
+     * Igreja emissora ativa; nula para notícias da CBN-GO Estadual ou igrejas desativadas.
      *
      * @return BelongsTo<Church, $this>
      */
     public function church(): BelongsTo
     {
-        return $this->belongsTo(Church::class);
+        return $this->belongsTo(Church::class)->where('is_active', true);
     }
 
     /**
@@ -137,7 +137,7 @@ class News extends Model
      */
     public function publisherName(): string
     {
-        return $this->church->name ?? self::STATE_PUBLISHER;
+        return $this->church?->name ?? self::STATE_PUBLISHER;
     }
 
     /**

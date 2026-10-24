@@ -55,16 +55,18 @@ status = 'published' AND published_at IS NOT NULL AND published_at <= NOW()
 |---|---|---|
 | `News` (`news`) | `image_url` | `featured_image` → accessor `featured_image_url` |
 | | `gallery_images` | `gallery` → accessor `gallery_urls` |
-| | `church_name` / `city` | relação `church()`. Nula = "CBN Goiás" (`publisherName()` / `publisherCity()`) |
-| | `is_published` | `status` + `published_at` |
-| `Article` (`articles`) | `author_id` → `authors.id` | `user_id` → `author_profiles.user_id` (`author()`) |
+| | `church_name` / `city` | relação `church()` restrita a igrejas ativas (`is_active = 1`). Nula ou inativa = "CBN Goiás" (`publisherName()` / `publisherCity()`, com acesso nullsafe `?->`) |
+| | `is_published` | `status` (`News::STATUS_PUBLISHED`) + `published_at` |
+| `Article` (`articles`) | `author_id` → `authors.id` | `user_id` → `author_profiles.user_id` (`author()` restrita a `users.is_active = 1`, com acesso nullsafe `?->` nas views e constante própria `Article::STATUS_PUBLISHED`) |
 | | — | `cover_image` → accessor `cover_image_url` |
 | `Author` (`author_profiles` + `users`) | `name` | accessor a partir de `users.name` |
 | | `role_title` | accessor `pastoral_title`, ou "Articulista CBN-GO" quando vazio |
 | | `avatar_url` | accessor a partir de `avatar` |
+| | `social_links` | `getSafeSocialLinks()` aceita `http(s)` e `mailto:` apenas quando o endereço passa em `FILTER_VALIDATE_EMAIL` |
 | | — | escopo `active()`: só perfis de usuários com `users.is_active = 1` |
 | `Church` (`churches`) | `logo_url` | `logo` → accessor `logo_url` |
 | | `address` | `getFullAddress()` monta `address, number – complement` |
+| | `phone` | exibe `phone` e `cellphone` (quando preenchidos) no card da igreja |
 | `UrgentNotice` (`notices`) | `message` | accessor: `content` sem HTML (o painel não sanitiza avisos) |
 | | `link` / `link_text` | `action_url` (só `http(s)` ou caminho relativo) / `action_label`, ou "Saiba mais" quando vazio |
 | | `type` | `priority`: `normal → info`, `high → warning`, `urgent → critical` |
@@ -95,10 +97,10 @@ Com mais de um vigente, a home exibe o de maior prioridade (`urgent` > `high` > 
 `App\Support\Html::sanitize()` usa `symfony/html-sanitizer` e aplica:
 - elementos seguros de texto (parágrafos, títulos, listas, citações, ênfase e tabelas);
 - links apenas `http`/`https`/`mailto`;
-- imagens apenas `http`/`https`;
+- imagens apenas `http`/`https`, convertendo previamente atributos `src` relativos de `<img>` (ex.: `news/attachments/foto.jpg` ou `/storage/news/foto.jpg`) via `Media::url()` antes da sanitização;
 - remoção de `<script>`, `<style>`, `<iframe>`, atributos `on*` e `style`.
 
-O painel também sanitiza ao salvar. Esta é uma segunda camada de defesa.
+O painel também sanitiza ao salvar e grava anexos do RichEditor com `MEDIA_URL` absoluto (`portal-cbngo-admin/docs/integracao-portal-publico.md`). Esta normalização + sanitização é uma segunda camada de defesa.
 
 ### 2.7 Sitemap
 - `Cache::remember('sitemap.entries', config('cbngo.sitemap.cache_ttl'))`, com padrão de 600 s (`SITEMAP_CACHE_TTL`).
@@ -109,18 +111,19 @@ O painel também sanitiza ao salvar. Esta é uma segunda camada de defesa.
 ## 3. Plano de Testes (TDD)
 - **Publicação:** `draft`, `pending_review`, `archived` e `published` com data nula ou futura ficam fora de listagem, detalhe, home e sitemap.
 - **Notícias:**
-  - Sem igreja, exibem "CBN Goiás".
-  - Os filtros de cidade e igreja usam a relação.
+  - Sem igreja ou com igreja inativa (`is_active = false`), exibem "CBN Goiás" e não filtram pela igreja inativa.
+  - Os filtros de cidade e igreja usam a relação restrita a igrejas ativas.
   - A galeria e a capa usam `MEDIA_URL`.
 - **Autores:**
   - Perfil por slug e por id.
-  - Usuário inativo dá 404 e some dos filtros e do sitemap.
+  - Usuário inativo dá 404, some dos filtros/sitemap e artigos publicados fazem fallback nullsafe para "CBN Goiás".
   - Fallback de `role_title`.
-- **Igrejas:** endereço com número e complemento; inativas ficam ocultas.
+  - `getSafeSocialLinks()` rejeita `mailto:` com e-mail inválido (`FILTER_VALIDATE_EMAIL`).
+- **Igrejas:** endereço com número e complemento; exibição de `phone` e `cellphone` no card; inativas ficam ocultas.
 - **Avisos:** mapeamento de prioridade para classe visual, desempate por prioridade, agendado e expirado ocultos, HTML do `content` não renderizado.
 - **Institucional:**
   - Documento com `file` usa `MEDIA_URL`; sem `file`, usa `external_url`.
   - A foto da diretoria vem de `MEDIA_URL`.
-- **Conteúdo:** HTML renderizado e sanitizado.
+- **Conteúdo:** HTML renderizado, imagens com `src` relativo convertidas para `MEDIA_URL/{path}` e sanitizadas.
 - **Sitemap:** respeita o TTL configurado.
 - **Unit:** `Media::url()`.

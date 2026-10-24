@@ -36,6 +36,11 @@ class Article extends Model
     use HasFactory;
 
     /**
+     * Status do painel que torna o artigo público (com published_at vencido).
+     */
+    public const STATUS_PUBLISHED = 'published';
+
+    /**
      * Os atributos atribuíveis em massa.
      *
      * @var array<int, string>
@@ -83,7 +88,7 @@ class Article extends Model
      */
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', News::STATUS_PUBLISHED)
+        return $query->where('status', self::STATUS_PUBLISHED)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
     }

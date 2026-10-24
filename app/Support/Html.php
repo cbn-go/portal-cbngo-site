@@ -31,7 +31,32 @@ class Html
      */
     public static function sanitize(?string $html): string
     {
-        return self::sanitizer()->sanitize((string) $html);
+        $normalized = self::rewriteRelativeImageSources((string) $html);
+
+        return self::sanitizer()->sanitize($normalized);
+    }
+
+    /**
+     * Normaliza atributos src relativos em tags <img> para apontarem para MEDIA_URL.
+     */
+    private static function rewriteRelativeImageSources(string $html): string
+    {
+        return (string) preg_replace_callback(
+            '/<img\b[^>]*>/i',
+            static fn (array $imgMatch): string => (string) preg_replace_callback(
+                '/\bsrc\s*=\s*(["\'])(.*?)\1/i',
+                static function (array $srcMatch): string {
+                    $resolved = Media::url(html_entity_decode($srcMatch[2], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+                    if ($resolved === null) {
+                        return $srcMatch[0];
+                    }
+
+                    return 'src="'.htmlspecialchars($resolved, ENT_QUOTES, 'UTF-8').'"';
+                },
+                $imgMatch[0],
+            ),
+            $html,
+        );
     }
 
     private static function sanitizer(): HtmlSanitizer

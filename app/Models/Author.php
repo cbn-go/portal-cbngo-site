@@ -155,13 +155,18 @@ class Author extends Model
             $trimmed = trim((string) $link);
 
             if (str_starts_with($trimmed, 'mailto:')) {
-                $safe[(string) $network] = $trimmed;
+                $email = trim(substr($trimmed, 7));
+                if (filter_var($email, FILTER_VALIDATE_EMAIL) !== false) {
+                    $safe[(string) $network] = 'mailto:'.$email;
+                }
 
                 continue;
             }
 
             if (str_contains($trimmed, '@') && ! str_starts_with($trimmed, 'http://') && ! str_starts_with($trimmed, 'https://')) {
-                $safe[(string) $network] = 'mailto:'.$trimmed;
+                if (filter_var($trimmed, FILTER_VALIDATE_EMAIL) !== false) {
+                    $safe[(string) $network] = 'mailto:'.$trimmed;
+                }
 
                 continue;
             }
