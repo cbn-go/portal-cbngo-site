@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // O schema pertence ao painel; o espelho só é migrado em desenvolvimento e nos testes.
+        if ($this->app->environment(['local', 'testing'])) {
+            $this->loadMigrationsFrom(database_path('migrations/testing'));
+        }
     }
 }

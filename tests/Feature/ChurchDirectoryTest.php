@@ -250,16 +250,19 @@ class ChurchDirectoryTest extends TestCase
         Church::create([
             'name' => 'Catedral Batista Nacional de Goiânia',
             'slug' => 'catedral-batista-nacional-goiania',
-            'logo_url' => 'https://cbngo.org.br/images/igrejas/catedral-goiania.png',
+            'logo' => 'churches/logos/catedral-goiania.png',
             'pastor_name' => 'Pr. Roberto Silveira',
-            'address' => 'Av. T-9, 2450',
+            'address' => 'Av. T-9',
+            'number' => '2450',
+            'complement' => 'Quadra 12',
             'neighborhood' => 'Jardim América',
             'city' => 'Goiânia',
             'state' => 'GO',
             'zip_code' => '74255-220',
             'latitude' => -16.7156000,
             'longitude' => -49.2834000,
-            'phone' => '(62) 3251-4000 / (62) 99988-7766',
+            'phone' => '(62) 3251-4000',
+            'cellphone' => '(62) 99988-7766',
             'email' => 'secretaria@catedralcbngo.org.br',
             'social_links' => [
                 'instagram' => 'https://instagram.com/catedralcbngo',
@@ -279,17 +282,18 @@ class ChurchDirectoryTest extends TestCase
         $response->assertStatus(200);
         // Nome e logotipo
         $response->assertSee('Catedral Batista Nacional de Goiânia');
-        $response->assertSee('https://cbngo.org.br/images/igrejas/catedral-goiania.png');
+        $response->assertSee('https://midia.test/churches/logos/catedral-goiania.png');
         // Pastor titular
         $response->assertSee('Pr. Roberto Silveira');
         // Endereço completo e links de rota Google Maps / Waze
-        $response->assertSee('Av. T-9, 2450');
+        $response->assertSee('Av. T-9, 2450 – Quadra 12');
         $response->assertSee('Jardim América');
         $response->assertSee('74255-220');
         $response->assertSee('google.com/maps', false);
         $response->assertSee('waze.com/ul', false);
         // Contatos e redes sociais
-        $response->assertSee('(62) 3251-4000 / (62) 99988-7766');
+        $response->assertSee('(62) 3251-4000');
+        $response->assertSee('(62) 99988-7766');
         $response->assertSee('mailto:secretaria@catedralcbngo.org.br', false);
         $response->assertSee('https://instagram.com/catedralcbngo');
         $response->assertSee('https://facebook.com/catedralcbngo');
@@ -313,7 +317,7 @@ class ChurchDirectoryTest extends TestCase
         Church::create([
             'name' => 'IBN Monte Sião',
             'slug' => 'ibn-monte-siao',
-            'logo_url' => null,
+            'logo' => null,
             'pastor_name' => 'Pr. Ezequiel Tavares',
             'address' => 'Rua das Palmeiras, 120',
             'neighborhood' => 'Setor Central',

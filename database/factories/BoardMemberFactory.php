@@ -24,7 +24,7 @@ class BoardMemberFactory extends Factory
             'role' => 'Membro da Diretoria',
             'group' => $this->faker->randomElement(array_keys(BoardMember::GROUPS)),
             'region' => null,
-            'photo_url' => null,
+            'photo' => null,
             'term_label' => 'Gestão 2025–2027',
             'position' => 0,
             'is_active' => true,

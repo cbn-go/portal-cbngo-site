@@ -35,9 +35,11 @@ class ChurchFactory extends Factory
         return [
             'name' => $name,
             'slug' => Str::slug($name),
-            'logo_url' => null,
+            'logo' => null,
             'pastor_name' => 'Pr. '.$this->faker->name('male'),
-            'address' => $this->faker->streetAddress(),
+            'address' => 'Rua '.$this->faker->lastName(),
+            'number' => (string) $this->faker->buildingNumber(),
+            'complement' => null,
             'neighborhood' => 'Setor '.$this->faker->word(),
             'city' => $chosen['city'],
             'state' => 'GO',
@@ -45,6 +47,7 @@ class ChurchFactory extends Factory
             'latitude' => $chosen['lat'],
             'longitude' => $chosen['lng'],
             'phone' => '(62) 3200-0000',
+            'cellphone' => null,
             'email' => $this->faker->safeEmail(),
             'social_links' => [
                 'instagram' => 'https://instagram.com/cbngoias',

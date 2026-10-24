@@ -3,9 +3,9 @@
 @section('title', $article->title)
 @section('meta_description', $article->excerpt ?? '')
 @section('og_type', 'article')
-@section('og_image', $article->author->avatar_url ?? '')
+@section('og_image', $article->cover_image_url ?? $article->author?->avatar_url ?? '')
 @section('published_time', $article->published_at?->toIso8601String() ?? '')
-@section('author_name', $article->author->name)
+@section('author_name', $article->author?->name ?? \App\Models\News::STATE_PUBLISHER)
 
 @push('structured-data')
     <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::article($article)) !!}</script>
@@ -62,6 +62,7 @@
 
             {{-- Autor e Metadados --}}
             <div class="pt-6 border-t border-neutral-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                @if ($article->author)
                 <a
                     href="{{ route('autores.show', $article->author->slug) }}"
                     class="flex items-center gap-3.5 group/author focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded p-1 -m-1"
@@ -93,6 +94,17 @@
                         </div>
                     </div>
                 </a>
+                @else
+                    <div class="flex items-center gap-2 text-sm text-neutral-600">
+                        <span class="font-bold text-cbn-black">{{ \App\Models\News::STATE_PUBLISHER }}</span>
+                        @if ($article->published_at)
+                            <span aria-hidden="true">·</span>
+                            <time datetime="{{ $article->published_at->toISOString() }}">
+                                {{ $article->published_at->translatedFormat('d \d\e F, Y') }}
+                            </time>
+                        @endif
+                    </div>
+                @endif
 
                 {{-- Compartilhamento Social Superior --}}
                 <div class="flex items-center gap-2">
@@ -184,12 +196,28 @@
             </div>
         </header>
 
-        {{-- Conteúdo Formatado e Sanitizado (XSS Guard) --}}
+        {{-- Imagem de Capa --}}
+        @if ($article->cover_image_url)
+            <figure class="mb-10 rounded-lg overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-sm">
+                <img
+                    src="{{ $article->cover_image_url }}"
+                    alt="{{ $article->title }}"
+                    width="1200"
+                    height="500"
+                    fetchpriority="high"
+                    decoding="async"
+                    class="w-full h-auto max-h-[500px] object-cover"
+                />
+            </figure>
+        @endif
+
+        {{-- Conteúdo HTML do RichEditor do painel, sanitizado novamente no portal (XSS Guard) --}}
         <div class="prose prose-lg max-w-none text-neutral-800 text-lg leading-relaxed font-brand-sans space-y-6">
-            {!! nl2br(e($article->content)) !!}
+            {!! \App\Support\Html::sanitize($article->content) !!}
         </div>
 
         {{-- Bloco do Autor ao final do Artigo --}}
+        @if ($article->author)
         <div class="mt-16 pt-10 border-t border-neutral-200">
             <div class="bg-neutral-50 border border-neutral-200/90 rounded-xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start">
                 @if ($article->author->avatar_url)
@@ -270,6 +298,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         {{-- Rodapé com Ações e Voltar --}}
         <footer class="mt-12 pt-8 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -312,9 +341,9 @@
                     <x-article-card
                         :title="$related->title"
                         :slug="$related->slug"
-                        :author-name="$related->author->name"
-                        :author-slug="$related->author->slug"
-                        :author-avatar="$related->author->avatar_url"
+                        :author-name="$related->author?->name ?? 'CBN Goiás'"
+                        :author-slug="$related->author?->slug"
+                        :author-avatar="$related->author?->avatar_url"
                         :category="$related->category"
                         :reading-time="$related->reading_time"
                         :excerpt="$related->excerpt"

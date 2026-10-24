@@ -71,9 +71,9 @@
                         class="w-full rounded border border-neutral-300 bg-white px-3 py-2.5 text-sm text-neutral-800 focus:border-cbn-orange focus:outline-none focus:ring-1 focus:ring-cbn-orange transition"
                     >
                         <option value="">Todas as congregações</option>
-                        @foreach ($availableChurches as $churchOption)
-                            <option value="{{ $churchOption }}" {{ $igreja === $churchOption ? 'selected' : '' }}>
-                                {{ $churchOption }}
+                        @foreach ($availableChurches as $churchSlug => $churchName)
+                            <option value="{{ $churchSlug }}" {{ $igreja === $churchSlug ? 'selected' : '' }}>
+                                {{ $churchName }}
                             </option>
                         @endforeach
                     </select>
@@ -122,9 +122,9 @@
                             href="{{ route('noticias.show', $item->slug) }}"
                             class="relative block aspect-video w-full overflow-hidden bg-neutral-100 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange"
                         >
-                            @if ($item->image_url)
+                            @if ($item->featured_image_url)
                                 <img
-                                    src="{{ $item->image_url }}"
+                                    src="{{ $item->featured_image_url }}"
                                     alt="{{ $item->title }}"
                                     loading="lazy"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -158,9 +158,9 @@
                                             {{ $item->published_at->translatedFormat('d \d\e F, Y') }}
                                         </time>
                                     @endif
-                                    @if ($item->city)
+                                    @if ($item->publisherCity())
                                         <span aria-hidden="true">·</span>
-                                        <span>{{ $item->city }}</span>
+                                        <span>{{ $item->publisherCity() }}</span>
                                     @endif
                                 </div>
 
@@ -182,7 +182,7 @@
 
                             <div class="pt-5 mt-5 border-t border-neutral-100 flex items-center justify-between">
                                 <span class="text-xs text-neutral-500 truncate max-w-[160px]">
-                                    {{ $item->church_name ?? 'CBN Goiás' }}
+                                    {{ $item->publisherName() }}
                                 </span>
                                 <a
                                     href="{{ route('noticias.show', $item->slug) }}"

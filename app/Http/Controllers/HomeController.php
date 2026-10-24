@@ -15,11 +15,11 @@ class HomeController extends Controller
     public function index(): View
     {
         $urgentNotice = UrgentNotice::active()
-            ->orderByDesc('starts_at')
-            ->latest('id')
+            ->byPriority()
             ->first();
 
         $latestNews = News::published()
+            ->with('church')
             ->latest('published_at')
             ->take(3)
             ->get();

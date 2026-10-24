@@ -49,4 +49,18 @@ return [
         'default_image' => 'images/brand/cbn-go.png',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Sitemap (Issue #19)
+    |--------------------------------------------------------------------------
+    |
+    | O conteúdo é publicado pelo painel, que o portal não observa. Um TTL curto
+    | limita o atraso até o conteúdo novo (ou agendado que venceu) entrar no sitemap.
+    |
+    */
+
+    'sitemap' => [
+        'cache_ttl' => (int) env('SITEMAP_CACHE_TTL', 600),
+    ],
+
 ];

@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Article;
-use App\Models\Author;
 use App\Models\News;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class SeoTest extends TestCase
@@ -44,7 +44,7 @@ class SeoTest extends TestCase
             'title' => 'Assembleia Estadual 2026',
             'slug' => 'assembleia-estadual-2026',
             'excerpt' => 'Pastores e líderes reunidos em Goiânia para a assembleia anual.',
-            'image_url' => 'https://cdn.cbngo.org.br/noticias/assembleia.jpg',
+            'featured_image' => 'news/featured/assembleia.jpg',
             'published_at' => now()->subDay(),
         ]);
 
@@ -58,9 +58,9 @@ class SeoTest extends TestCase
         $response->assertSee('<meta property="og:type" content="article">', false);
         $response->assertSee('<meta property="og:title" content="Assembleia Estadual 2026">', false);
         $response->assertSee('<meta property="og:url" content="'.route('noticias.show', $news->slug).'">', false);
-        $response->assertSee('<meta property="og:image" content="https://cdn.cbngo.org.br/noticias/assembleia.jpg">', false);
+        $response->assertSee('<meta property="og:image" content="https://midia.test/news/featured/assembleia.jpg">', false);
         $response->assertSee('<meta name="twitter:title" content="Assembleia Estadual 2026">', false);
-        $response->assertSee('<meta name="twitter:image" content="https://cdn.cbngo.org.br/noticias/assembleia.jpg">', false);
+        $response->assertSee('<meta name="twitter:image" content="https://midia.test/news/featured/assembleia.jpg">', false);
         $response->assertSee('<meta property="article:published_time" content="'.$news->published_at->toIso8601String().'">', false);
     }
 
@@ -71,8 +71,8 @@ class SeoTest extends TestCase
     {
         $this->withoutVite();
 
-        $withoutImage = News::factory()->create(['slug' => 'sem-capa', 'image_url' => null]);
-        $unsafeImage = News::factory()->create(['slug' => 'capa-insegura', 'image_url' => 'javascript:alert(1)']);
+        $withoutImage = News::factory()->create(['slug' => 'sem-capa', 'featured_image' => null]);
+        $unsafeImage = News::factory()->create(['slug' => 'capa-insegura', 'featured_image' => 'javascript:alert(1)']);
 
         foreach ([$withoutImage, $unsafeImage] as $news) {
             $response = $this->get(route('noticias.show', $news->slug));
@@ -112,14 +112,14 @@ class SeoTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::factory()->create([
+        $author = $this->createAuthor([
             'name' => 'Pr. Roberto Silveira',
             'slug' => 'pr-roberto-silveira',
-            'avatar_url' => 'https://cdn.cbngo.org.br/autores/roberto.jpg',
+            'avatar' => 'https://cdn.cbngo.org.br/autores/roberto.jpg',
         ]);
 
         $article = Article::factory()->create([
-            'author_id' => $author->id,
+            'user_id' => $author->user_id,
             'title' => 'A Graça que Transforma',
             'slug' => 'a-graca-que-transforma',
             'excerpt' => 'Uma reflexão pastoral sobre a graça.',
@@ -181,7 +181,7 @@ class SeoTest extends TestCase
         $news = News::factory()->create([
             'title' => 'Assembleia Estadual 2026',
             'slug' => 'assembleia-estadual-2026',
-            'image_url' => 'https://cdn.cbngo.org.br/noticias/assembleia.jpg',
+            'featured_image' => 'news/featured/assembleia.jpg',
         ]);
 
         $data = collect($this->structuredData($this->get(route('noticias.show', $news->slug))->getContent()));
@@ -189,7 +189,7 @@ class SeoTest extends TestCase
         $article = $data->firstWhere('@type', 'NewsArticle');
         $this->assertNotNull($article);
         $this->assertSame('Assembleia Estadual 2026', $article['headline']);
-        $this->assertSame(['https://cdn.cbngo.org.br/noticias/assembleia.jpg'], $article['image']);
+        $this->assertSame(['https://midia.test/news/featured/assembleia.jpg'], $article['image']);
         $this->assertSame($news->published_at->toIso8601String(), $article['datePublished']);
         $this->assertSame(route('noticias.show', $news->slug), $article['mainEntityOfPage']);
         $this->assertSame('Convenção Batista Nacional do Estado de Goiás', $article['publisher']['name']);
@@ -206,8 +206,8 @@ class SeoTest extends TestCase
     {
         $this->withoutVite();
 
-        $author = Author::factory()->create(['name' => 'Pr. Roberto Silveira', 'slug' => 'pr-roberto-silveira']);
-        $article = Article::factory()->create(['author_id' => $author->id, 'slug' => 'a-graca-que-transforma']);
+        $author = $this->createAuthor(['name' => 'Pr. Roberto Silveira', 'slug' => 'pr-roberto-silveira']);
+        $article = Article::factory()->create(['user_id' => $author->user_id, 'slug' => 'a-graca-que-transforma']);
 
         $data = collect($this->structuredData($this->get(route('artigos.show', $article->slug))->getContent()));
 
@@ -245,13 +245,17 @@ class SeoTest extends TestCase
     public function test_sitemap_lists_static_routes_and_published_content_only(): void
     {
         $published = News::factory()->create(['slug' => 'noticia-publicada']);
-        $draft = News::factory()->create(['slug' => 'noticia-rascunho', 'is_published' => false]);
+        $draft = News::factory()->create(['slug' => 'noticia-rascunho', 'status' => 'draft']);
         $scheduled = News::factory()->create(['slug' => 'noticia-agendada', 'published_at' => now()->addWeek()]);
+        $pending = News::factory()->pendingReview()->create(['slug' => 'noticia-pendente']);
+        $archived = News::factory()->archived()->create(['slug' => 'noticia-arquivada']);
 
-        $author = Author::factory()->create(['slug' => 'autor-ativo']);
-        $silentAuthor = Author::factory()->create(['slug' => 'autor-sem-artigos']);
-        Article::factory()->create(['author_id' => $author->id, 'slug' => 'artigo-publicado']);
-        Article::factory()->create(['author_id' => $silentAuthor->id, 'slug' => 'artigo-rascunho', 'is_published' => false]);
+        $author = $this->createAuthor(['slug' => 'autor-ativo']);
+        $silentAuthor = $this->createAuthor(['slug' => 'autor-sem-artigos']);
+        Article::factory()->create(['user_id' => $author->user_id, 'slug' => 'artigo-publicado']);
+        Article::factory()->create(['user_id' => $silentAuthor->user_id, 'slug' => 'artigo-rascunho', 'status' => 'draft']);
+        $inactiveAuthor = $this->createAuthor(['slug' => 'autor-inativo', 'is_active' => false]);
+        Article::factory()->byAuthor($inactiveAuthor)->create(['slug' => 'artigo-de-autor-inativo']);
 
         $response = $this->get('/sitemap.xml');
 
@@ -272,11 +276,45 @@ class SeoTest extends TestCase
 
         $this->assertNotContains(route('noticias.show', $draft->slug), $locations);
         $this->assertNotContains(route('noticias.show', $scheduled->slug), $locations);
+        $this->assertNotContains(route('noticias.show', $pending->slug), $locations);
+        $this->assertNotContains(route('noticias.show', $archived->slug), $locations);
+        $this->assertNotContains(route('autores.show', 'autor-inativo'), $locations);
         $this->assertNotContains(route('artigos.show', 'artigo-rascunho'), $locations);
         $this->assertNotContains(route('autores.show', 'autor-sem-artigos'), $locations);
         $this->assertNotContains(route('design-system'), $locations);
 
         $response->assertSee('<lastmod>'.$published->updated_at->toAtomString().'</lastmod>', false);
+    }
+
+    /**
+     * Valida que o sitemap usa o TTL configurado (10 min por padrão), para que o conteúdo do painel apareça no prazo.
+     */
+    public function test_sitemap_cache_uses_configured_ttl(): void
+    {
+        $this->assertSame(600, config('cbngo.sitemap.cache_ttl'));
+
+        config(['cbngo.sitemap.cache_ttl' => 120]);
+
+        Cache::shouldReceive('remember')
+            ->once()
+            ->with('sitemap.entries', 120, \Mockery::type(\Closure::class))
+            ->andReturnUsing(fn (string $key, int $ttl, \Closure $callback) => $callback());
+
+        $this->get('/sitemap.xml')->assertStatus(200);
+    }
+
+    /**
+     * Valida que conteúdo publicado depois do sitemap em cache aparece quando o cache expira.
+     */
+    public function test_sitemap_reflects_new_content_after_cache_expires(): void
+    {
+        $this->get('/sitemap.xml')->assertStatus(200);
+
+        $news = News::factory()->create(['slug' => 'publicada-no-painel']);
+        $this->get('/sitemap.xml')->assertDontSee(route('noticias.show', $news->slug), false);
+
+        $this->travel(config('cbngo.sitemap.cache_ttl') + 1)->seconds();
+        $this->get('/sitemap.xml')->assertSee(route('noticias.show', $news->slug), false);
     }
 
     /**
