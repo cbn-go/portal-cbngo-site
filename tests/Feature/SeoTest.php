@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ProjectCategory;
 use App\Models\Article;
+use App\Models\Church;
 use App\Models\News;
+use App\Models\SocialProject;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -384,6 +387,55 @@ class SeoTest extends TestCase
 
         $this->get(route('design-system'))
             ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
+    }
+
+    /**
+     * Valida metatags, og:image da capa e JSON-LD Project vinculado à igreja no detalhe do projeto social (P.6).
+     */
+    public function test_social_project_page_renders_meta_and_project_structured_data(): void
+    {
+        $this->withoutVite();
+
+        $church = Church::factory()->create(['name' => 'Igreja Batista Nacional Luz', 'city' => 'Luziânia']);
+        SocialProject::factory()->forChurch($church)->category(ProjectCategory::CULTURAL)->create([
+            'title' => 'Orquestra Jovem Luz',
+            'slug' => 'orquestra-jovem-luz',
+            'summary' => 'Aulas de música para adolescentes da comunidade.',
+            'cover_image' => 'projects/covers/orquestra.jpg',
+            'started_at' => '2025-08-01',
+        ]);
+
+        $response = $this->get('/projetos-sociais/orquestra-jovem-luz');
+
+        $response->assertSee('<title>Orquestra Jovem Luz — CBN Goiás</title>', false);
+        $response->assertSee('<meta name="description" content="Aulas de música para adolescentes da comunidade.">', false);
+        $response->assertSee('<meta property="og:image" content="https://midia.test/projects/covers/orquestra.jpg">', false);
+
+        $project = collect($this->structuredData((string) $response->getContent()))->firstWhere('@type', 'Project');
+
+        $this->assertNotNull($project);
+        $this->assertSame('Orquestra Jovem Luz', $project['name']);
+        $this->assertSame(route('projetos-sociais.show', 'orquestra-jovem-luz'), $project['url']);
+        $this->assertSame('2025-08-01', $project['foundingDate']);
+        $this->assertSame('Luziânia', $project['areaServed']['name']);
+        $this->assertSame('Igreja Batista Nacional Luz', $project['parentOrganization']['name']);
+        $this->assertSame(url('/').'#organizacao', $project['parentOrganization']['memberOf']['@id']);
+    }
+
+    /**
+     * Valida que o sitemap lista a página e os projetos publicados (com imagem) e omite rascunhos (P.6, P.8).
+     */
+    public function test_sitemap_lists_published_social_projects_only(): void
+    {
+        $published = SocialProject::factory()->create(['cover_image' => 'projects/covers/horta.jpg']);
+        $draft = SocialProject::factory()->draft()->create();
+
+        $response = $this->get('/sitemap.xml');
+
+        $response->assertSee('<loc>'.route('projetos-sociais.index').'</loc>', false);
+        $response->assertSee('<loc>'.route('projetos-sociais.show', $published->slug).'</loc>', false);
+        $response->assertSee('<image:loc>https://midia.test/projects/covers/horta.jpg</image:loc>', false);
+        $response->assertDontSee(route('projetos-sociais.show', $draft->slug), false);
     }
 
     /**

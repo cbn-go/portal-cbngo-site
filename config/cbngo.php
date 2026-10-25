@@ -65,6 +65,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Projetos sociais (Issue #27)
+    |--------------------------------------------------------------------------
+    |
+    | As categorias seguem a missão integral do Pacto de Lausanne. Enquanto o site
+    | não tiver um artigo próprio sobre o Pacto, o link aponta para o texto oficial.
+    |
+    */
+
+    'lausanne_url' => env('CBNGO_LAUSANNE_URL', 'https://lausanne.org/pt-br/statement/pacto-de-lausanne'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Banners do hero da home (Issue #23)
     |--------------------------------------------------------------------------
     |
