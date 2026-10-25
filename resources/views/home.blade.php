@@ -14,7 +14,8 @@
 
 @section('content')
 @if ($banners->isNotEmpty())
-{{-- Hero com os banners cadastrados no painel (Issue #23) --}}
+{{-- Hero com as artes dos banners cadastrados no painel (Issues #23 e #24); a arte não tem título visível --}}
+<h1 class="sr-only">{{ config('cbngo.organization.name') }}</h1>
 <x-hero-banner :banners="$banners" />
 @else
 {{-- Hero institucional (layout Stitch — fundo claro), fallback sem banners vigentes --}}

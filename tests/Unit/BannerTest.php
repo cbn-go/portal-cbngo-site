@@ -43,16 +43,6 @@ class BannerTest extends TestCase
     }
 
     /**
-     * Valida o rótulo do botão com fallback "Saiba mais".
-     */
-    public function test_link_text_falls_back_to_default_label(): void
-    {
-        $this->assertSame('Inscreva-se', (new Banner(['link_label' => 'Inscreva-se']))->link_text);
-        $this->assertSame('Saiba mais', (new Banner(['link_label' => '  ']))->link_text);
-        $this->assertSame('Saiba mais', (new Banner(['link_label' => null]))->link_text);
-    }
-
-    /**
      * Valida que só URLs absolutas de outro host são externas e abrem em nova aba.
      */
     public function test_external_links_open_in_new_tab(): void
@@ -72,17 +62,6 @@ class BannerTest extends TestCase
         $this->assertFalse($relative->opens_new_tab);
         $this->assertFalse($forced->is_external);
         $this->assertTrue($forced->opens_new_tab);
-    }
-
-    /**
-     * Valida a conversão do ponto focal do painel em object-position (B.3).
-     */
-    public function test_focal_point_maps_to_object_position(): void
-    {
-        $this->assertSame('center center', (new Banner(['focal_point' => 'center']))->object_position);
-        $this->assertSame('left center', (new Banner(['focal_point' => 'left']))->object_position);
-        $this->assertSame('right center', (new Banner(['focal_point' => 'right']))->object_position);
-        $this->assertSame('center center', (new Banner(['focal_point' => 'top']))->object_position);
     }
 
     /**

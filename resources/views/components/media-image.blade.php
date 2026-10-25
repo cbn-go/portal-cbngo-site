@@ -2,6 +2,7 @@
     'path' => null,
     'alt' => '',
     'variant' => 'card', // card | cover | thumb
+    'fit' => 'cover', // cover (preenche cortando) | contain (imagem inteira)
     'aspect' => null,
     'loading' => 'lazy',
     'fetchpriority' => null,
@@ -32,7 +33,7 @@
         alt="{{ $alt }}"
         loading="{{ $loading }}"
         @if ($fetchpriority) fetchpriority="{{ $fetchpriority }}" @endif
-        {{ $attributes->merge(['class' => 'object-cover w-full h-full']) }}
+        {{ $attributes->merge(['class' => ($fit === 'contain' ? 'object-contain' : 'object-cover').' w-full h-full']) }}
     />
 @else
     <x-media-placeholder

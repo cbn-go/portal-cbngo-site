@@ -15,9 +15,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int|null $user_id
  * @property string $title
- * @property string|null $subtitle
  * @property string $image
- * @property string $focal_point
  * @property string $alt_text
  * @property string|null $link_url
  * @property string|null $link_label
@@ -30,9 +28,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read string|null $image_url
  * @property-read string|null $image_srcset
- * @property-read string $object_position
+ * @property-read string|null $backdrop_url
  * @property-read string|null $link
- * @property-read string $link_text
  * @property-read bool $is_external
  * @property-read bool $opens_new_tab
  *
@@ -43,20 +40,12 @@ class Banner extends Model
     use HasFactory;
 
     /**
-     * Ponto focal do painel → object-position (BannerFocalPoint::objectPosition() no painel).
-     *
-     * @var array<string, string>
+     * Dimensões da arte no padrão 16:9 do painel (Banner::RECOMMENDED_WIDTH/HEIGHT no painel),
+     * usadas para reservar a proporção do hero e evitar CLS.
      */
-    public const OBJECT_POSITIONS = [
-        'center' => 'center center',
-        'left' => 'left center',
-        'right' => 'right center',
-    ];
+    public const WIDTH = 1920;
 
-    /**
-     * Texto do botão quando o banner tem link e link_label está vazio.
-     */
-    public const DEFAULT_LINK_LABEL = 'Saiba mais';
+    public const HEIGHT = 1080;
 
     /**
      * Os atributos atribuíveis em massa.
@@ -66,9 +55,7 @@ class Banner extends Model
     protected $fillable = [
         'user_id',
         'title',
-        'subtitle',
         'image',
-        'focal_point',
         'alt_text',
         'link_url',
         'link_label',
@@ -134,17 +121,17 @@ class Banner extends Model
     }
 
     /**
-     * Corte da imagem em telas estreitas a partir do ponto focal, com fallback no centro.
+     * Versão leve da arte (variante WebP thumb, com fallback no original) para o fundo desfocado do hero.
      *
-     * @return Attribute<string, never>
+     * @return Attribute<string|null, never>
      */
-    protected function objectPosition(): Attribute
+    protected function backdropUrl(): Attribute
     {
-        return Attribute::get(fn (): string => self::OBJECT_POSITIONS[(string) $this->focal_point] ?? self::OBJECT_POSITIONS['center']);
+        return Attribute::get(fn (): ?string => Media::variant($this->image, 'thumb') ?? Media::url($this->image));
     }
 
     /**
-     * Link do botão apenas com esquema http/https ou caminho relativo local (proteção XSS).
+     * Link do banner apenas com esquema http/https ou caminho relativo local (proteção XSS).
      *
      * @return Attribute<string|null, never>
      */
@@ -159,16 +146,6 @@ class Banner extends Model
 
             return null;
         });
-    }
-
-    /**
-     * Rótulo do botão, com fallback "Saiba mais".
-     *
-     * @return Attribute<string, never>
-     */
-    protected function linkText(): Attribute
-    {
-        return Attribute::get(fn (): string => trim((string) $this->link_label) ?: self::DEFAULT_LINK_LABEL);
     }
 
     /**
