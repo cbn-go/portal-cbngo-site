@@ -27,13 +27,13 @@ class HomeController extends Controller
         $latestNews = News::published()
             ->with('church')
             ->latest('published_at')
-            ->take(3)
+            ->take(4)
             ->get();
 
         $latestArticles = Article::with('author')
             ->published()
             ->latest('published_at')
-            ->take(3)
+            ->take(4)
             ->get();
 
         $featuredProjects = SocialProject::published()
@@ -42,7 +42,26 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        return view('home', compact('urgentNotice', 'banners', 'latestNews', 'latestArticles', 'featuredProjects'));
+        $projectStats = $featuredProjects->isNotEmpty() ? $this->projectStats() : null;
+
+        return view('home', compact('urgentNotice', 'banners', 'latestNews', 'latestArticles', 'featuredProjects', 'projectStats'));
+    }
+
+    /**
+     * Números de impacto dos projetos publicados: projetos em andamento, igrejas envolvidas e beneficiados.
+     *
+     * @return array{projects: int, churches: int, beneficiaries: int}
+     */
+    private function projectStats(): array
+    {
+        $ongoing = SocialProject::published()
+            ->where(fn ($query) => $query->whereNull('ended_at')->orWhereDate('ended_at', '>=', today()));
+
+        return [
+            'projects' => (clone $ongoing)->count(),
+            'churches' => (clone $ongoing)->distinct()->count('church_id'),
+            'beneficiaries' => (int) (clone $ongoing)->sum('beneficiaries_count'),
+        ];
     }
 
     /**

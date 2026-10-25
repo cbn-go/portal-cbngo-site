@@ -95,9 +95,14 @@ class DesignSystemTest extends TestCase
         $navbarHtml = $this->blade('<x-navbar />');
         $navbarHtml->assertSee('images/brand/cbn-go.png', false);
         $navbarHtml->assertSee('CBN | GO', false);
-        $navbarHtml->assertSee('Institucional');
+        $navbarHtml->assertSee('A Convenção');
         $navbarHtml->assertSee('Igrejas');
+        $navbarHtml->assertSee('Projetos Sociais');
+        $navbarHtml->assertSee('Notícias e Artigos');
+        $navbarHtml->assertSee('Encontre uma igreja');
         $navbarHtml->assertSee('aria-expanded', false);
+        $navbarHtml->assertSee('aria-controls="painel-convencao"', false);
+        $navbarHtml->assertSee('id="cbn-busca"', false);
 
         $footerHtml = $this->blade('<x-footer />');
         $footerHtml->assertSee('images/brand/cbn-go-on-dark.png', false);
@@ -116,11 +121,12 @@ class DesignSystemTest extends TestCase
      */
     public function test_navbar_highlights_specified_active_item_on_desktop_and_mobile(): void
     {
-        $navbarHtml = $this->blade('<x-navbar active="noticias" />');
+        $html = (string) $this->blade('<x-navbar active="noticias" />');
 
-        // Notícias deve ter classes ativas (layout claro Stitch)
-        $navbarHtml->assertSee('text-cbn-black font-semibold border-b-2 border-cbn-black', false);
-        $navbarHtml->assertSee('Notícias');
+        // O link de Notícias (painel desktop e gaveta mobile) recebe aria-current e o grupo fica destacado.
+        $this->assertSame(2, preg_match_all('#href="'.preg_quote(route('noticias.index'), '#').'"[^>]*aria-current="page"#', $html));
+        $this->assertMatchesRegularExpression('#aria-controls="painel-comunicacao"[^>]*text-cbn-black font-semibold#', $html);
+        $this->assertStringContainsString('<span class="border-b-2 border-cbn-black">Notícias e Artigos</span>', $html);
     }
 
     /**
@@ -132,7 +138,7 @@ class DesignSystemTest extends TestCase
         $navbarHtml = $this->blade('<x-navbar />');
 
         $navbarHtml->assertSee('id="cbn-mobile-menu"', false);
-        $navbarHtml->assertSee('x-show="open"', false);
+        $navbarHtml->assertSee('x-show="mobileOpen"', false);
         $navbarHtml->assertSee('x-cloak', false);
         $navbarHtml->assertSee('lg:hidden', false);
         $navbarHtml->assertDontSee('hidden lg:hidden', false);

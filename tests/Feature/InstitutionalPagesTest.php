@@ -254,23 +254,26 @@ class InstitutionalPagesTest extends TestCase
         $response->assertSee('href="mailto:contato@cbngo.org.br"', false);
         $response->assertSee('Segunda a sexta, das 9h às 18h30');
         $response->assertSee('https://www.google.com/maps/search/?api=1&amp;query='.rawurlencode('Rua Teste, 100 - Setor Central, Goiânia - GO'), false);
-        $response->assertDontSee('<form', false);
+        // A página de contato não tem formulário (o menu tem a busca do portal, fora do <main>).
+        preg_match('#<main[^>]*>(.*)</main>#s', (string) $response->getContent(), $main);
+        $this->assertStringNotContainsString('<form', $main[1]);
     }
 
     /**
-     * Valida que o navbar destaca 'Institucional' com aria-current="page" em /quem-somos e /diretoria.
+     * Valida que o navbar destaca o grupo 'A Convenção' e o link da página em /quem-somos e /diretoria.
      */
     public function test_navbar_highlights_institutional_on_about_and_board_pages(): void
     {
         $this->withoutVite();
 
-        $pattern = '/href="'.preg_quote(route('quem-somos'), '/').'"[^>]*aria-current="page"/';
-
         foreach (['quem-somos', 'diretoria'] as $routeName) {
             $response = $this->get(route($routeName));
+            $html = (string) $response->getContent();
 
             $response->assertStatus(200);
-            $this->assertMatchesRegularExpression($pattern, (string) $response->getContent());
+            // O link da própria página fica com aria-current e o grupo "A Convenção" fica destacado.
+            $this->assertMatchesRegularExpression('/href="'.preg_quote(route($routeName), '/').'"[^>]*aria-current="page"/', $html);
+            $this->assertStringContainsString('<span class="border-b-2 border-cbn-black">A Convenção</span>', $html);
         }
     }
 
