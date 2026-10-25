@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Author;
 use App\Models\News;
+use App\Models\SocialProject;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 
@@ -22,6 +23,7 @@ class SitemapController extends Controller
         'contato',
         'igrejas',
         'noticias.index',
+        'projetos-sociais.index',
         'artigos.index',
     ];
 
@@ -72,6 +74,15 @@ class SitemapController extends Controller
                     'loc' => route('noticias.show', $news->slug),
                     'lastmod' => $news->updated_at?->toAtomString(),
                     'image' => $news->featured_image_url,
+                ];
+            });
+
+        SocialProject::published()->ordered()->get(['id', 'slug', 'cover_image', 'updated_at'])
+            ->each(function (SocialProject $project) use (&$entries) {
+                $entries[] = [
+                    'loc' => route('projetos-sociais.show', $project->slug),
+                    'lastmod' => $project->updated_at?->toAtomString(),
+                    'image' => $project->cover_image_url,
                 ];
             });
 

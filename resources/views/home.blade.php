@@ -171,6 +171,43 @@
     </div>
 </section>
 
+{{-- Projetos Sociais (Issue #27): só aparece quando há projetos publicados --}}
+@if ($featuredProjects->isNotEmpty())
+<section class="py-20 lg:py-24 bg-white border-b border-neutral-200" id="projetos-sociais">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-cbn-orange" aria-hidden="true"></span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-cbn-orange-ink">Missão integral</span>
+                </div>
+                <h2 class="font-brand-serif font-bold text-2xl lg:text-3xl text-cbn-black tracking-tight">
+                    Projetos Sociais
+                </h2>
+                <p class="text-neutral-600 mt-2 text-sm md:text-base max-w-xl">
+                    Ações das igrejas da CBN Goiás em cuidado social, cultura, educação e formação de líderes. Conheça e ajude.
+                </p>
+            </div>
+            <a
+                href="{{ route('projetos-sociais.index') }}"
+                class="inline-flex items-center gap-1.5 text-sm font-semibold text-cbn-black hover:text-cbn-orange-ink group transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded"
+            >
+                <span>Ver todos os projetos</span>
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            @foreach ($featuredProjects as $project)
+                <x-project-card :project="$project" />
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- Destaques institucionais: SETEBAN + Assembleia / Eventos --}}
 <section class="py-20 lg:py-24 bg-white border-b border-neutral-200" id="institucional">
     <div class="max-w-7xl mx-auto px-6 lg:px-12">

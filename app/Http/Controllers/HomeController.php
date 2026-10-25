@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Banner;
 use App\Models\News;
+use App\Models\SocialProject;
 use App\Models\UrgentNotice;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,7 +36,13 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        return view('home', compact('urgentNotice', 'banners', 'latestNews', 'latestArticles'));
+        $featuredProjects = SocialProject::published()
+            ->with('church')
+            ->ordered()
+            ->take(3)
+            ->get();
+
+        return view('home', compact('urgentNotice', 'banners', 'latestNews', 'latestArticles', 'featuredProjects'));
     }
 
     /**

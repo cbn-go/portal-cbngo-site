@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Article;
 use App\Models\News;
+use App\Models\SocialProject;
 
 class StructuredData
 {
@@ -85,6 +86,45 @@ class StructuredData
             ] : self::publisherReference(),
             'publisher' => self::publisherReference(),
         ];
+    }
+
+    /**
+     * Projeto social publicado como Project (subtipo de Organization), vinculado à igreja responsável.
+     *
+     * @return array<string, mixed>
+     */
+    public static function socialProject(SocialProject $project): array
+    {
+        $church = $project->church;
+
+        return array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'Project',
+            'name' => $project->title,
+            'description' => Seo::description($project->summary),
+            'url' => route('projetos-sociais.show', $project->slug),
+            'image' => Seo::image($project->cover_image_url),
+            'keywords' => $project->category->value,
+            'foundingDate' => $project->started_at->toDateString(),
+            'dissolutionDate' => $project->ended_at?->toDateString(),
+            'areaServed' => [
+                '@type' => 'City',
+                'name' => $project->city,
+            ],
+            'parentOrganization' => $church ? array_filter([
+                '@type' => ['Organization', 'ReligiousOrganization'],
+                'name' => $church->name,
+                'url' => $project->church_directory_url,
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => $church->getStreetAddress() ?: null,
+                    'addressLocality' => $church->city,
+                    'addressRegion' => $church->state,
+                    'addressCountry' => 'BR',
+                ],
+                'memberOf' => self::publisherReference(),
+            ]) : self::publisherReference(),
+        ], fn ($value) => $value !== null);
     }
 
     /**

@@ -6,6 +6,8 @@ export default {
         './resources/**/*.blade.php',
         './resources/**/*.js',
         './resources/**/*.vue',
+        // Enums com classes de cor usadas nas views (ex.: badges de ProjectCategory)
+        './app/Enums/**/*.php',
     ],
     theme: {
         extend: {

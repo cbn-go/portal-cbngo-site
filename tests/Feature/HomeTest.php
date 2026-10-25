@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Article;
 use App\Models\News;
+use App\Models\SocialProject;
 use App\Models\UrgentNotice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -539,5 +540,42 @@ class HomeTest extends TestCase
             ->assertStatus(200)
             ->assertSee('https://cbngo.org.br/agenda')
             ->assertSee('Saiba mais');
+    }
+
+    /**
+     * A seção de projetos sociais só aparece com projetos publicados (P.5).
+     */
+    public function test_home_hides_social_projects_section_without_published_projects(): void
+    {
+        $this->withoutVite();
+
+        SocialProject::factory()->draft()->create(['title' => 'Projeto em Rascunho']);
+
+        $response = $this->get('/');
+
+        $response->assertDontSee('id="projetos-sociais"', false);
+        $response->assertDontSee('Projeto em Rascunho');
+    }
+
+    /**
+     * A home mostra até 3 projetos, com os destaques primeiro (P.5).
+     */
+    public function test_home_renders_up_to_three_social_projects_featured_first(): void
+    {
+        $this->withoutVite();
+
+        SocialProject::factory()->count(3)->create(['published_at' => now()->subHour()]);
+        SocialProject::factory()->featured()->create(['title' => 'Projeto Destaque Antigo', 'published_at' => now()->subMonth()]);
+
+        $response = $this->get('/');
+        $html = (string) $response->getContent();
+
+        $response->assertSee('id="projetos-sociais"', false);
+        $response->assertSee('Ver todos os projetos');
+        $this->assertSame(3, substr_count($html, 'data-testid="project-card"'));
+        $this->assertLessThan(
+            strpos($html, 'data-testid="project-card"', strpos($html, 'data-testid="project-card"') + 1),
+            strpos($html, 'Projeto Destaque Antigo')
+        );
     }
 }
