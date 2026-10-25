@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Article;
+use App\Models\Author;
+use App\Models\Church;
 use App\Models\News;
 use App\Models\SocialProject;
 use App\Models\UrgentNotice;
@@ -123,20 +125,28 @@ class HomeTest extends TestCase
     }
 
     /**
-     * Valida que a seção de notícias exibe as 3 mais recentes publicadas (AC 3.3).
+     * Valida que a seção de notícias exibe as 4 mais recentes publicadas: manchete + 3 chamadas (AC 3.3).
      */
     public function test_home_renders_latest_published_news(): void
     {
         $this->withoutVite();
 
         News::factory()->create([
-            'title' => 'Notícia Antiga Fora do Top 3',
-            'slug' => 'noticia-antiga-fora-do-top-3',
+            'title' => 'Notícia Antiga Fora do Top 4',
+            'slug' => 'noticia-antiga-fora-do-top-4',
             'category' => 'Geral',
             'excerpt' => 'Resumo da notícia antiga.',
             'content' => 'Conteúdo detalhado da notícia antiga.',
             'status' => 'published',
             'published_at' => now()->subDays(10),
+        ]);
+
+        News::factory()->create([
+            'title' => 'Mutirão Missionário no Entorno do DF',
+            'slug' => 'mutirao-missionario-entorno-df',
+            'category' => 'Missões',
+            'status' => 'published',
+            'published_at' => now()->subDays(5),
         ]);
 
         News::factory()->create([
@@ -177,7 +187,8 @@ class HomeTest extends TestCase
         $response->assertSee('Nova Congregação Inaugurada em Rio Verde');
         $response->assertSee('Retiro Estadual de Pastores 2026');
         $response->assertSee('/noticias/comunicado-oficial-da-diretoria-cbn-go');
-        $response->assertDontSee('Notícia Antiga Fora do Top 3');
+        $response->assertSee('Mutirão Missionário no Entorno do DF');
+        $response->assertDontSee('Notícia Antiga Fora do Top 4');
     }
 
     /**
@@ -229,13 +240,24 @@ class HomeTest extends TestCase
 
         Article::factory()->create([
             'user_id' => $author->user_id,
-            'title' => 'Artigo Antigo Fora do Top 3',
-            'slug' => 'artigo-antigo-fora-top-3',
+            'title' => 'Artigo Antigo Fora do Top 4',
+            'slug' => 'artigo-antigo-fora-top-4',
             'excerpt' => 'Resumo artigo antigo.',
             'content' => 'Conteúdo artigo antigo.',
             'reading_time' => 4,
             'status' => 'published',
             'published_at' => now()->subDays(15),
+        ]);
+
+        Article::factory()->create([
+            'user_id' => $author->user_id,
+            'title' => 'Discipulado nas Pequenas Comunidades',
+            'slug' => 'discipulado-pequenas-comunidades',
+            'excerpt' => 'Resumo sobre discipulado.',
+            'content' => 'Conteúdo sobre discipulado.',
+            'reading_time' => 6,
+            'status' => 'published',
+            'published_at' => now()->subDays(8),
         ]);
 
         Article::factory()->create([
@@ -280,7 +302,8 @@ class HomeTest extends TestCase
         $response->assertSee('A Centralidade de Cristo na Vida Comunitária');
         $response->assertSee('Pr. Roberto Silveira');
         $response->assertSee('/artigos/avivamento-biblico-missoes-seculo-xxi');
-        $response->assertDontSee('Artigo Antigo Fora do Top 3');
+        $response->assertSee('Discipulado nas Pequenas Comunidades');
+        $response->assertDontSee('Artigo Antigo Fora do Top 4');
     }
 
     /**
@@ -572,10 +595,64 @@ class HomeTest extends TestCase
 
         $response->assertSee('id="projetos-sociais"', false);
         $response->assertSee('Ver todos os projetos');
-        $this->assertSame(3, substr_count($html, 'data-testid="project-card"'));
+        $this->assertSame(3, substr_count($html, 'data-testid="project-tile"'));
+        // O destaque abre o mosaico (primeiro bloco, o maior).
         $this->assertLessThan(
-            strpos($html, 'data-testid="project-card"', strpos($html, 'data-testid="project-card"') + 1),
+            strpos($html, 'data-testid="project-tile"', strpos($html, 'data-testid="project-tile"') + 1),
             strpos($html, 'Projeto Destaque Antigo')
         );
+    }
+
+    /**
+     * A faixa de projetos mostra números reais: em andamento, igrejas envolvidas e pessoas atendidas.
+     */
+    public function test_home_social_projects_band_shows_real_impact_numbers(): void
+    {
+        $this->withoutVite();
+
+        $church = Church::factory()->create();
+        SocialProject::factory()->forChurch($church)->create(['beneficiaries_count' => 1200]);
+        SocialProject::factory()->forChurch($church)->create(['beneficiaries_count' => 300]);
+        SocialProject::factory()->create(['beneficiaries_count' => 50]);
+        SocialProject::factory()->ended()->create(['beneficiaries_count' => 999]);
+        SocialProject::factory()->draft()->create(['beneficiaries_count' => 5000]);
+
+        $html = (string) $this->get('/')->getContent();
+
+        preg_match('#<dl[^>]*data-testid="project-stats"[^>]*>(.*?)</dl>#s', $html, $stats);
+        $this->assertNotEmpty($stats);
+        $this->assertMatchesRegularExpression('#Projetos em andamento</dt>\s*<dd[^>]*>3</dd>#', $stats[1]);
+        $this->assertMatchesRegularExpression('#Igrejas envolvidas</dt>\s*<dd[^>]*>2</dd>#', $stats[1]);
+        $this->assertMatchesRegularExpression('#Pessoas atendidas</dt>\s*<dd[^>]*>1.550</dd>#', $stats[1]);
+        $this->assertStringContainsString(e(route('projetos-sociais.index', ['categoria' => 'educacao'])), $html);
+    }
+
+    /**
+     * Notícias em layout editorial e artigos com citação em destaque (seções com layouts diferentes).
+     */
+    public function test_home_sections_use_editorial_news_and_quoted_article_layouts(): void
+    {
+        $this->withoutVite();
+
+        News::factory()->count(4)->create();
+        $author = Author::factory()->create();
+        Article::factory()->create([
+            'user_id' => $author->user_id,
+            'title' => 'O Pastor e a Família',
+            'excerpt' => 'A eficácia do ministério repousa na saúde do lar.',
+            'published_at' => now()->subHour(),
+        ]);
+
+        $response = $this->get('/');
+        $html = (string) $response->getContent();
+
+        preg_match('#<section[^>]*id="noticias"[^>]*>(.*?)</section>#s', $html, $news);
+        $this->assertSame(3, substr_count($news[1], '<li class="py-5'));
+        $this->assertStringContainsString('Mais notícias das igrejas', $news[1]);
+
+        preg_match('#<section[^>]*id="artigos"[^>]*>(.*?)</section>#s', $html, $articles);
+        $this->assertStringContainsString('<blockquote', $articles[1]);
+        $this->assertStringContainsString('A eficácia do ministério repousa na saúde do lar.', $articles[1]);
+        $this->assertStringContainsString(route('autores.show', $author->slug), $articles[1]);
     }
 }
