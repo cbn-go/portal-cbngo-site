@@ -1,7 +1,9 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
+import heroCarousel from './hero-carousel';
 
 window.Alpine = Alpine;
+Alpine.data('heroCarousel', heroCarousel);
 Alpine.start();
 
 // O Leaflet só é baixado nas páginas que exibem o mapa de Goiás, mantendo o bundle principal leve.

@@ -181,4 +181,18 @@ class DesignSystemTest extends TestCase
         $imageHtml->assertDontSee('<img', false);
         $imageHtml->assertSee('data-testid="media-placeholder"', false);
     }
+
+    /**
+     * Valida que a vitrine do design system exibe o componente x-hero-banner (Issue #23).
+     */
+    public function test_design_system_showcase_displays_hero_banner(): void
+    {
+        $this->withoutVite();
+
+        $response = $this->get('/design-system');
+
+        $response->assertOk();
+        $response->assertSee('data-testid="hero-banner"', false);
+        $response->assertSee('Matrículas abertas no SETEBAN-GO');
+    }
 }
