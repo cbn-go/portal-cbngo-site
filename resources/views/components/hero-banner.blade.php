@@ -1,12 +1,13 @@
 @props([
     'banners',
     'interval' => 7000,
-    'firstHeading' => 'h1', // a página deve ter um único h1; o design system usa h2
 ])
 
 @php
     $total = $banners->count();
     $isCarousel = $total > 1;
+    // Largura máxima do quadro 16:9: limita a altura em telas muito largas sem cortar a arte.
+    $frameWidth = 'max-w-[min(1600px,calc(78svh*16/9))]';
 @endphp
 
 <section
@@ -26,85 +27,73 @@
     @else
         aria-label="Aviso em destaque"
     @endif
-    {{ $attributes->merge(['class' => 'relative h-[560px] lg:h-[640px] overflow-hidden bg-cbn-black border-b border-neutral-200']) }}
+    {{ $attributes->merge(['class' => 'relative overflow-hidden bg-cbn-black border-b border-neutral-200']) }}
 >
-    @foreach ($banners as $banner)
-        @php($first = $loop->first)
-        <div
-            @if ($isCarousel)
-                role="group"
-                aria-roledescription="slide"
-                aria-label="{{ $loop->iteration }} de {{ $total }}"
-                x-bind:class="{ 'opacity-100 z-10': active === {{ $loop->index }}, 'opacity-0 z-0': active !== {{ $loop->index }} }"
-                x-bind:aria-hidden="active !== {{ $loop->index }}"
-                x-bind:inert="active !== {{ $loop->index }}"
-                @unless ($first) x-cloak aria-hidden="true" inert @endunless
-            @endif
-            class="absolute inset-0 motion-safe:transition-opacity motion-safe:duration-700 {{ $first ? 'opacity-100 z-10' : 'opacity-0 z-0' }}"
-        >
-            <x-media-image
-                :path="$banner->image"
-                :alt="$banner->alt_text"
-                variant="cover"
-                fallback-variant="cover"
-                sizes="100vw"
-                :loading="$first ? 'eager' : 'lazy'"
-                :fetchpriority="$first ? 'high' : null"
-                width="1600"
-                height="667"
-                decoding="async"
-                data-hero-image
-                style="object-position: {{ $banner->object_position }};"
-                class="absolute inset-0"
-            />
+    <div class="relative">
+        @foreach ($banners as $banner)
+            @php($first = $loop->first)
+            <div
+                @if ($isCarousel)
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="{{ $loop->iteration }} de {{ $total }}: {{ $banner->title }}"
+                    x-bind:class="{ 'opacity-100 z-10': active === {{ $loop->index }}, 'opacity-0 z-0': active !== {{ $loop->index }} }"
+                    x-bind:aria-hidden="active !== {{ $loop->index }}"
+                    x-bind:inert="active !== {{ $loop->index }}"
+                    @unless ($first) x-cloak aria-hidden="true" inert @endunless
+                @endif
+                class="absolute inset-0 motion-safe:transition-opacity motion-safe:duration-700 {{ $first ? 'opacity-100 z-10' : 'opacity-0 z-0' }}"
+            >
+                {{-- Fundo: a própria arte desfocada preenche as laterais e as faixas de artes fora do 16:9 --}}
+                @if ($banner->backdrop_url)
+                    <div
+                        class="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-50"
+                        style="background-image: url('{{ $banner->backdrop_url }}');"
+                        aria-hidden="true"
+                    ></div>
+                @endif
 
-            <div class="absolute inset-0 bg-gradient-to-t from-cbn-black/90 via-cbn-black/60 to-cbn-black/20 lg:bg-gradient-to-r lg:from-cbn-black/85 lg:via-cbn-black/55 lg:to-cbn-black/10" aria-hidden="true"></div>
-
-            <div class="relative h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-end lg:justify-center {{ $isCarousel ? 'pb-24' : 'pb-14' }} lg:pb-0">
-                <div class="max-w-2xl">
-                    @php($heading = $first ? $firstHeading : 'h2')
-                    <{{ $heading }} class="font-brand-serif font-extrabold text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.1] text-balance">
-                        {{ $banner->title }}
-                    </{{ $heading }}>
-
-                    @if (filled($banner->subtitle))
-                        <p class="mt-4 lg:mt-6 font-brand-sans text-base sm:text-lg lg:text-xl text-white/85 leading-relaxed text-balance">
-                            {{ $banner->subtitle }}
-                        </p>
+                <div class="absolute inset-y-0 inset-x-0 mx-auto w-full {{ $frameWidth }}">
+                    @if ($banner->link)
+                        <a
+                            href="{{ $banner->link }}"
+                            @if ($banner->opens_new_tab) target="_blank" rel="noopener noreferrer" @endif
+                            class="block w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-cbn-orange"
+                        >
                     @endif
 
+                    <x-media-image
+                        :path="$banner->image"
+                        :alt="$banner->alt_text"
+                        variant="cover"
+                        fit="contain"
+                        fallback-variant="cover"
+                        sizes="(min-width: 1600px) 1600px, 100vw"
+                        :loading="$first ? 'eager' : 'lazy'"
+                        :fetchpriority="$first ? 'high' : null"
+                        :width="\App\Models\Banner::WIDTH"
+                        :height="\App\Models\Banner::HEIGHT"
+                        decoding="async"
+                        data-hero-image
+                    />
+
                     @if ($banner->link)
-                        <div class="mt-8">
-                            <x-button
-                                variant="primary"
-                                size="lg"
-                                :href="$banner->link"
-                                :target="$banner->opens_new_tab ? '_blank' : null"
-                                :rel="$banner->opens_new_tab ? 'noopener noreferrer' : null"
-                                class="w-full sm:w-auto focus-visible:ring-offset-cbn-black"
-                            >
-                                {{ $banner->link_text }}
-                                @if ($banner->opens_new_tab)
-                                    <span class="sr-only">(abre em nova aba)</span>
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
-                                    </svg>
-                                @else
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-                                    </svg>
-                                @endif
-                            </x-button>
-                        </div>
+                            @if ($banner->opens_new_tab)
+                                <span class="sr-only">(abre em nova aba)</span>
+                            @endif
+                        </a>
                     @endif
                 </div>
             </div>
-        </div>
-    @endforeach
+        @endforeach
+
+        {{-- Reserva a altura do quadro 16:9 (sem CLS) --}}
+        <div class="mx-auto w-full aspect-video {{ $frameWidth }}" aria-hidden="true"></div>
+    </div>
 
     @if ($isCarousel)
-        <div class="absolute inset-x-0 bottom-0 z-20">
-            <div class="max-w-7xl mx-auto px-6 lg:px-12 pb-6 lg:pb-8 flex items-center justify-between gap-6">
+        <div data-testid="hero-banner-controls" class="relative z-20 border-t border-white/10">
+            <div class="mx-auto w-full {{ $frameWidth }} px-4 sm:px-6 py-3 flex items-center justify-between gap-6">
                 <div class="flex items-center gap-2 flex-1 max-w-xs">
                     @foreach ($banners as $banner)
                         <button
@@ -131,7 +120,7 @@
                         x-on:click="togglePause()"
                         x-bind:aria-label="paused ? 'Retomar rotação dos banners' : 'Pausar rotação dos banners'"
                         aria-label="Pausar rotação dos banners"
-                        class="w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                        class="w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     >
                         <svg x-show="!paused" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
                         <svg x-show="paused" x-cloak class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>

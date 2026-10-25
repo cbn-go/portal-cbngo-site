@@ -96,8 +96,36 @@ $banner->opens_new_tab;     // opens_in_new_tab || is_external
 - N banners: ordem por `position`, controles do carrossel, `fetchpriority="high"` só no primeiro e `loading="lazy"` nos demais.
 - Banner expirado, agendado ou inativo não aparece.
 - Link externo com `target="_blank"` e `rel="noopener noreferrer"`; link interno sem `target`; sem link, sem botão; `javascript:` descartado.
-- `focal_point=left` → `object-position: left center`.
+- ~~`focal_point=left` → `object-position: left center`~~ (removido na Issue #24, ver seção 5).
 - Edição de banner reflete na requisição seguinte (cache invalidado por `updated_at`).
 
 ### Definition of Done
 O hero exibe os banners do painel na ordem e no período definidos, com links funcionando, Lighthouse sem regressão de LCP/CLS e fallback institucional quando não houver banners.
+
+---
+
+## 5. Revisão — Issue #24 (arte completa 16:9)
+
+- **Issue:** [#24 — Hero: exibir a arte do banner inteira, sem corte e sem texto sobreposto](https://github.com/cbn-go/portal-cbngo-site/issues/24)
+- **Painel:** [admin#26 — arte completa com texto embutido e proporção padrão 16:9](https://github.com/cbn-go/portal-cbngo-admin/issues/26)
+- **Data:** 25 de Outubro de 2026
+
+### 5.1 Motivo
+Com a primeira arte real ("Encontro de Missões Nacionais 2026", 16:9 com texto embutido), o hero da Issue #23 cortava a imagem (altura fixa + `object-cover`) e escrevia título, subtítulo e botão por cima de uma arte que já traz esse conteúdo. O banner passa a ser **a arte final completa**, exibida inteira.
+
+### 5.2 O que muda nos contratos
+- **Tabela (2.1):** o painel removeu `subtitle` e `focal_point` e ampliou `alt_text` para 500 caracteres (espelho em `database/migrations/testing/2026_10_26_100000_drop_subtitle_and_focal_point_from_banners_table.php`). `title` é só o nome interno; `link_label` não é mais usado.
+- **Model (2.2):** saem `object_position`, `link_text`, `OBJECT_POSITIONS` e `DEFAULT_LINK_LABEL`. Entram `Banner::WIDTH`/`Banner::HEIGHT` (1920×1080) e `backdrop_url` (variante `thumb`, com fallback no original) para o fundo desfocado.
+- **Componente (2.3):**
+  - Quadro 16:9 (`aspect-video`) em largura total, limitado a `min(1600px, 78svh × 16/9)` em telas largas; a arte usa `object-contain` (`<x-media-image fit="contain">`), com `width="1920" height="1080"` e `sizes="(min-width: 1600px) 1600px, 100vw"`.
+  - Fundo: a própria arte desfocada preenche as laterais e as faixas de artes fora do 16:9 (C.2).
+  - Sem gradiente, título, subtítulo ou botão sobrepostos (C.3).
+  - Com link válido, um `<a>` envolve a arte inteira; externo com `target="_blank" rel="noopener noreferrer"` e "(abre em nova aba)" para leitores de tela; o nome acessível é o `alt_text` (C.4, C.5).
+  - Controles do carrossel numa barra abaixo da arte; slides e indicadores rotulados com o `title` (C.6).
+- **Home:** com banners, um `<h1 class="sr-only">` com o nome da organização mantém o único `h1` da página (C.5). O fallback institucional não muda (C.8).
+
+### 5.3 Critérios de aceitação (C.9)
+- A arte não é cortada em 375, 768, 1280 e 1920px; o `<img>` usa `object-contain` e não `object-cover`.
+- Título e subtítulo não são renderizados; a home tem exatamente um `h1`.
+- Com link, a `<img>` fica dentro do `<a>`; sem link (ou com esquema inseguro), a arte não é clicável.
+- Os testes de `focal_point` e de rótulo do botão foram removidos junto com os recursos.

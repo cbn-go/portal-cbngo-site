@@ -213,20 +213,17 @@
             </div>
         </div>
 
-        <!-- Hero com banners do painel (Issue #23) -->
+        <!-- Hero com banners do painel (Issues #23 e #24) -->
         <div class="space-y-6">
             <h3 class="text-lg font-bold text-slate-900 font-brand-serif">Hero com Banners do Painel (&lt;x-hero-banner&gt;)</h3>
-            <p class="text-sm text-slate-600">Com um banner, hero simples; com vários, carrossel com autoplay, setas, indicadores e swipe. Sem banners vigentes, a home exibe o hero institucional.</p>
+            <p class="text-sm text-slate-600">A arte final 16:9 (com textos e logos) é exibida inteira, sem corte e sem texto sobreposto; com link, o banner inteiro é clicável. Com vários banners, carrossel com autoplay, setas, indicadores e swipe abaixo da arte. Sem banners vigentes, a home exibe o hero institucional.</p>
             <x-hero-banner
-                first-heading="h4"
                 class="rounded-xl"
                 :banners="collect([
                     new \App\Models\Banner([
-                        'title' => 'Matrículas abertas no SETEBAN-GO',
-                        'subtitle' => 'Bacharelado em Teologia com aulas presenciais em Goiânia.',
-                        'image' => 'https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&q=70&w=1600',
-                        'alt_text' => 'Comunidade reunida em culto',
-                        'focal_point' => 'center',
+                        'title' => 'Exemplo do design system',
+                        'image' => 'https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&q=70&w=1600&h=900',
+                        'alt_text' => 'Interior de igreja com vitrais (arte de exemplo em 16:9)',
                         'link_url' => '/quem-somos',
                     ]),
                 ])"

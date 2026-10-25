@@ -193,6 +193,6 @@ class DesignSystemTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-testid="hero-banner"', false);
-        $response->assertSee('Matrículas abertas no SETEBAN-GO');
+        $response->assertSee('alt="Interior de igreja com vitrais (arte de exemplo em 16:9)"', false);
     }
 }

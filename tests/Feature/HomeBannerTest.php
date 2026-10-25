@@ -18,7 +18,7 @@ class HomeBannerTest extends TestCase
     }
 
     /**
-     * Sem banners vigentes, a home mantém o hero institucional (B.4).
+     * Sem banners vigentes, a home mantém o hero institucional (B.4 / C.8).
      */
     public function test_home_falls_back_to_institutional_hero_without_banners(): void
     {
@@ -31,63 +31,86 @@ class HomeBannerTest extends TestCase
         $response->assertSee('Conheça a CBN-GO');
         $response->assertDontSee('Banner Vencido');
         $response->assertDontSee('data-testid="hero-banner"', false);
+        $this->assertSame(1, substr_count((string) $response->getContent(), '<h1'));
     }
 
     /**
-     * Com um banner, exibe hero simples sem controles de carrossel (B.3).
+     * Com um banner, exibe a arte inteira, sem texto sobreposto e sem controles de carrossel (C.1, C.3).
      */
-    public function test_home_renders_single_banner_without_carousel_controls(): void
+    public function test_home_renders_single_banner_art_without_overlay_or_controls(): void
     {
         Banner::factory()->create([
-            'title' => 'Matrículas abertas no SETEBAN-GO',
-            'subtitle' => 'Bacharelado em Teologia com aulas em Goiânia.',
-            'image' => 'banners/seteban.jpg',
-            'alt_text' => 'Alunos em sala de aula do seminário',
+            'title' => 'Encontro de Missões Nacionais',
+            'image' => 'banners/missoes-2026.jpg',
+            'alt_text' => 'Encontro de Missões Nacionais 2026, de 12 a 14 de novembro, em Goiânia.',
         ]);
 
         $response = $this->get('/');
+        $html = (string) $response->getContent();
 
         $response->assertOk();
         $response->assertSee('data-testid="hero-banner"', false);
-        $response->assertSee('Matrículas abertas no SETEBAN-GO');
-        $response->assertSee('Bacharelado em Teologia com aulas em Goiânia.');
-        $response->assertSee('alt="Alunos em sala de aula do seminário"', false);
-        $response->assertSee('https://midia.test/banners/seteban-cover.webp 1600w', false);
-        $response->assertSee('fetchpriority="high"', false);
+        $response->assertSee('alt="Encontro de Missões Nacionais 2026, de 12 a 14 de novembro, em Goiânia."', false);
+        $response->assertDontSeeText('Encontro de Missões Nacionais');
         $response->assertDontSee('aria-roledescription="carousel"', false);
         $response->assertDontSee('Próximo banner');
+        $response->assertDontSee('from-cbn-black/90', false);
         $response->assertDontSee('Uma Convenção que Cuida, Fortalece e Multiplica');
+
+        $image = $this->heroImages($html)[0];
+        $this->assertStringContainsString('object-contain', $image);
+        $this->assertStringNotContainsString('object-cover', $image);
+        $this->assertStringContainsString('width="1920"', $image);
+        $this->assertStringContainsString('height="1080"', $image);
+        $this->assertStringContainsString('sizes="(min-width: 1600px) 1600px, 100vw"', $image);
+        $this->assertStringContainsString('https://midia.test/banners/missoes-2026-cover.webp 1600w', $image);
+        $this->assertStringContainsString('fetchpriority="high"', $image);
     }
 
     /**
-     * Com vários banners, exibe carrossel acessível na ordem do painel (B.3, B.5, B.6).
+     * Sem título visível no hero, a home mantém um único h1 oculto com o nome da organização (C.5).
+     */
+    public function test_home_keeps_single_visually_hidden_h1_with_banners(): void
+    {
+        Banner::factory()->count(2)->create();
+
+        $html = (string) $this->get('/')->getContent();
+
+        $this->assertSame(1, substr_count($html, '<h1'));
+        $this->assertMatchesRegularExpression('#<h1 class="sr-only">\s*Convenção Batista Nacional do Estado de Goiás\s*</h1>#', $html);
+        $this->assertStringNotContainsString('<h2 class="font-brand-serif font-extrabold', $html);
+    }
+
+    /**
+     * Com vários banners, exibe carrossel acessível na ordem do painel, com controles abaixo da arte (C.6).
      */
     public function test_home_renders_carousel_in_position_order_for_multiple_banners(): void
     {
-        Banner::factory()->create(['title' => 'Terceiro aviso', 'position' => 3]);
-        Banner::factory()->create(['title' => 'Primeiro aviso', 'position' => 1]);
-        Banner::factory()->create(['title' => 'Segundo aviso', 'position' => 2]);
+        Banner::factory()->create(['title' => 'Terceiro aviso', 'alt_text' => 'Arte do terceiro aviso', 'position' => 3]);
+        Banner::factory()->create(['title' => 'Primeiro aviso', 'alt_text' => 'Arte do primeiro aviso', 'position' => 1]);
+        Banner::factory()->create(['title' => 'Segundo aviso', 'alt_text' => 'Arte do segundo aviso', 'position' => 2]);
 
         $response = $this->get('/');
 
         $response->assertOk();
         $response->assertSee('aria-roledescription="carousel"', false);
         $response->assertSee('aria-roledescription="slide"', false);
-        $response->assertSeeInOrder(['Primeiro aviso', 'Segundo aviso', 'Terceiro aviso']);
+        $response->assertSeeInOrder(['Arte do primeiro aviso', 'Arte do segundo aviso', 'Arte do terceiro aviso']);
         $response->assertSee('Banner anterior');
         $response->assertSee('Próximo banner');
-        $response->assertSee('Ir para o banner 3');
+        $response->assertSee('Ir para o banner 3: Terceiro aviso');
+        $response->assertSee('aria-label="1 de 3: Primeiro aviso"', false);
         $response->assertSee('Pausar rotação dos banners');
+        $response->assertSee('data-testid="hero-banner-controls"', false);
 
-        preg_match_all('#<img[^>]*data-hero-image[^>]*>#', (string) $response->getContent(), $images);
-        $this->assertCount(3, $images[0]);
-        $this->assertStringContainsString('fetchpriority="high"', $images[0][0]);
-        $this->assertStringContainsString('loading="eager"', $images[0][0]);
-        foreach (array_slice($images[0], 1) as $image) {
+        $images = $this->heroImages((string) $response->getContent());
+        $this->assertCount(3, $images);
+        $this->assertStringContainsString('fetchpriority="high"', $images[0]);
+        $this->assertStringContainsString('loading="eager"', $images[0]);
+        foreach (array_slice($images, 1) as $image) {
             $this->assertStringContainsString('loading="lazy"', $image);
             $this->assertStringNotContainsString('fetchpriority', $image);
         }
-        $this->assertSame(1, substr_count((string) $response->getContent(), '<h1'));
     }
 
     /**
@@ -95,10 +118,10 @@ class HomeBannerTest extends TestCase
      */
     public function test_home_hides_inactive_scheduled_and_expired_banners(): void
     {
-        Banner::factory()->create(['title' => 'Banner Vigente']);
-        Banner::factory()->inactive()->create(['title' => 'Banner Desativado']);
-        Banner::factory()->scheduled()->create(['title' => 'Banner Agendado']);
-        Banner::factory()->expired()->create(['title' => 'Banner Expirado']);
+        Banner::factory()->create(['alt_text' => 'Banner Vigente']);
+        Banner::factory()->inactive()->create(['alt_text' => 'Banner Desativado']);
+        Banner::factory()->scheduled()->create(['alt_text' => 'Banner Agendado']);
+        Banner::factory()->expired()->create(['alt_text' => 'Banner Expirado']);
 
         $response = $this->get('/');
 
@@ -109,58 +132,48 @@ class HomeBannerTest extends TestCase
     }
 
     /**
-     * Link externo abre em nova aba com rel seguro; link interno abre na mesma aba (B.3).
+     * Com link, o banner inteiro é o link: externo em nova aba com rel seguro, interno na mesma aba (C.4).
      */
-    public function test_banner_links_render_target_and_rel_by_destination(): void
+    public function test_whole_banner_is_the_link_with_target_by_destination(): void
     {
         Banner::factory()->external()->create([
             'position' => 1,
             'link_url' => 'https://www.cbn.org.br/campanha',
-            'link_label' => 'Ver campanha nacional',
+            'alt_text' => 'Campanha nacional de missões',
         ]);
         Banner::factory()->create([
             'position' => 2,
             'link_url' => '/igrejas',
-            'link_label' => 'Encontrar igreja filiada',
+            'alt_text' => 'Encontre uma igreja filiada',
         ]);
 
-        $response = $this->get('/');
-        $html = (string) $response->getContent();
+        $html = (string) $this->get('/')->getContent();
 
-        $this->assertSame(1, preg_match('#<a[^>]*href="https://www\.cbn\.org\.br/campanha"[^>]*>#', $html, $external));
+        $this->assertSame(1, preg_match('#<a[^>]*href="https://www\.cbn\.org\.br/campanha"[^>]*>(.*?)</a>#s', $html, $external));
         $this->assertStringContainsString('target="_blank"', $external[0]);
         $this->assertStringContainsString('rel="noopener noreferrer"', $external[0]);
+        $this->assertStringContainsString('data-hero-image', $external[1]);
+        $this->assertStringContainsString('alt="Campanha nacional de missões"', $external[1]);
+        $this->assertStringContainsString('(abre em nova aba)', $external[1]);
 
-        $this->assertSame(1, preg_match('#<a[^>]*href="/igrejas"[^>]*>\s*Encontrar igreja filiada#', $html, $internal));
-        $this->assertStringNotContainsString('target=', $internal[0]);
-        $response->assertSee('Ver campanha nacional');
-        $response->assertSee('(abre em nova aba)');
-        $response->assertSee('Encontrar igreja filiada');
+        $this->assertSame(1, preg_match('#<a([^>]*)href="/igrejas"([^>]*)>(.*?)</a>#s', $html, $internal));
+        $this->assertStringNotContainsString('target=', $internal[1].$internal[2]);
+        $this->assertStringContainsString('data-hero-image', $internal[3]);
+        $this->assertStringNotContainsString('(abre em nova aba)', $internal[3]);
     }
 
     /**
-     * Sem link válido, o banner não exibe botão.
+     * Sem link válido, a arte não é clicável.
      */
-    public function test_banner_without_valid_link_has_no_button(): void
+    public function test_banner_without_valid_link_is_not_clickable(): void
     {
-        Banner::factory()->create(['position' => 1, 'link_url' => null, 'link_label' => 'Botão sem destino']);
-        Banner::factory()->create(['position' => 2, 'link_url' => 'javascript:alert(1)', 'link_label' => 'Botão malicioso']);
+        Banner::factory()->create(['position' => 1, 'link_url' => null]);
+        Banner::factory()->create(['position' => 2, 'link_url' => 'javascript:alert(1)']);
 
-        $response = $this->get('/');
+        $html = (string) $this->get('/')->getContent();
 
-        $response->assertDontSee('Botão sem destino');
-        $response->assertDontSee('Botão malicioso');
-        $response->assertDontSee('javascript:alert(1)', false);
-    }
-
-    /**
-     * O ponto focal do painel controla o corte da imagem (object-position).
-     */
-    public function test_banner_focal_point_is_applied_as_object_position(): void
-    {
-        Banner::factory()->create(['focal_point' => 'left']);
-
-        $this->get('/')->assertSee('object-position: left center', false);
+        $this->assertSame(0, preg_match('#<a[^>]*>(?:(?!</a>).)*data-hero-image#s', $html));
+        $this->assertStringNotContainsString('javascript:alert(1)', $html);
     }
 
     /**
@@ -168,15 +181,27 @@ class HomeBannerTest extends TestCase
      */
     public function test_banner_cache_is_refreshed_when_banner_is_updated(): void
     {
-        $banner = Banner::factory()->create(['title' => 'Título original']);
+        $banner = Banner::factory()->create(['alt_text' => 'Arte original']);
 
-        $this->get('/')->assertSee('Título original');
+        $this->get('/')->assertSee('Arte original');
 
         $this->travel(1)->seconds();
-        $banner->update(['title' => 'Título revisado']);
+        $banner->update(['alt_text' => 'Arte revisada']);
 
         $this->get('/')
-            ->assertSee('Título revisado')
-            ->assertDontSee('Título original');
+            ->assertSee('Arte revisada')
+            ->assertDontSee('Arte original');
+    }
+
+    /**
+     * Tags <img> das artes do hero, na ordem do HTML.
+     *
+     * @return array<int, string>
+     */
+    private function heroImages(string $html): array
+    {
+        preg_match_all('#<img[^>]*data-hero-image[^>]*>#', $html, $matches);
+
+        return $matches[0];
     }
 }
