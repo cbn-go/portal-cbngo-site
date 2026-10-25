@@ -13,7 +13,11 @@
 @endif
 
 @section('content')
-{{-- Hero (layout Stitch — fundo claro institucional) --}}
+@if ($banners->isNotEmpty())
+{{-- Hero com os banners cadastrados no painel (Issue #23) --}}
+<x-hero-banner :banners="$banners" />
+@else
+{{-- Hero institucional (layout Stitch — fundo claro), fallback sem banners vigentes --}}
 <section class="relative min-h-[560px] lg:min-h-[640px] flex items-center justify-center overflow-hidden border-b border-neutral-200">
     @php($heroImage = 'https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&q=70&w=')
     <img
@@ -65,6 +69,7 @@
         </div>
     </div>
 </section>
+@endif
 
 {{-- Últimas Notícias --}}
 <section class="py-20 lg:py-24 bg-white border-b border-neutral-200" id="noticias">

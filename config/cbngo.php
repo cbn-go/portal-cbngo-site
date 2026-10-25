@@ -63,4 +63,18 @@ return [
         'cache_ttl' => (int) env('SITEMAP_CACHE_TTL', 600),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Banners do hero da home (Issue #23)
+    |--------------------------------------------------------------------------
+    |
+    | A chave do cache muda quando um banner é criado, editado ou removido no
+    | painel; o TTL limita o atraso de banners cuja vigência começa ou termina.
+    |
+    */
+
+    'home' => [
+        'banners_cache_ttl' => (int) env('HOME_BANNERS_CACHE_TTL', 300),
+    ],
+
 ];
