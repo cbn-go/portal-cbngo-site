@@ -60,3 +60,85 @@ jobs:
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: ":memory:"
+
+  deploy:
+    needs: quality
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      REMOTE_ROOT: /home/u579305537/domains/honeydew-wolverine-903854.hostingersite.com
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql
+          coverage: none
+          tools: composer
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Composer production dependencies
+        run: composer install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-interaction
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Configure SSH
+        env:
+          HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$HOSTINGER_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "$HOSTINGER_PORT" "$HOSTINGER_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync application (never overwrite .env, never migrate)
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+        run: |
+          RSYNC_SSH="ssh -p $HOSTINGER_PORT -o StrictHostKeyChecking=yes -i $HOME/.ssh/id_ed25519"
+          rsync -az --delete \
+            -e "$RSYNC_SSH" \
+            --exclude '.env' \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'node_modules/' \
+            --exclude 'tests/' \
+            --exclude 'tmp/' \
+            --exclude 'public/' \
+            --exclude 'public_html/' \
+            --exclude 'storage/logs/*' \
+            --exclude 'storage/framework/sessions/*' \
+            --exclude 'storage/framework/cache/data/*' \
+            --exclude 'storage/framework/views/*' \
+            --exclude 'database/database.sqlite' \
+            ./ "${HOSTINGER_USER}@${HOSTINGER_HOST}:${REMOTE_ROOT}/"
+          rsync -az --delete \
+            -e "$RSYNC_SSH" \
+            public/ "${HOSTINGER_USER}@${HOSTINGER_HOST}:${REMOTE_ROOT}/public_html/"
+
+      - name: Rebuild Laravel caches on the server
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+        run: |
+          ssh -p "$HOSTINGER_PORT" -o StrictHostKeyChecking=yes -i "$HOME/.ssh/id_ed25519" \
+            "${HOSTINGER_USER}@${HOSTINGER_HOST}" \
+            "cd ${REMOTE_ROOT} && /opt/alt/php83/usr/bin/php artisan config:cache && /opt/alt/php83/usr/bin/php artisan route:cache && /opt/alt/php83/usr/bin/php artisan view:cache"
