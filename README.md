@@ -79,3 +79,17 @@ Portal público institucional da **Convenção Batista Nacional do Estado de Goi
   ```bash
   composer phpstan
   ```
+
+## Publicação (preview Hostinger)
+
+O preview vive em https://honeydew-wolverine-903854.hostingersite.com/. A spec está em [`specs/deploy-portal.md`](specs/deploy-portal.md).
+
+- Push em `main` publica depois do job `quality` (rsync via SSH). O deploy **não** executa `php artisan migrate`.
+- O `.env` de produção é criado **uma vez** no servidor (`APP_ENV=production`, `APP_DEBUG=false`) e o rsync o ignora. Não copie `.env.example` no servidor.
+- Secrets do repositório (Actions):
+  - `HOSTINGER_SSH_KEY` — chave privada Ed25519 só de deploy
+  - `HOSTINGER_HOST` — `82.180.153.107`
+  - `HOSTINGER_PORT` — `65002`
+  - `HOSTINGER_USER` — `u579305537`
+- Monitoramento: `.github/workflows/uptime.yml` consulta `/health` a cada 15 minutos. Configure também um check no UptimeRobot (ou equivalente) para o mesmo endpoint, com alerta por e-mail.
+- Cloudflare e o domínio oficial (`cbngo.com.br`) **não** entram nesta entrega; o WordPress legado permanece no ar.

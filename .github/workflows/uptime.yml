@@ -1,0 +1,14 @@
+name: Uptime
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check preview /health
+        run: |
+          curl -fsS --max-time 30 https://honeydew-wolverine-903854.hostingersite.com/health | grep -q '"status":"ok"'
