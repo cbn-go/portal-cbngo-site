@@ -80,9 +80,11 @@ Portal público institucional da **Convenção Batista Nacional do Estado de Goi
   composer phpstan
   ```
 
-## Publicação (preview Hostinger)
+## Publicação (Hostinger)
 
-O preview vive em https://honeydew-wolverine-903854.hostingersite.com/. A spec está em [`specs/deploy-portal.md`](specs/deploy-portal.md).
+O portal vive em https://cbngo.org.br/ (pasta `/home/u579305537/domains/cbngo.org.br` no servidor; antes era o preview `honeydew-wolverine-903854.hostingersite.com`). A spec está em [`specs/deploy-portal.md`](specs/deploy-portal.md).
+
+- Se o domínio ou a pasta do site mudar no hPanel, atualize `REMOTE_ROOT`, `SITE_URL` (`.github/workflows/ci.yml`), o monitor (`.github/workflows/uptime.yml`) e o `APP_URL` do `.env` no servidor, e apague `bootstrap/cache/config.php`: o cache de configuração guarda caminhos absolutos da pasta antiga e derruba o site com erro 500.
 
 - Push em `main` publica depois do job `quality` (rsync via SSH). O deploy **não** executa `php artisan migrate`.
 - O `.env` de produção é criado **uma vez** no servidor (`APP_ENV=production`, `APP_DEBUG=false`) e o rsync o ignora. Não copie `.env.example` no servidor.

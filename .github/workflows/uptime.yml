@@ -9,6 +9,6 @@ jobs:
   health:
     runs-on: ubuntu-latest
     steps:
-      - name: Check preview /health
+      - name: Check portal /health
         run: |
-          curl -fsS --max-time 30 https://honeydew-wolverine-903854.hostingersite.com/health | grep -q '"status":"ok"'
+          curl -fsS --max-time 30 https://cbngo.org.br/health | grep -q '"status":"ok"'
