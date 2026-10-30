@@ -72,6 +72,7 @@ status = 'published' AND published_at IS NOT NULL AND published_at <= NOW()
 | | `type` | `priority`: `normal → info`, `high → warning`, `urgent → critical` |
 | | `ends_at` | `expires_at` |
 | `BoardMember` (`board_members`) | `photo_url` | `photo`, lido via `Media::url()` |
+| | `name` com título | `title` + `name` (`getDisplayName()`); `region` com as chaves das AMIGOs (Issue #45) |
 | `Document` (`documents`) | `file_url` | `MEDIA_URL/{file}`; sem arquivo, usa `external_url` |
 
 ### 2.3 Avisos vigentes

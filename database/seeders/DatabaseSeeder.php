@@ -302,26 +302,54 @@ class DatabaseSeeder extends Seeder
             'published_at' => now()->subDays(4),
         ]);
 
-        // 6. Diretoria e Órgãos da Convenção (rascunho — nomes a confirmar com a secretaria)
+        // 6. Diretoria do triênio 2026–2029, eleita na XXVI Assembleia Geral (mesma composição do
+        // BoardTerm20262029Seeder do painel): [título, nome, cargo, órgão, região AMIGO].
         $boardMembers = [
-            ['name' => 'Pr. Roberto Silveira', 'role' => 'Presidente', 'group' => 'presidencia', 'photo' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'],
-            ['name' => 'Pr. Carlos Eduardo Mendes', 'role' => '1º Vice-presidente', 'group' => 'vice_presidencia', 'position' => 1, 'photo' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'],
-            ['name' => 'Pr. André Luiz Barbosa', 'role' => '2º Vice-presidente', 'group' => 'vice_presidencia', 'position' => 2],
-            ['name' => 'Pra. Helena Albuquerque', 'role' => '1ª Secretária', 'group' => 'secretaria', 'position' => 1, 'photo' => 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'],
-            ['name' => 'Pr. Daniel Ferreira Costa', 'role' => '2º Secretário', 'group' => 'secretaria', 'position' => 2],
-            ['name' => 'Diác. Márcio Antunes', 'role' => '1º Tesoureiro', 'group' => 'tesouraria', 'position' => 1],
-            ['name' => 'Presb. Juliana Rezende', 'role' => '2ª Tesoureira', 'group' => 'tesouraria', 'position' => 2],
-            ['name' => 'Pr. Valdir Cunha', 'role' => 'Relator', 'group' => 'conselho_fiscal', 'position' => 1],
-            ['name' => 'Pr. Samuel Rocha', 'role' => 'Vogal', 'group' => 'conselho_fiscal', 'position' => 2],
-            ['name' => 'Pr. Elias Moreira', 'role' => 'Vogal', 'group' => 'conselho_fiscal', 'position' => 3],
-            ['name' => 'Pr. Fernando Lopes', 'role' => 'Coordenador Regional', 'group' => 'coordenacao_regional', 'region' => 'Região Metropolitana de Goiânia', 'position' => 1],
-            ['name' => 'Pr. Gilberto Nunes', 'role' => 'Coordenador Regional', 'group' => 'coordenacao_regional', 'region' => 'Região Centro (Anápolis)', 'position' => 2],
-            ['name' => 'Pr. Wesley Prado', 'role' => 'Coordenador Regional', 'group' => 'coordenacao_regional', 'region' => 'Região Sudoeste (Rio Verde e Jataí)', 'position' => 3],
-            ['name' => 'Pr. Josué Teixeira', 'role' => 'Coordenador Regional', 'group' => 'coordenacao_regional', 'region' => 'Região Entorno do DF (Luziânia)', 'position' => 4],
+            ['Pr.', 'André Luiz Rodrigues da Silva', 'Presidente', 'presidencia', null],
+            ['Pr.', 'Deusimar Pereira do Amaral', 'Vice-Presidente', 'vice_presidencia', null],
+            ['Pr.', 'Antônio Rogério Oliveira de Freitas', '1º Secretário de Atas', 'secretaria', null],
+            ['Pr.', 'Welismar Alves Moreira', '2º Secretário de Atas', 'secretaria', null],
+            ['Pr.', 'Wellington Coelho de Sousa', 'Vogal', 'conplex', null],
+            ['Pr.', 'Waldir Sebastião Assis', 'Vogal', 'conplex', null],
+            [null, 'Allan Kardec Pereira de Assis', 'Vogal', 'conplex', null],
+            [null, 'Irenice Ramos', 'Vogal', 'conplex', null],
+            [null, 'Abílio Rocha Neto', 'Relator', 'conselho_fiscal', null],
+            [null, 'Juarez Raimundo de Araújo', '1º Vogal', 'conselho_fiscal', null],
+            [null, 'Marilane Cristina Jacintho e Braga', '2ª Vogal', 'conselho_fiscal', null],
+            [null, 'Cristiano Sales de Carvalho', '1º Suplente', 'conselho_fiscal', null],
+            [null, 'Marcos Fialho Silva', '2º Suplente', 'conselho_fiscal', null],
+            [null, 'Sueli Burin Redivo', '3ª Suplente', 'conselho_fiscal', null],
+            ['Pr.', 'Reidner Pereira de Almeida', 'Coordenador', 'coordenacao_regional', 'leste'],
+            ['Pr.', 'Jamil Aparecido Vieira da Silva', 'Vice-Coordenador', 'coordenacao_regional', 'leste'],
+            ['Pr.', 'Rone Rogers Garcês Dias da Silva', '1º Secretário', 'coordenacao_regional', 'leste'],
+            ['Ev.', 'Fábio Oliveira Nascimento', '2º Secretário', 'coordenacao_regional', 'leste'],
+            ['Pr.', 'Maxsuel Ferreira Ramos', 'Coordenador', 'coordenacao_regional', 'oeste'],
+            ['Pr.', 'Fabiano Antônio Pinto', 'Vice-Coordenador', 'coordenacao_regional', 'oeste'],
+            ['Pr.', 'Paulo Cézar de Oliveira', '1º Secretário', 'coordenacao_regional', 'oeste'],
+            ['Pr.', 'Marcos Fialho Silva', '2º Secretário', 'coordenacao_regional', 'oeste'],
+            ['Pr.', 'Adonias Ferreira Leite', 'Coordenador', 'coordenacao_regional', 'norte'],
+            ['Pr.', 'Manoel de Souza Dourado Neto', 'Vice-Coordenador', 'coordenacao_regional', 'norte'],
+            ['Pr.', 'Alessandro Gonzaga Silva', '1º Secretário', 'coordenacao_regional', 'norte'],
+            ['Pr.', 'Fábio Teixeira dos Santos', '2º Secretário', 'coordenacao_regional', 'norte'],
+            ['Pr.', 'Marcondes Nunes Pereira', 'Coordenador', 'coordenacao_regional', 'sudoeste'],
+            ['Pr.', 'José Wilson de Oliveira', 'Vice-Coordenador', 'coordenacao_regional', 'sudoeste'],
+            ['Pr.', 'Francisco Marques da Silva Neto', '1º Secretário', 'coordenacao_regional', 'sudoeste'],
+            ['Ev.', 'Elcio Luiz Miranda Sobrinho', '2º Secretário', 'coordenacao_regional', 'sudoeste'],
         ];
 
-        foreach ($boardMembers as $member) {
-            BoardMember::create($member + ['term_label' => 'Gestão 2025–2027', 'is_active' => true]);
+        foreach ($boardMembers as $index => [$title, $name, $role, $group, $region]) {
+            BoardMember::create([
+                'title' => $title,
+                'name' => $name,
+                'role' => $role,
+                'group' => $group,
+                'region' => $region,
+                'term_label' => 'Triênio 2026–2029',
+                'term_starts_on' => '2026-10-01',
+                'term_ends_on' => '2029-09-30',
+                'position' => $index + 1,
+                'is_active' => true,
+            ]);
         }
 
         // 7. Documentos oficiais para consulta/download

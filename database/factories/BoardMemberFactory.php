@@ -19,13 +19,18 @@ class BoardMemberFactory extends Factory
      */
     public function definition(): array
     {
+        $group = $this->faker->randomElement(array_keys(BoardMember::GROUPS));
+
         return [
-            'name' => 'Pr. '.$this->faker->name(),
+            'title' => 'Pr.',
+            'name' => $this->faker->name(),
             'role' => 'Membro da Diretoria',
-            'group' => $this->faker->randomElement(array_keys(BoardMember::GROUPS)),
-            'region' => null,
+            'group' => $group,
+            'region' => $group === 'coordenacao_regional' ? $this->faker->randomElement(array_keys(BoardMember::REGIONS)) : null,
             'photo' => null,
-            'term_label' => 'Gestão 2025–2027',
+            'term_label' => 'Triênio 2026–2029',
+            'term_starts_on' => '2026-10-01',
+            'term_ends_on' => '2029-09-30',
             'position' => 0,
             'is_active' => true,
         ];

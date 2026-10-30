@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Diretoria')
-@section('meta_description', 'Conheça a diretoria atual da Convenção Batista Nacional do Estado de Goiás: presidência, secretaria, tesouraria, conselho fiscal e coordenadores regionais.')
+@section('meta_description', 'Conheça a diretoria atual da Convenção Batista Nacional do Estado de Goiás: presidência, secretaria, CONPLEX, conselho fiscal e diretorias regionais (AMIGO).')
 
 @section('content')
 <div class="bg-[#FFFDFB]">
@@ -31,11 +31,27 @@
                     <span class="inline-block w-6 h-0.5 bg-cbn-orange" aria-hidden="true"></span>
                     <h2 id="grupo-{{ $key }}" class="font-brand-serif font-bold text-2xl text-cbn-black">{{ $group['label'] }}</h2>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    @foreach ($group['members'] as $member)
-                        <x-board-member-card :member="$member" />
-                    @endforeach
-                </div>
+                @if ($group['regions'])
+                    {{-- Diretorias regionais: uma subseção por AMIGO (Issue #45) --}}
+                    <div class="space-y-10">
+                        @foreach ($group['regions'] as $regionKey => $region)
+                            <div data-board-region="{{ $regionKey }}" class="space-y-4">
+                                <h3 class="text-sm uppercase font-bold tracking-wider text-cbn-orange-ink">{{ $region['label'] }}</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    @foreach ($region['members'] as $member)
+                                        <x-board-member-card :member="$member" heading="h4" />
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        @foreach ($group['members'] as $member)
+                            <x-board-member-card :member="$member" />
+                        @endforeach
+                    </div>
+                @endif
             </section>
         @empty
             <div data-testid="board-empty" class="rounded-xl border border-dashed border-neutral-300 bg-white p-10 text-center text-neutral-500">
