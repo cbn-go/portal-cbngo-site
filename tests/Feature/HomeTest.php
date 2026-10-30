@@ -357,6 +357,8 @@ class HomeTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('SETEBAN-GO');
         $response->assertSee('Seminário Teológico');
+        $response->assertSee('Formação pastoral');
+        $response->assertDontSee('Bacharelado');
         $response->assertSee('Assembleia Geral');
         $response->assertSee('Eventos Anuais');
     }

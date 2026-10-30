@@ -146,8 +146,8 @@
                 />
                 <x-news-card
                     title="Juventude Batista Nacional realiza congresso estadual com recorde de inscritos"
-                    slug="congresso-jubang-2026"
-                    category="JUBANG"
+                    slug="congresso-juban-2026"
+                    category="JUBAN"
                     date="05/10/2026"
                     excerpt="Mais de mil jovens de diversas cidades goianas participaram do evento focado em missões e liderança."
                 />

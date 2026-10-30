@@ -76,10 +76,10 @@
                             SETEBAN-GO
                         </a>
                     </li>
-                    <li><a href="#jami" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Secretaria de Missões (SEM-GO)</a></li>
+                    <li><a href="#amigo" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Associações Missionárias Goianas (AMIGO)</a></li>
                     <li><a href="#ormiban" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Ordem dos Pastores (ORMIBAN)</a></li>
                     <li><a href="#ufmbn" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">União Feminina (UFBN)</a></li>
-                    <li><a href="#jubang" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Juventude Conectada (JUBAN)</a></li>
+                    <li><a href="#juban" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Juventude Batista Nacional (JUBAN)</a></li>
                 </ul>
             </div>
 

@@ -366,12 +366,12 @@
                         SETEBAN-GO
                     </h3>
                     <p class="text-neutral-700 text-sm lg:text-base mt-3 leading-relaxed">
-                        Seminário Teológico Batista Nacional: forma líderes preparados para servir pessoas, fortalecer famílias e gerar impacto social duradouro nas comunidades.
+                        Seminário Teológico Batista Nacional, de formação pastoral: capacita líderes para servir pessoas, fortalecer famílias e gerar impacto social duradouro nas comunidades.
                     </p>
                     <div class="mt-6 flex flex-wrap gap-2">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-200 text-xs font-medium text-neutral-800 rounded shadow-sm">
                             <span class="w-1.5 h-1.5 rounded-full bg-cbn-orange" aria-hidden="true"></span>
-                            Bacharelado em Teologia
+                            Formação pastoral
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-200 text-xs font-medium text-neutral-800 rounded shadow-sm">
                             <span class="w-1.5 h-1.5 rounded-full bg-cbn-orange-mid" aria-hidden="true"></span>

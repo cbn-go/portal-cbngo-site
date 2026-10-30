@@ -108,6 +108,9 @@ class DesignSystemTest extends TestCase
         $footerHtml->assertSee('images/brand/cbn-go-on-dark.png', false);
         $footerHtml->assertSee('Convenção Batista Nacional do Estado de Goiás');
         $footerHtml->assertSee('SETEBAN-GO');
+        $footerHtml->assertSee('Juventude Batista Nacional (JUBAN)');
+        $footerHtml->assertSee('Associações Missionárias Goianas (AMIGO)');
+        $footerHtml->assertDontSee('Secretaria de Missões');
         $footerHtml->assertSee('Goiânia');
         // Redes sociais exigidas no AC 2.2:
         $footerHtml->assertSee('Instagram');

@@ -191,7 +191,7 @@ class DatabaseSeeder extends Seeder
         $author1 = $this->author('Pr. Roberto Silveira', [
             'slug' => 'pr-roberto-silveira',
             'pastoral_title' => 'Pastor Titular & Presidente CBN-GO',
-            'bio' => 'Ministro do evangelho, bacharel em Teologia pelo SETEBAN-GO e articulista sobre liderança eclesiástica.',
+            'bio' => 'Ministro do evangelho, formado pelo SETEBAN-GO e articulista sobre liderança eclesiástica.',
             'avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
             'social_links' => [
                 'instagram' => 'https://instagram.com/cbngoias',
@@ -293,7 +293,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'SETEBAN-GO abre processo seletivo para turmas de Teologia Ministerial 2026',
             'slug' => 'seteban-go-abre-processo-seletivo-2026',
             'category' => 'Educação Teológica',
-            'excerpt' => 'O Seminário Teológico Batista Nacional em Goiás convida vocacionados e líderes locais para o vestibular do primeiro semestre.',
+            'excerpt' => 'O Seminário Teológico Batista Nacional em Goiás convida vocacionados e líderes locais para o processo seletivo do primeiro semestre.',
             'content' => 'O SETEBAN-GO reafirma seu compromisso de mais de quatro décadas na formação eclesiástica séria e confessional...',
             'user_id' => $author1->user_id,
             'church_id' => null,
