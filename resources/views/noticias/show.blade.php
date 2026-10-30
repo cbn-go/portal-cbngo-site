@@ -3,7 +3,7 @@
 @section('title', $news->title)
 @section('meta_description', $news->excerpt ?? '')
 @section('og_type', 'article')
-@section('og_image', $news->featured_image_url ?? '')
+@section('og_image', \App\Support\Media::shareImage($news->featured_image) ?? '')
 @section('published_time', $news->published_at?->toIso8601String() ?? '')
 
 @push('structured-data')

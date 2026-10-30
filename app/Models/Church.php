@@ -185,6 +185,68 @@ class Church extends Model
     }
 
     /**
+     * Horários de culto em uma linha (ex.: "Domingo 19h00, Quarta-feira 20h00"), ignorando itens incompletos.
+     */
+    public function getServiceTimesSummary(): string
+    {
+        $times = array_map(
+            fn (array $item): string => trim(trim($item['day']).' '.trim($item['time'])),
+            $this->service_times ?? [],
+        );
+
+        return implode(', ', array_filter($times, fn (string $time): bool => $time !== ''));
+    }
+
+    /**
+     * Título da página: "{nome} em {cidade}", ou só o nome quando ele já traz a cidade.
+     */
+    public function getSeoTitle(): string
+    {
+        return $this->nameHasCity() ? $this->name : $this->name.' em '.trim($this->city);
+    }
+
+    /**
+     * Descrição para buscadores: nome, cidade, logradouro com bairro e horários de culto.
+     *
+     * "Igreja Batista Nacional" e a cidade só são repetidos quando o nome não os traz, para caber nos 160 caracteres.
+     */
+    public function getSeoDescription(): string
+    {
+        $place = trim($this->city).'-'.trim($this->state ?: 'GO');
+        $intro = match (true) {
+            ! str_contains(mb_strtolower($this->name), 'batista nacional') => $this->name.', Igreja Batista Nacional em '.$place.'.',
+            $this->nameHasCity() => $this->name.', '.$place.'.',
+            default => $this->name.' em '.$place.'.',
+        };
+        $parts = [$intro];
+
+        $street = implode(', ', array_filter(
+            [$this->getStreetAddress(), trim((string) $this->neighborhood)],
+            fn (string $part): bool => $part !== ''
+        ));
+        if ($street !== '') {
+            $parts[] = $street.'.';
+        }
+
+        $times = $this->getServiceTimesSummary();
+        if ($times !== '') {
+            $parts[] = 'Cultos: '.$times.'.';
+        }
+
+        return implode(' ', $parts);
+    }
+
+    /**
+     * Indica se o nome da igreja já inclui a cidade (ex.: "Igreja Batista Nacional de Anápolis").
+     */
+    private function nameHasCity(): bool
+    {
+        $city = mb_strtolower(trim($this->city));
+
+        return $city !== '' && str_contains(mb_strtolower($this->name), $city);
+    }
+
+    /**
      * Gera URL segura para rota no Google Maps (priorizando coordenadas válidas ou usando endereço completo).
      */
     public function getGoogleMapsUrl(): string

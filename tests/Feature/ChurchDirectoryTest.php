@@ -308,6 +308,22 @@ class ChurchDirectoryTest extends TestCase
     }
 
     /**
+     * O nome da igreja no card leva à página própria da igreja (Issue #43, S.2), sem mudar a âncora usada pelo mapa.
+     */
+    public function test_church_card_links_to_church_page(): void
+    {
+        $this->withoutVite();
+
+        Church::factory()->create(['name' => 'Igreja Batista Nacional Esperança', 'slug' => 'ibn-esperanca']);
+
+        $html = (string) $this->get(route('igrejas'))->getContent();
+
+        $this->assertMatchesRegularExpression('#<a[^>]*href="'.preg_quote(route('igrejas.show', 'ibn-esperanca'), '#').'"[^>]*>\s*Igreja Batista Nacional Esperança\s*</a>#', $html);
+        $this->assertStringContainsString('id="igreja-ibn-esperanca"', $html);
+        $this->assertStringContainsString('Ver página da igreja', $html);
+    }
+
+    /**
      * Valida que congregações sem logotipo cadastrado exibem um fallback institucional elegante (AC 6.2).
      */
     public function test_church_card_renders_fallback_when_logo_is_missing(): void

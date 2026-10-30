@@ -34,6 +34,7 @@ Route::get('/estatuto/versoes', [StatuteController::class, 'versions'])->name('e
 Route::get('/estatuto/versoes/{date}', [StatuteController::class, 'version'])->name('estatuto.version');
 
 Route::get('/igrejas', [ChurchController::class, 'index'])->name('igrejas');
+Route::get('/igrejas/{slug}', [ChurchController::class, 'show'])->name('igrejas.show');
 
 Route::get('/noticias', [NewsController::class, 'index'])->name('noticias.index');
 Route::get('/noticias/{slug}', [NewsController::class, 'show'])->name('noticias.show');

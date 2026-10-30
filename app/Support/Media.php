@@ -51,6 +51,14 @@ class Media
     }
 
     /**
+     * Imagem de compartilhamento (og:image) de uma capa: a variante cover (1600px) ou, sem ela, o original.
+     */
+    public static function shareImage(?string $path): ?string
+    {
+        return self::variant($path, 'cover') ?? self::url($path);
+    }
+
+    /**
      * Retorna a URL da variante WebP para o tamanho especificado (thumb, card, cover, full).
      *
      * Regra do painel: para caminho relativo "news/featured/abc.jpg", a variante é "news/featured/abc-{size}.webp".
