@@ -3,7 +3,7 @@
 @section('title', $article->title)
 @section('meta_description', $article->excerpt ?? '')
 @section('og_type', 'article')
-@section('og_image', $article->cover_image_url ?? $article->author?->avatar_url ?? '')
+@section('og_image', \App\Support\Media::shareImage($article->cover_image) ?? $article->author?->avatar_url ?? '')
 @section('published_time', $article->published_at?->toIso8601String() ?? '')
 @section('author_name', $article->author?->name ?? \App\Models\News::STATE_PUBLISHER)
 

@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@push('structured-data')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::website()) !!}</script>
+@endpush
 
 @if ($urgentNotice)
     @section('banner')

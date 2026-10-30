@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Author;
+use App\Models\Church;
 use App\Models\News;
 use App\Models\SocialProject;
 use App\Models\Statute;
@@ -73,6 +74,15 @@ class SitemapController extends Controller
         if ($statute) {
             $entries[] = ['loc' => route('estatuto.show'), 'lastmod' => $statute->updated_at?->toAtomString(), 'image' => null];
         }
+
+        Church::active()->orderBy('city')->orderBy('name')->get(['id', 'slug', 'logo', 'updated_at'])
+            ->each(function (Church $church) use (&$entries) {
+                $entries[] = [
+                    'loc' => route('igrejas.show', $church->slug),
+                    'lastmod' => $church->updated_at?->toAtomString(),
+                    'image' => $church->logo_url,
+                ];
+            });
 
         News::published()->latest('published_at')->get(['slug', 'featured_image', 'updated_at'])
             ->each(function (News $news) use (&$entries) {

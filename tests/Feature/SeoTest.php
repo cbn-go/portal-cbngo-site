@@ -32,7 +32,10 @@ class SeoTest extends TestCase
         $response->assertSee('<meta property="og:type" content="website">', false);
         $response->assertSee('<meta property="og:site_name" content="CBN Goiás">', false);
         $response->assertSee('<meta property="og:locale" content="pt_BR">', false);
-        $response->assertSee('<meta property="og:image" content="'.asset('images/brand/cbn-go.png').'">', false);
+        $response->assertSee('<meta property="og:image" content="'.asset('images/brand/cbn-go-share.png').'">', false);
+        $response->assertSee('<meta property="og:image:width" content="1200">', false);
+        $response->assertSee('<meta property="og:image:height" content="630">', false);
+        $response->assertSee('<meta property="og:image:alt" content="CBN Goiás — Convenção Batista Nacional do Estado de Goiás">', false);
         $response->assertSee('<meta name="twitter:card" content="summary_large_image">', false);
         $response->assertSee('<meta name="robots" content="index, follow">', false);
     }
@@ -62,9 +65,13 @@ class SeoTest extends TestCase
         $response->assertSee('<meta property="og:type" content="article">', false);
         $response->assertSee('<meta property="og:title" content="Assembleia Estadual 2026">', false);
         $response->assertSee('<meta property="og:url" content="'.route('noticias.show', $news->slug).'">', false);
-        $response->assertSee('<meta property="og:image" content="https://midia.test/news/featured/assembleia.jpg">', false);
+        // Capa no compartilhamento: variante cover (WebP 1600px), sem dimensões fixas.
+        $response->assertSee('<meta property="og:image" content="https://midia.test/news/featured/assembleia-cover.webp">', false);
+        $response->assertSee('<meta property="og:image:alt" content="Assembleia Estadual 2026">', false);
+        $response->assertDontSee('og:image:width', false);
         $response->assertSee('<meta name="twitter:title" content="Assembleia Estadual 2026">', false);
-        $response->assertSee('<meta name="twitter:image" content="https://midia.test/news/featured/assembleia.jpg">', false);
+        $response->assertSee('<meta name="twitter:image" content="https://midia.test/news/featured/assembleia-cover.webp">', false);
+        $response->assertSee('<meta name="twitter:image:alt" content="Assembleia Estadual 2026">', false);
         $response->assertSee('<meta property="article:published_time" content="'.$news->published_at->toIso8601String().'">', false);
     }
 
@@ -82,7 +89,8 @@ class SeoTest extends TestCase
             $response = $this->get(route('noticias.show', $news->slug));
 
             $response->assertStatus(200);
-            $response->assertSee('<meta property="og:image" content="'.asset('images/brand/cbn-go.png').'">', false);
+            $response->assertSee('<meta property="og:image" content="'.asset('images/brand/cbn-go-share.png').'">', false);
+            $response->assertSee('<meta property="og:image:width" content="1200">', false);
             $response->assertDontSee('content="javascript:', false);
         }
     }
@@ -410,7 +418,7 @@ class SeoTest extends TestCase
 
         $response->assertSee('<title>Orquestra Jovem Luz — CBN Goiás</title>', false);
         $response->assertSee('<meta name="description" content="Aulas de música para adolescentes da comunidade.">', false);
-        $response->assertSee('<meta property="og:image" content="https://midia.test/projects/covers/orquestra.jpg">', false);
+        $response->assertSee('<meta property="og:image" content="https://midia.test/projects/covers/orquestra-cover.webp">', false);
 
         $project = collect($this->structuredData((string) $response->getContent()))->firstWhere('@type', 'Project');
 
@@ -420,6 +428,7 @@ class SeoTest extends TestCase
         $this->assertSame('2025-08-01', $project['foundingDate']);
         $this->assertSame('Luziânia', $project['areaServed']['name']);
         $this->assertSame('Igreja Batista Nacional Luz', $project['parentOrganization']['name']);
+        $this->assertSame(route('igrejas.show', $church->slug), $project['parentOrganization']['url']);
         $this->assertSame(url('/').'#organizacao', $project['parentOrganization']['memberOf']['@id']);
     }
 
@@ -471,6 +480,69 @@ class SeoTest extends TestCase
         Statute::factory()->create();
 
         $this->get('/sitemap.xml')->assertSee('<loc>'.route('estatuto.show').'</loc>', false);
+    }
+
+    /**
+     * A arte padrão de compartilhamento existe e tem 1200×630 (Issue #43, S.1).
+     */
+    public function test_default_share_image_is_1200_by_630(): void
+    {
+        $path = public_path((string) config('cbngo.seo.default_image'));
+
+        $this->assertFileExists($path);
+        $this->assertSame([1200, 630], array_slice((array) getimagesize($path), 0, 2));
+    }
+
+    /**
+     * Artigo com capa usa a variante cover; sem capa, cai no avatar do articulista (Issue #43, S.1).
+     */
+    public function test_article_share_image_uses_cover_variant(): void
+    {
+        $this->withoutVite();
+
+        $author = $this->createAuthor(['slug' => 'autor-capa']);
+        $article = Article::factory()->byAuthor($author)->create(['slug' => 'artigo-capa', 'cover_image' => 'articles/covers/graca.jpg']);
+
+        $this->get(route('artigos.show', $article->slug))
+            ->assertSee('<meta property="og:image" content="https://midia.test/articles/covers/graca-cover.webp">', false);
+    }
+
+    /**
+     * A home tem o JSON-LD WebSite com o nome do site; as outras páginas não (Issue #43, S.3).
+     */
+    public function test_home_renders_website_structured_data_only_on_home(): void
+    {
+        $this->withoutVite();
+
+        $website = collect($this->structuredData((string) $this->get(route('home'))->getContent()))->firstWhere('@type', 'WebSite');
+
+        $this->assertNotNull($website);
+        $this->assertSame(url('/').'#site', $website['@id']);
+        $this->assertSame('CBN Goiás', $website['name']);
+        $this->assertSame(['CBN-GO', 'Convenção Batista Nacional do Estado de Goiás'], $website['alternateName']);
+        $this->assertSame(url('/'), $website['url']);
+        $this->assertSame('pt-BR', $website['inLanguage']);
+        $this->assertSame(url('/').'#organizacao', $website['publisher']['@id']);
+        $this->assertArrayNotHasKey('potentialAction', $website);
+
+        $contact = collect($this->structuredData((string) $this->get(route('contato'))->getContent()))->firstWhere('@type', 'WebSite');
+        $this->assertNull($contact);
+    }
+
+    /**
+     * O sitemap lista as páginas das igrejas ativas, com logo, e omite as inativas (Issue #43, S.2).
+     */
+    public function test_sitemap_lists_active_church_pages_only(): void
+    {
+        $active = Church::factory()->create(['slug' => 'ibn-ativa', 'logo' => 'churches/logos/ativa.png']);
+        Church::factory()->create(['slug' => 'ibn-inativa', 'is_active' => false]);
+
+        $response = $this->get('/sitemap.xml');
+
+        $response->assertSee('<loc>'.route('igrejas.show', 'ibn-ativa').'</loc>', false);
+        $response->assertSee('<lastmod>'.$active->updated_at->toAtomString().'</lastmod>', false);
+        $response->assertSee('<image:loc>https://midia.test/churches/logos/ativa.png</image:loc>', false);
+        $response->assertDontSee('ibn-inativa', false);
     }
 
     /**

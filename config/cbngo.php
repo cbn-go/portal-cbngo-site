@@ -60,8 +60,10 @@ return [
 
     'seo' => [
         'default_description' => 'Portal oficial da Convenção Batista Nacional do Estado de Goiás: notícias, artigos pastorais, diretório de igrejas e informações institucionais da CBN-GO.',
-        // TODO substituir por arte própria de compartilhamento (1200×630).
-        'default_image' => 'images/brand/cbn-go.png',
+        // Arte de compartilhamento (1200×630) usada quando a página não tem imagem própria.
+        'default_image' => 'images/brand/cbn-go-share.png',
+        'default_image_width' => 1200,
+        'default_image_height' => 630,
     ],
 
     /*

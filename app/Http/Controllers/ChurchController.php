@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Church;
+use App\Models\News;
+use App\Models\SocialProject;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -64,6 +66,20 @@ class ChurchController extends Controller
             'availableCities' => $availableCities,
             'q' => $q,
             'cidade' => $cidade,
+        ]);
+    }
+
+    /**
+     * Exibe a página da igreja ativa, com seus projetos sociais e notícias publicados.
+     */
+    public function show(string $slug): View
+    {
+        $church = Church::active()->where('slug', $slug)->firstOrFail();
+
+        return view('igrejas.show', [
+            'church' => $church,
+            'projects' => SocialProject::published()->where('church_id', $church->id)->ordered()->limit(3)->get(),
+            'news' => News::published()->where('church_id', $church->id)->latest('published_at')->limit(3)->get(),
         ]);
     }
 }

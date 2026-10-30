@@ -221,14 +221,14 @@ class SocialProject extends Model
     }
 
     /**
-     * Link para a igreja no diretório (não há página de detalhe de igreja): busca pelo nome + âncora do card.
+     * Link para a página da igreja responsável.
      *
      * @return Attribute<string|null, never>
      */
     protected function churchDirectoryUrl(): Attribute
     {
         return Attribute::get(fn (): ?string => $this->church
-            ? route('igrejas', ['q' => $this->church->name]).'#igreja-'.$this->church->slug
+            ? route('igrejas.show', $this->church->slug)
             : null);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Article;
+use App\Models\Church;
 use App\Models\News;
 use App\Models\SocialProject;
 use App\Models\Statute;
@@ -32,6 +33,65 @@ class StructuredData
             'address' => $info->postalAddress(),
             'sameAs' => array_column($info->socialLinks(), 'url'),
         ];
+    }
+
+    /**
+     * Site publicado como WebSite (só na home), para o nome do site aparecer nos resultados de busca.
+     *
+     * @return array<string, mixed>
+     */
+    public static function website(): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            '@id' => url('/').'#site',
+            'name' => config('cbngo.organization.short_name'),
+            'alternateName' => ['CBN-GO', config('cbngo.organization.name')],
+            'url' => url('/'),
+            'inLanguage' => 'pt-BR',
+            'publisher' => ['@id' => url('/').'#organizacao'],
+        ];
+    }
+
+    /**
+     * Igreja filiada publicada como Church, com endereço, coordenadas e a convenção como organização-mãe.
+     *
+     * Os horários de culto não entram como openingHoursSpecification: o painel guarda só o início do culto.
+     *
+     * @return array<string, mixed>
+     */
+    public static function church(Church $church): array
+    {
+        $street = implode(' - ', array_filter(
+            [$church->getStreetAddress(), trim((string) $church->neighborhood)],
+            fn (string $part): bool => $part !== ''
+        ));
+
+        return array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'Church',
+            'name' => $church->name,
+            'url' => route('igrejas.show', $church->slug),
+            'image' => $church->logo_url,
+            'address' => array_filter([
+                '@type' => 'PostalAddress',
+                'streetAddress' => $street !== '' ? $street : null,
+                'addressLocality' => $church->city,
+                'addressRegion' => $church->state ?: 'GO',
+                'postalCode' => filled($church->zip_code) ? trim((string) $church->zip_code) : null,
+                'addressCountry' => 'BR',
+            ], fn ($value) => $value !== null),
+            'geo' => $church->hasValidCoordinates() ? [
+                '@type' => 'GeoCoordinates',
+                'latitude' => (float) $church->latitude,
+                'longitude' => (float) $church->longitude,
+            ] : null,
+            'telephone' => filled($church->phone) ? $church->phone : (filled($church->cellphone) ? $church->cellphone : null),
+            'email' => $church->getSafeEmail(),
+            'sameAs' => array_values($church->getSafeSocialLinks()) ?: null,
+            'parentOrganization' => self::publisherReference(),
+        ], fn ($value) => $value !== null);
     }
 
     /**

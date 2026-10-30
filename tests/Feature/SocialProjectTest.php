@@ -195,7 +195,7 @@ class SocialProjectTest extends TestCase
         $response->assertSee('Cesta Básica Vida');
         $response->assertSee('Distribuição mensal de cestas básicas.');
         $response->assertSee('Igreja Batista Nacional Vida');
-        $response->assertSee(e(route('igrejas', ['q' => 'Igreja Batista Nacional Vida']).'#igreja-ibn-vida'), false);
+        $response->assertSee('href="'.route('igrejas.show', 'ibn-vida').'"', false);
         $response->assertSee('Jataí');
         $response->assertSee('Desde mar/2026');
         $response->assertSee('Famílias em vulnerabilidade');

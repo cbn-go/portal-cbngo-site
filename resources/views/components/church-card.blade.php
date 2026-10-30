@@ -48,7 +48,9 @@
                 </div>
 
                 <h3 class="font-brand-serif font-bold text-xl text-cbn-black leading-snug">
-                    {{ $church->name }}
+                    <a href="{{ route('igrejas.show', $church->slug) }}" class="hover:text-cbn-orange-ink transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded">
+                        {{ $church->name }}
+                    </a>
                 </h3>
 
                 <p class="mt-1 text-xs sm:text-sm text-neutral-600 flex items-center gap-1.5">
@@ -179,4 +181,11 @@
             </div>
         @endif
     </div>
+    <a
+        href="{{ route('igrejas.show', $church->slug) }}"
+        class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-cbn-orange-ink hover:text-cbn-orange-mid transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange rounded self-start"
+    >
+        Ver página da igreja <span aria-hidden="true">&rarr;</span>
+        <span class="sr-only">{{ $church->name }}</span>
+    </a>
 </article>
