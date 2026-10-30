@@ -5,7 +5,7 @@
 - **Metodologia:** Spec-Driven Development (SDD) com ciclo TDD Mandatório
 - **Data:** 26 de Outubro de 2026
 - **Status:** Preview no ar (9.1 e 9.3). 9.2 (Cloudflare / domínio oficial) pendente.
-- **URL de preview:** https://honeydew-wolverine-903854.hostingersite.com/
+- **URL de preview:** https://honeydew-wolverine-903854.hostingersite.com/ (substituída pelo domínio `cbngo.org.br` em 29/10/2026, ver seção 5)
 
 ---
 
@@ -113,3 +113,22 @@ PHP CLI e FPM: 8.3. `exec` / `shell_exec` estão desabilitados; `proc_open` não
 - O banco `u579305537_cbngo` já existe e é preenchido pelo painel. Se o painel ainda não tiver conteúdo publicado, a home abre vazia, não com 500.
 - Cache LiteSpeed full-page da Hostinger, se ligado, pode servir HTML stale. Prefere-se desligado; o cache desta entrega é o `.htaccess` de estáticos.
 - A issue #9 permanece aberta até 9.2 (Cloudflare + domínio oficial).
+
+---
+
+## 5. Atualização — domínio `cbngo.org.br` (29/10/2026)
+
+O domínio `cbngo.org.br` foi conectado ao site no hPanel. A Hostinger renomeou a pasta do site de `/home/u579305537/domains/honeydew-wolverine-903854.hostingersite.com` para `/home/u579305537/domains/cbngo.org.br`.
+
+**Incidente:** o `bootstrap/cache/config.php` (gerado por `config:cache` no deploy) guardava os caminhos absolutos da pasta antiga (`storage`, `vendor`, sessões, views compiladas). Depois da troca, todas as rotas, inclusive `/health` e `/up`, responderam 500, e o Laravel passou a gravar o log em `honeydew-…/storage/logs/laravel.log`.
+
+**Correção no servidor:** `APP_URL=https://cbngo.org.br` no `.env`; remover `bootstrap/cache/config.php` e `bootstrap/cache/routes-v7.php`; `view:clear`; recriar `config:cache`, `route:cache` e `view:cache`.
+
+**Correção no deploy (`.github/workflows/ci.yml`):**
+- `REMOTE_ROOT` aponta para `/home/u579305537/domains/cbngo.org.br` e `SITE_URL` para `https://cbngo.org.br`.
+- Antes de aquecer os caches, o deploy apaga os caches de configuração e rotas e roda `view:clear`, para nunca reaproveitar caminhos de uma pasta antiga.
+- Depois de publicar, o job confere `GET ${SITE_URL}/health` e falha se o portal não responder.
+
+**Monitoramento:** `.github/workflows/uptime.yml` passa a consultar `https://cbngo.org.br/health`.
+
+O WordPress continua em `cbngo.com.br`. Cloudflare (9.2) segue pendente.
