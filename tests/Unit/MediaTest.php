@@ -137,7 +137,7 @@ class MediaTest extends TestCase
         $srcset = Media::srcset('news/featured/abc.jpg');
 
         $this->assertSame(
-            'https://midia.cbngo.org.br/news/featured/abc-thumb.webp 400w, https://midia.cbngo.org.br/news/featured/abc-card.webp 800w, https://midia.cbngo.org.br/news/featured/abc-cover.webp 1600w',
+            'https://midia.cbngo.org.br/news/featured/abc-thumb.webp 400w, https://midia.cbngo.org.br/news/featured/abc-card.webp 800w, https://midia.cbngo.org.br/news/featured/abc-cover.webp 1600w, https://midia.cbngo.org.br/news/featured/abc-full.webp 2400w',
             $srcset
         );
 
