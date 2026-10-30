@@ -91,6 +91,7 @@
                     <li><a href="{{ route('home') }}" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Página Inicial</a></li>
                     <li><a href="{{ route('quem-somos') }}" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Quem Somos</a></li>
                     <li><a href="{{ route('diretoria') }}" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Diretoria Executiva</a></li>
+                    <li><a href="{{ route('estatuto.show') }}" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Estatuto</a></li>
                     <li><a href="{{ route('igrejas') }}" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Igrejas Filiadas</a></li>
                     <li><a href="{{ route('projetos-sociais.index') }}" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Projetos Sociais</a></li>
                     <li><a href="{{ route('noticias.index') }}" class="text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cbn-orange rounded">Notícias e Comunicados</a></li>

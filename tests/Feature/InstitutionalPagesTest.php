@@ -48,33 +48,33 @@ class InstitutionalPagesTest extends TestCase
         ]);
 
         Document::create([
-            'title' => 'Estatuto da CBN',
-            'slug' => 'estatuto',
-            'description' => 'Estatuto social vigente da convenção.',
-            'category' => 'estatuto',
-            'file' => 'documents/files/estatuto.pdf',
+            'title' => 'Ata da Assembleia Geral 2025',
+            'slug' => 'ata-assembleia-2025',
+            'description' => 'Ata da assembleia geral ordinária.',
+            'category' => 'ata',
+            'file' => 'documents/files/ata-2025.pdf',
             'position' => 1,
             'is_active' => true,
         ]);
 
         Document::create([
-            'title' => 'Estatuto Revogado 2010',
-            'slug' => 'estatuto-revogado-2010',
-            'category' => 'estatuto',
-            'file' => 'documents/files/estatuto-2010.pdf',
+            'title' => 'Ata Revogada 2010',
+            'slug' => 'ata-revogada-2010',
+            'category' => 'ata',
+            'file' => 'documents/files/ata-2010.pdf',
             'is_active' => false,
         ]);
 
         $response = $this->get(route('quem-somos'));
 
         $response->assertStatus(200);
-        $response->assertSeeInOrder(['Estatuto da CBN', 'Regimento Interno da CBN']);
-        $response->assertSee('Estatuto social vigente da convenção.');
-        $response->assertSee('href="https://midia.test/documents/files/estatuto.pdf"', false);
+        $response->assertSeeInOrder(['Ata da Assembleia Geral 2025', 'Regimento Interno da CBN']);
+        $response->assertSee('Ata da assembleia geral ordinária.');
+        $response->assertSee('href="https://midia.test/documents/files/ata-2025.pdf"', false);
         $response->assertSee('href="https://cbngo.com.br/dados-abertos/regimento-interno.pdf"', false);
         $response->assertSee('rel="noopener noreferrer"', false);
-        $response->assertDontSee('Estatuto Revogado 2010');
-        $response->assertDontSee('estatuto-2010.pdf', false);
+        $response->assertDontSee('Ata Revogada 2010');
+        $response->assertDontSee('ata-2010.pdf', false);
     }
 
     /**

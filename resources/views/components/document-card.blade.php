@@ -1,6 +1,5 @@
 @props([
     'document',
-    'readUrl' => null, // página com o texto do documento (ex.: /estatuto); tem prioridade sobre o arquivo
 ])
 
 @php
@@ -27,18 +26,7 @@
         </div>
     </div>
 
-    @if ($readUrl !== null)
-        <a
-            href="{{ $readUrl }}"
-            class="inline-flex items-center justify-center gap-2 rounded border border-cbn-orange bg-cbn-orange-ink text-white hover:bg-cbn-orange-ink-dark px-4 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange focus-visible:ring-offset-2"
-        >
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.04A8.97 8.97 0 006 3.75c-1.05 0-2.06.18-3 .51v14.25A8.99 8.99 0 016 18c2.3 0 4.41.87 6 2.29m0-14.25a8.97 8.97 0 016-2.29c1.05 0 2.06.18 3 .51v14.25A8.99 8.99 0 0018 18a8.97 8.97 0 00-6 2.29m0-14.25v14.25"/>
-            </svg>
-            Ler o texto integral
-            <span class="sr-only">: {{ $document->title }}</span>
-        </a>
-    @elseif ($safeUrl !== null)
+    @if ($safeUrl !== null)
         <a
             href="{{ $safeUrl }}"
             target="_blank"

@@ -168,37 +168,66 @@ class StatuteTest extends TestCase
     }
 
     /**
-     * Em Quem Somos, o documento "Estatuto" leva ao texto integral quando há versão publicada.
+     * O menu (painel "A Convenção" e gaveta mobile) e o rodapé têm atalho para o estatuto; na página, o link fica ativo.
      */
-    public function test_about_page_statute_card_links_to_statute_page(): void
+    public function test_menu_and_footer_link_to_statute_and_highlight_it(): void
     {
-        Document::factory()->create([
-            'title' => 'Estatuto da CBN-GO',
-            'slug' => 'estatuto-da-cbn',
-            'category' => 'estatuto',
-            'external_url' => 'https://cbngo.com.br/dados-abertos/estatuto.pdf',
-            'is_active' => true,
-        ]);
+        Statute::factory()->create();
 
-        $this->get('/quem-somos')->assertDontSee('Ler o texto integral');
+        $html = (string) $this->get('/estatuto')->getContent();
+        $link = 'href="'.route('estatuto.show').'"';
+
+        $this->assertGreaterThanOrEqual(3, substr_count($html, $link));
+        $this->assertSame(2, preg_match_all('#'.preg_quote($link, '#').'[^>]*aria-current="page"#', $html));
+        $this->assertStringContainsString('<span class="border-b-2 border-cbn-black">A Convenção</span>', $html);
+
+        preg_match('#<footer.*</footer>#s', (string) $this->get('/')->getContent(), $footer);
+        $this->assertStringContainsString($link, $footer[0]);
+    }
+
+    /**
+     * Com estatuto publicado, Quem Somos mostra um card próprio levando ao texto integral.
+     */
+    public function test_about_page_shows_statute_card_when_published(): void
+    {
+        $this->get('/quem-somos')
+            ->assertSee('data-testid="documents-empty"', false)
+            ->assertDontSee('data-testid="statute-card"', false);
 
         Statute::factory()->create();
 
         $response = $this->get('/quem-somos');
-        $response->assertSee('Ler o texto integral');
+        $response->assertSee('data-testid="statute-card"', false);
+        $response->assertSee('Ler o estatuto');
+        $response->assertSee('Aprovado pela Assembleia Geral em Anápolis, 18 de outubro de 2025.');
+        $response->assertDontSee('data-testid="documents-empty"', false);
         $this->assertMatchesRegularExpression(
-            '#id="documento-estatuto-da-cbn".*?href="'.preg_quote(route('estatuto.show'), '#').'"#s',
+            '#href="'.preg_quote(route('estatuto.show'), '#').'"\s+data-testid="statute-card"#',
             (string) $response->getContent()
         );
     }
 
     /**
-     * Na página do estatuto, o menu destaca o grupo "A Convenção".
+     * O estatuto não é publicado em PDF: documentos da categoria "estatuto" nunca são listados.
      */
-    public function test_navbar_highlights_convention_group_on_statute_page(): void
+    public function test_about_page_never_lists_statute_pdf_documents(): void
     {
+        Document::factory()->create([
+            'title' => 'Estatuto da CBN-GO (PDF)',
+            'slug' => 'estatuto-pdf',
+            'category' => 'estatuto',
+            'external_url' => 'https://cbngo.com.br/dados-abertos/estatuto.pdf',
+            'is_active' => true,
+        ]);
+
+        $this->get('/quem-somos')
+            ->assertDontSee('Estatuto da CBN-GO (PDF)')
+            ->assertDontSee('dados-abertos/estatuto.pdf', false);
+
         Statute::factory()->create();
 
-        $this->get('/estatuto')->assertSee('<span class="border-b-2 border-cbn-black">A Convenção</span>', false);
+        $this->get('/quem-somos')
+            ->assertSee('data-testid="statute-card"', false)
+            ->assertDontSee('Estatuto da CBN-GO (PDF)');
     }
 }
