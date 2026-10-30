@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\Church;
 use App\Models\News;
 use App\Models\SocialProject;
+use App\Models\Statute;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -436,6 +437,40 @@ class SeoTest extends TestCase
         $response->assertSee('<loc>'.route('projetos-sociais.show', $published->slug).'</loc>', false);
         $response->assertSee('<image:loc>https://midia.test/projects/covers/horta.jpg</image:loc>', false);
         $response->assertDontSee(route('projetos-sociais.show', $draft->slug), false);
+    }
+
+    /**
+     * Valida o JSON-LD Legislation do estatuto, identificado pela URI FRBR Work do Akoma Ntoso (Issue #33).
+     */
+    public function test_statute_page_renders_legislation_structured_data(): void
+    {
+        $this->withoutVite();
+
+        Statute::factory()->create();
+
+        $html = (string) $this->get('/estatuto')->getContent();
+        $legislation = collect($this->structuredData($html))->firstWhere('@type', 'Legislation');
+
+        $this->assertNotNull($legislation);
+        $this->assertSame('/akn/br/act/estatuto/cbngo/2025-10-18', $legislation['legislationIdentifier']);
+        $this->assertSame('2025-10-18', $legislation['legislationDate']);
+        $this->assertSame('pt-BR', $legislation['inLanguage']);
+        $this->assertSame('https://schema.org/InForce', $legislation['legislationLegalForce']);
+        $this->assertSame(route('estatuto.xml'), $legislation['encoding']['contentUrl']);
+        $this->assertSame(url('/').'#organizacao', $legislation['legislationPassedBy']['@id']);
+    }
+
+    /**
+     * Valida que /estatuto entra no sitemap só quando há versão publicada.
+     */
+    public function test_sitemap_lists_statute_only_when_published(): void
+    {
+        $this->get('/sitemap.xml')->assertDontSee('<loc>'.route('estatuto.show').'</loc>', false);
+
+        Cache::forget('sitemap.entries');
+        Statute::factory()->create();
+
+        $this->get('/sitemap.xml')->assertSee('<loc>'.route('estatuto.show').'</loc>', false);
     }
 
     /**

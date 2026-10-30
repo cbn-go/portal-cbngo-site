@@ -113,7 +113,7 @@
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($documents as $document)
-                        <x-document-card :document="$document" />
+                        <x-document-card :document="$document" :read-url="$document->category === 'estatuto' ? $statuteUrl : null" />
                     @endforeach
                 </div>
             @endif

@@ -5,6 +5,8 @@ namespace App\Support;
 use App\Models\Article;
 use App\Models\News;
 use App\Models\SocialProject;
+use App\Models\Statute;
+use App\Support\Akn\RenderedStatute;
 
 class StructuredData
 {
@@ -124,6 +126,32 @@ class StructuredData
                 ],
                 'memberOf' => self::publisherReference(),
             ]) : self::publisherReference(),
+        ], fn ($value) => $value !== null);
+    }
+
+    /**
+     * Estatuto publicado como Legislation, identificado pela URI FRBR Work do Akoma Ntoso.
+     *
+     * @return array<string, mixed>
+     */
+    public static function legislation(Statute $statute, RenderedStatute $document, string $url): array
+    {
+        return array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'Legislation',
+            'name' => $statute->title,
+            'legislationIdentifier' => $document->workUri,
+            'legislationDate' => $statute->approved_at->toDateString(),
+            'legislationLegalForce' => $statute->isCurrent() ? 'https://schema.org/InForce' : 'https://schema.org/NotInForce',
+            'legislationType' => 'Estatuto',
+            'legislationPassedBy' => self::publisherReference(),
+            'inLanguage' => 'pt-BR',
+            'url' => $url,
+            'encoding' => $statute->isCurrent() ? [
+                '@type' => 'MediaObject',
+                'encodingFormat' => 'application/akn+xml',
+                'contentUrl' => route('estatuto.xml'),
+            ] : null,
         ], fn ($value) => $value !== null);
     }
 

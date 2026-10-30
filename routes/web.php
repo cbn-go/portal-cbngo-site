@@ -8,6 +8,7 @@ use App\Http\Controllers\InstitutionalController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialProjectController;
+use App\Http\Controllers\StatuteController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -26,6 +27,11 @@ Route::get('/design-system', function () {
 Route::get('/quem-somos', [InstitutionalController::class, 'about'])->name('quem-somos');
 Route::get('/diretoria', [InstitutionalController::class, 'board'])->name('diretoria');
 Route::get('/contato', [InstitutionalController::class, 'contact'])->name('contato');
+
+Route::get('/estatuto', [StatuteController::class, 'show'])->name('estatuto.show');
+Route::get('/estatuto.akn.xml', [StatuteController::class, 'xml'])->name('estatuto.xml');
+Route::get('/estatuto/versoes', [StatuteController::class, 'versions'])->name('estatuto.versions');
+Route::get('/estatuto/versoes/{date}', [StatuteController::class, 'version'])->name('estatuto.version');
 
 Route::get('/igrejas', [ChurchController::class, 'index'])->name('igrejas');
 

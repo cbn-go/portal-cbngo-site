@@ -77,6 +77,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Estatuto em Akoma Ntoso 3.0 (Issue #33)
+    |--------------------------------------------------------------------------
+    |
+    | O HTML do estatuto é gerado do XML e guardado em cache. A chave muda a cada
+    | edição no painel (updated_at); o TTL só limita o tamanho do cache.
+    |
+    */
+
+    'statute' => [
+        'cache_ttl' => (int) env('STATUTE_CACHE_TTL', 86400),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Banners do hero da home (Issue #23)
     |--------------------------------------------------------------------------
     |

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BoardMember;
 use App\Models\Document;
+use App\Models\Statute;
 use App\Support\ContactLinks;
 use Illuminate\View\View;
 
@@ -21,6 +22,8 @@ class InstitutionalController extends Controller
 
         return view('institucional.quem-somos', [
             'documents' => $documents,
+            // Com estatuto publicado em Akoma Ntoso, o card do estatuto leva ao texto integral no site.
+            'statuteUrl' => Statute::published()->exists() ? route('estatuto.show') : null,
         ]);
     }
 
