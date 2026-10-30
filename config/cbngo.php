@@ -101,4 +101,3 @@ return [
     'panel_url' => env('CBNGO_PANEL_URL', 'https://painel.cbngo.org.br'),
 
 ];
-

@@ -219,5 +219,3 @@ class DesignSystemTest extends TestCase
         $layoutHtml->assertDontSee('https://admin.cbngo.com.br', false);
     }
 }
-
-
