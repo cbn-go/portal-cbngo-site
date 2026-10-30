@@ -106,14 +106,37 @@
                 <p class="text-neutral-600 leading-relaxed">Estatuto, Regimento Interno e demais documentos disponíveis para consulta e download.</p>
             </div>
 
-            @if ($documents->isEmpty())
+            @if ($statute)
+                <a
+                    href="{{ route('estatuto.show') }}"
+                    data-testid="statute-card"
+                    class="group flex flex-col sm:flex-row sm:items-center justify-between gap-5 rounded-xl bg-cbn-black text-white p-6 sm:p-8 hover:bg-cbn-black/95 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cbn-orange focus-visible:ring-offset-2"
+                >
+                    <span class="flex items-start gap-4">
+                        <span class="w-12 h-12 rounded-lg bg-white/10 text-cbn-gold flex items-center justify-center shrink-0" aria-hidden="true">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.04A8.97 8.97 0 006 3.75c-1.05 0-2.06.18-3 .51v14.25A8.99 8.99 0 016 18c2.3 0 4.41.87 6 2.29m0-14.25a8.97 8.97 0 016-2.29c1.05 0 2.06.18 3 .51v14.25A8.99 8.99 0 0018 18a8.97 8.97 0 00-6 2.29m0-14.25v14.25"/></svg>
+                        </span>
+                        <span>
+                            <span class="block text-[11px] uppercase font-bold tracking-wider text-cbn-gold">Em vigor</span>
+                            <span class="block font-brand-serif font-bold text-xl sm:text-2xl">{{ $statute->title }}</span>
+                            <span class="block text-sm text-white/70 mt-1">Aprovado pela {{ $statute->approval_body }} em {{ $statute->approved_place }}, {{ $statute->approved_at->translatedFormat('d \d\e F \d\e Y') }}.</span>
+                        </span>
+                    </span>
+                    <span class="inline-flex items-center gap-2 text-sm font-semibold text-cbn-gold group-hover:text-white shrink-0">
+                        Ler o estatuto
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                    </span>
+                </a>
+            @endif
+
+            @if ($documents->isEmpty() && ! $statute)
                 <div data-testid="documents-empty" class="rounded-xl border border-dashed border-neutral-300 bg-white p-10 text-center text-neutral-500">
                     Nenhum documento oficial publicado no momento.
                 </div>
-            @else
+            @elseif ($documents->isNotEmpty())
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($documents as $document)
-                        <x-document-card :document="$document" :read-url="$document->category === 'estatuto' ? $statuteUrl : null" />
+                        <x-document-card :document="$document" />
                     @endforeach
                 </div>
             @endif

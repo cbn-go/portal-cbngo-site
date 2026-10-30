@@ -15,15 +15,18 @@ class InstitutionalController extends Controller
      */
     public function about(): View
     {
+        $statute = Statute::published()->first(['id', 'title', 'approved_at', 'approved_place', 'approval_body']);
+
         $documents = Document::active()
+            // O estatuto é publicado só como texto no site (/estatuto), nunca como PDF.
+            ->where('category', '!=', 'estatuto')
             ->orderBy('position')
             ->orderBy('title')
             ->get();
 
         return view('institucional.quem-somos', [
             'documents' => $documents,
-            // Com estatuto publicado em Akoma Ntoso, o card do estatuto leva ao texto integral no site.
-            'statuteUrl' => Statute::published()->exists() ? route('estatuto.show') : null,
+            'statute' => $statute,
         ]);
     }
 

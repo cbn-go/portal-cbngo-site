@@ -22,6 +22,7 @@
             'label' => 'A Convenção',
             'links' => [
                 'quem-somos' => ['label' => 'Quem somos', 'description' => 'História, missão, visão e documentos oficiais', 'href' => route('quem-somos'), 'icon' => 'M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.33A48.36 48.36 0 0012 9.75c-2.55 0-5.06.2-7.5.58V21M3 21h18'],
+                'estatuto' => ['label' => 'Estatuto', 'description' => 'Texto integral em vigor, com link para cada artigo', 'href' => route('estatuto.show'), 'icon' => 'M12 6.04A8.97 8.97 0 006 3.75c-1.05 0-2.06.18-3 .51v14.25A8.99 8.99 0 016 18c2.3 0 4.41.87 6 2.29m0-14.25a8.97 8.97 0 016-2.29c1.05 0 2.06.18 3 .51v14.25A8.99 8.99 0 0018 18a8.97 8.97 0 00-6 2.29m0-14.25v14.25'],
                 'diretoria' => ['label' => 'Diretoria', 'description' => 'Diretoria executiva, conselhos e coordenadores', 'href' => route('diretoria'), 'icon' => 'M15 19.13a9.38 9.38 0 002.63.37 9.34 9.34 0 004.12-.95 4.13 4.13 0 00-7.53-2.49M15 19.13v-.01c0-1.11-.29-2.16-.79-3.07M15 19.13v.1A12.32 12.32 0 018.62 21c-2.33 0-4.51-.65-6.37-1.77v-.1a6.38 6.38 0 0111.96-3.07M12 6.38a3.38 3.38 0 11-6.75 0 3.38 3.38 0 016.75 0zm8.25 2.25a2.63 2.63 0 11-5.25 0 2.63 2.63 0 015.25 0z'],
                 'contato' => ['label' => 'Fale com a secretaria', 'description' => 'Endereço, telefones e horário de atendimento', 'href' => route('contato'), 'icon' => 'M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.24a2.25 2.25 0 01-1.07 1.92l-7.5 4.61a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.92V6.75'],
             ],
@@ -43,8 +44,6 @@
     ];
 
     $activeGroup = collect($groups)->search(fn (array $group) => array_key_exists((string) $activeKey, $group['links']));
-    // Páginas sem item próprio no menu (ex.: /estatuto, aberto pelos documentos de Quem Somos) acendem o grupo delas.
-    $activeGroup = $activeGroup ?: match ($activeKey) { 'estatuto' => 'convencao', default => false };
     $churchAreaUrl = config('cbngo.panel_url', 'https://painel.cbngo.org.br');
     $searchScopes = [
         'noticias.index' => 'Notícias',
