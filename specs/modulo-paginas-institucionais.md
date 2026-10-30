@@ -20,7 +20,7 @@ Construir as páginas de apresentação institucional da Convenção Batista Nac
   - Seção `id="pacto"` com o Pacto de Fé (síntese do Pacto Renovado).
   - Seção `id="documentos"` listando os documentos oficiais ativos (`Document::active()`, ordenados por `position`) com link de consulta/download (`target="_blank"`, `rel="noopener noreferrer"`), cards `<x-document-card>` e empty state quando não houver documentos.
 - **Página `/diretoria` (Sub-issue 7.2):**
-  - Galeria da diretoria atual agrupada por órgão, na ordem fixa de `BoardMember::GROUPS`: Presidência, Vice-presidências, Secretaria, Tesouraria, Conselho Fiscal e Coordenadores de Regiões (`data-board-group="{chave}"`).
+  - Galeria da diretoria atual agrupada por órgão, na ordem fixa de `BoardMember::GROUPS`: Presidência, Vice-presidência, Secretaria, Tesouraria, CONPLEX, Conselho Fiscal e Diretorias Regionais (AMIGO) (`data-board-group="{chave}"`). Títulos, regionais por AMIGO e grupos desconhecidos: ver `specs/diretoria-2026-2029.md` (Issue #45).
   - Dentro de cada grupo, membros ativos ordenados por `position` e depois `name`; grupos sem membros não são renderizados.
   - Cards `<x-board-member-card>` com foto (`photo_url` segura) ou fallback de iniciais (`data-testid="board-member-initials"`), nome, cargo e região (coordenadores).
   - Empty state quando não houver membros ativos.

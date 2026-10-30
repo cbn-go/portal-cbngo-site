@@ -6,6 +6,9 @@ use App\Models\BoardMember;
 use App\Models\Document;
 use App\Models\Statute;
 use App\Support\InstitutionalInfo;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class InstitutionalController extends Controller
@@ -31,15 +34,16 @@ class InstitutionalController extends Controller
     }
 
     /**
-     * Exibe a galeria da diretoria atual agrupada pelos órgãos da convenção.
+     * Exibe a galeria da diretoria atual agrupada pelos órgãos da convenção e, nas regionais, pelas AMIGOs.
      */
     public function board(): View
     {
         $members = BoardMember::active()
-            ->whereIn('group', array_keys(BoardMember::GROUPS))
             ->orderBy('position')
             ->orderBy('name')
             ->get()
+            // toBase(): o except() da coleção Eloquent compara chaves de model, não as chaves dos grupos.
+            ->toBase()
             ->groupBy('group');
 
         $groups = [];
@@ -48,13 +52,62 @@ class InstitutionalController extends Controller
                 $groups[$key] = [
                     'label' => $label,
                     'members' => $members->get($key),
+                    'regions' => $key === 'coordenacao_regional' ? $this->groupByRegion($members->get($key)) : null,
                 ];
             }
+        }
+
+        // Órgão que o site ainda não conhece: aparece no fim com rótulo genérico, nunca some em silêncio.
+        foreach ($members->except(array_keys(BoardMember::GROUPS)) as $key => $unknown) {
+            Log::warning('Diretoria: órgão desconhecido exibido como "Outros membros da diretoria".', [
+                'group' => $key,
+                'count' => $unknown->count(),
+            ]);
+
+            $groups[$key] = [
+                'label' => 'Outros membros da diretoria',
+                'members' => $unknown,
+                'regions' => null,
+            ];
         }
 
         return view('institucional.diretoria', [
             'groups' => $groups,
         ]);
+    }
+
+    /**
+     * Agrupa as diretorias regionais por AMIGO, na ordem de `BoardMember::REGIONS`.
+     *
+     * Região vazia ou fora das quatro chaves (dados antigos) vai para o fim, rotulada com o texto original.
+     *
+     * @param  Collection<int, BoardMember>  $members
+     * @return array<string, array{label: string, members: Collection<int, BoardMember>}>
+     */
+    private function groupByRegion(Collection $members): array
+    {
+        $byRegion = $members->toBase()->groupBy(fn (BoardMember $member): string => trim((string) $member->region));
+
+        $regions = [];
+        foreach (BoardMember::REGIONS as $key => $label) {
+            if ($byRegion->has($key)) {
+                $regions[$key] = ['label' => $label, 'members' => $byRegion->get($key)];
+            }
+        }
+
+        foreach ($byRegion->except(array_keys(BoardMember::REGIONS)) as $region => $unknown) {
+            Log::warning('Diretoria: região regional fora das AMIGOs exibida no fim.', [
+                'region' => $region,
+                'count' => $unknown->count(),
+            ]);
+
+            $regions[$region === '' ? 'sem-regiao' : Str::slug($region)] = [
+                'label' => $region === '' ? 'Sem região definida' : $region,
+                'members' => $unknown,
+            ];
+        }
+
+        return $regions;
     }
 
     /**

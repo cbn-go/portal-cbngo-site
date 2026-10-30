@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\BoardMember;
 use App\Models\Document;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class InstitutionalPagesTest extends TestCase
@@ -129,19 +130,20 @@ class InstitutionalPagesTest extends TestCase
     }
 
     /**
-     * Valida que a diretoria é agrupada na ordem institucional dos órgãos e por posição dentro do grupo (AC 7.2).
+     * Valida que a diretoria é agrupada na ordem institucional dos órgãos, com o CONPLEX, e por posição dentro do grupo (#45).
      */
     public function test_board_page_groups_members_in_institutional_order(): void
     {
         $this->withoutVite();
 
-        BoardMember::create(['name' => 'Coordenador Norte', 'role' => 'Coordenador Regional', 'group' => 'coordenacao_regional', 'region' => 'Região Norte']);
-        BoardMember::create(['name' => 'Relator Fiscal', 'role' => 'Relator', 'group' => 'conselho_fiscal']);
-        BoardMember::create(['name' => 'Tesoureiro Geral', 'role' => '1º Tesoureiro', 'group' => 'tesouraria']);
-        BoardMember::create(['name' => 'Segundo Secretário', 'role' => '2º Secretário', 'group' => 'secretaria', 'position' => 2]);
-        BoardMember::create(['name' => 'Primeiro Secretário', 'role' => '1º Secretário', 'group' => 'secretaria', 'position' => 1]);
-        BoardMember::create(['name' => 'Vice Presidente Um', 'role' => '1º Vice-presidente', 'group' => 'vice_presidencia']);
-        BoardMember::create(['name' => 'Presidente Atual', 'role' => 'Presidente', 'group' => 'presidencia']);
+        BoardMember::factory()->create(['name' => 'Coordenador Leste', 'role' => 'Coordenador', 'group' => 'coordenacao_regional', 'region' => 'leste']);
+        BoardMember::factory()->create(['name' => 'Relator Fiscal', 'role' => 'Relator', 'group' => 'conselho_fiscal']);
+        BoardMember::factory()->create(['name' => 'Vogal Conplex', 'role' => 'Vogal', 'group' => 'conplex']);
+        BoardMember::factory()->create(['name' => 'Tesoureiro Geral', 'role' => '1º Tesoureiro', 'group' => 'tesouraria']);
+        BoardMember::factory()->create(['name' => 'Segundo Secretário', 'role' => '2º Secretário de Atas', 'group' => 'secretaria', 'position' => 2]);
+        BoardMember::factory()->create(['name' => 'Primeiro Secretário', 'role' => '1º Secretário de Atas', 'group' => 'secretaria', 'position' => 1]);
+        BoardMember::factory()->create(['name' => 'Vice Presidente', 'role' => 'Vice-Presidente', 'group' => 'vice_presidencia']);
+        BoardMember::factory()->create(['name' => 'Presidente Atual', 'role' => 'Presidente', 'group' => 'presidencia']);
 
         $response = $this->get(route('diretoria'));
 
@@ -151,54 +153,135 @@ class InstitutionalPagesTest extends TestCase
             'data-board-group="vice_presidencia"',
             'data-board-group="secretaria"',
             'data-board-group="tesouraria"',
+            'data-board-group="conplex"',
             'data-board-group="conselho_fiscal"',
             'data-board-group="coordenacao_regional"',
         ], false);
-        $response->assertSeeInOrder(['Presidência', 'Vice-presidências', 'Secretaria', 'Tesouraria', 'Conselho Fiscal', 'Coordenadores de Regiões']);
+        $response->assertSeeInOrder([
+            'Presidência',
+            'Vice-presidência',
+            'Secretaria',
+            'Tesouraria',
+            'Conselho de Planejamento e Execução (CONPLEX)',
+            'Conselho Fiscal',
+            'Diretorias Regionais (AMIGO)',
+        ]);
         $response->assertSeeInOrder(['Primeiro Secretário', 'Segundo Secretário']);
-        $response->assertSee('Presidente Atual');
+        $response->assertSee('Vogal Conplex');
     }
 
     /**
-     * Valida que membros inativos ou de órgãos desconhecidos não aparecem, e grupos vazios não são renderizados.
+     * Valida que o título eclesiástico aparece antes do nome, que o leigo fica sem prefixo e que as iniciais ignoram o título (#45).
      */
-    public function test_board_page_hides_inactive_members_and_unknown_groups(): void
+    public function test_board_member_card_shows_title_before_name(): void
     {
         $this->withoutVite();
 
-        BoardMember::create(['name' => 'Presidente Atual', 'role' => 'Presidente', 'group' => 'presidencia']);
-        BoardMember::create(['name' => 'Ex Presidente', 'role' => 'Presidente', 'group' => 'presidencia', 'is_active' => false]);
-        BoardMember::create(['name' => 'Membro Avulso', 'role' => 'Assessor', 'group' => 'grupo_inexistente']);
+        BoardMember::factory()->create(['title' => 'Pr.', 'name' => 'André Luiz Rodrigues da Silva', 'role' => 'Presidente', 'group' => 'presidencia', 'photo' => 'board/photos/andre.jpg']);
+        BoardMember::factory()->create(['title' => null, 'name' => 'Irenice Ramos', 'role' => 'Vogal', 'group' => 'conplex']);
+
+        $response = $this->get(route('diretoria'));
+
+        $response->assertSee('>Pr. André Luiz Rodrigues da Silva<', false);
+        $response->assertSee('alt="Foto de Pr. André Luiz Rodrigues da Silva"', false);
+        $response->assertSee('>Irenice Ramos<', false);
+        $response->assertSee('>IR<', false);
+
+        $this->assertSame('AS', (new BoardMember(['title' => 'Pr.', 'name' => 'André Luiz Rodrigues da Silva']))->getInitials());
+        $this->assertSame('Ev. Fábio Oliveira Nascimento', (new BoardMember(['title' => 'Ev.', 'name' => 'Fábio Oliveira Nascimento']))->getDisplayName());
+        $this->assertSame('Irenice Ramos', (new BoardMember(['name' => 'Irenice Ramos']))->getDisplayName());
+    }
+
+    /**
+     * Valida que as regionais são agrupadas por AMIGO na ordem Leste, Oeste, Norte e Sudoeste, e que região antiga não some (#45).
+     */
+    public function test_board_page_groups_regional_members_by_amigo_region(): void
+    {
+        $this->withoutVite();
+        $log = Log::spy();
+
+        BoardMember::factory()->create(['name' => 'Coordenador Sudoeste', 'role' => 'Coordenador', 'group' => 'coordenacao_regional', 'region' => 'sudoeste', 'position' => 1]);
+        BoardMember::factory()->create(['name' => 'Secretário Norte', 'role' => '1º Secretário', 'group' => 'coordenacao_regional', 'region' => 'norte', 'position' => 3]);
+        BoardMember::factory()->create(['name' => 'Coordenador Norte', 'role' => 'Coordenador', 'group' => 'coordenacao_regional', 'region' => 'norte', 'position' => 2]);
+        BoardMember::factory()->create(['name' => 'Coordenador Oeste', 'role' => 'Coordenador', 'group' => 'coordenacao_regional', 'region' => 'oeste', 'position' => 4]);
+        BoardMember::factory()->create(['name' => 'Coordenador Leste', 'role' => 'Coordenador', 'group' => 'coordenacao_regional', 'region' => 'leste', 'position' => 5]);
+        BoardMember::factory()->create(['name' => 'Coordenador Antigo', 'role' => 'Coordenador Regional', 'group' => 'coordenacao_regional', 'region' => 'Região Centro (Anápolis)', 'position' => 0]);
+
+        $response = $this->get(route('diretoria'));
+
+        $response->assertSeeInOrder([
+            'data-board-region="leste"', 'AMIGO Leste', 'Coordenador Leste',
+            'data-board-region="oeste"', 'AMIGO Oeste', 'Coordenador Oeste',
+            'data-board-region="norte"', 'AMIGO Norte', 'Coordenador Norte', 'Secretário Norte',
+            'data-board-region="sudoeste"', 'AMIGO Sudoeste', 'Coordenador Sudoeste',
+            'Região Centro (Anápolis)', 'Coordenador Antigo',
+        ], false);
+        $response->assertSee('<h4', false);
+
+        $log->shouldHaveReceived('warning')->once();
+    }
+
+    /**
+     * Valida que membros de órgãos desconhecidos aparecem no fim com rótulo genérico e geram aviso no log (#45).
+     */
+    public function test_board_page_shows_unknown_groups_with_generic_label_and_logs(): void
+    {
+        $this->withoutVite();
+        $log = Log::spy();
+
+        BoardMember::factory()->create(['name' => 'Membro Avulso', 'role' => 'Assessor', 'group' => 'grupo_inexistente']);
+        BoardMember::factory()->create(['name' => 'Presidente Atual', 'role' => 'Presidente', 'group' => 'presidencia']);
+
+        $response = $this->get(route('diretoria'));
+
+        $response->assertSeeInOrder([
+            'data-board-group="presidencia"',
+            'data-board-group="grupo_inexistente"',
+            'Outros membros da diretoria',
+            'Membro Avulso',
+        ], false);
+
+        $log->shouldHaveReceived('warning')->once()->withArgs(fn (string $message, array $context): bool => $context['group'] === 'grupo_inexistente' && $context['count'] === 1);
+    }
+
+    /**
+     * Valida que membros inativos não aparecem e grupos vazios não são renderizados.
+     */
+    public function test_board_page_hides_inactive_members(): void
+    {
+        $this->withoutVite();
+
+        BoardMember::factory()->create(['name' => 'Presidente Atual', 'role' => 'Presidente', 'group' => 'presidencia']);
+        BoardMember::factory()->create(['name' => 'Ex Presidente', 'role' => 'Presidente', 'group' => 'presidencia', 'is_active' => false]);
 
         $response = $this->get(route('diretoria'));
 
         $response->assertStatus(200);
         $response->assertSee('Presidente Atual');
         $response->assertDontSee('Ex Presidente');
-        $response->assertDontSee('Membro Avulso');
         $response->assertDontSee('data-board-group="tesouraria"', false);
     }
 
     /**
-     * Valida o card de membro: foto segura, fallback de iniciais e região do coordenador (AC 7.2).
+     * Valida o card de membro: foto segura, fallback de iniciais e mandato (AC 7.2).
      */
-    public function test_board_member_card_renders_initials_fallback_and_region(): void
+    public function test_board_member_card_renders_photo_and_initials_fallback(): void
     {
         $this->withoutVite();
 
-        BoardMember::create([
-            'name' => 'Pr. Roberto Silveira',
+        BoardMember::factory()->create([
+            'title' => 'Pr.',
+            'name' => 'Roberto Silveira',
             'role' => 'Presidente',
             'group' => 'presidencia',
             'photo' => 'board/photos/roberto.jpg',
-            'term_label' => 'Gestão 2025–2027',
         ]);
 
-        BoardMember::create([
-            'name' => 'Pra. Helena de Albuquerque',
-            'role' => 'Coordenadora Regional',
-            'group' => 'coordenacao_regional',
-            'region' => 'Região Sudoeste',
+        BoardMember::factory()->create([
+            'title' => 'Pra.',
+            'name' => 'Helena de Albuquerque',
+            'role' => '1ª Secretária de Atas',
+            'group' => 'secretaria',
             'photo' => 'javascript:alert(1)',
         ]);
 
@@ -206,14 +289,14 @@ class InstitutionalPagesTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('src="https://midia.test/board/photos/roberto.jpg"', false);
-        $response->assertSee('Gestão 2025–2027');
+        $response->assertSee('Triênio 2026–2029');
         $response->assertSee('data-testid="board-member-initials"', false);
         $response->assertSee('>HA<', false);
-        $response->assertSee('Região Sudoeste');
         $response->assertDontSee('javascript:alert(1)', false);
 
+        // Nomes antigos que ainda trazem o título no próprio campo.
         $this->assertSame('RS', (new BoardMember(['name' => 'Pr. Roberto Silveira']))->getInitials());
-        $this->assertSame('HA', (new BoardMember(['name' => 'Pra. Helena de Albuquerque']))->getInitials());
+        $this->assertSame('FN', (new BoardMember(['name' => 'Ev. Fábio Nascimento']))->getInitials());
         $this->assertSame('M', (new BoardMember(['name' => 'Marta']))->getInitials());
     }
 
@@ -314,23 +397,34 @@ class InstitutionalPagesTest extends TestCase
     }
 
     /**
-     * Valida que o DatabaseSeeder popula a diretoria em todos os órgãos e os documentos oficiais.
+     * Valida que o DatabaseSeeder traz a diretoria do triênio 2026–2029 (30 membros) e os documentos oficiais (#45).
      */
-    public function test_database_seeder_populates_board_members_and_documents(): void
+    public function test_database_seeder_populates_current_board_and_documents(): void
     {
         $this->withoutVite();
 
         $this->seed();
 
-        foreach (array_keys(BoardMember::GROUPS) as $group) {
-            $this->assertTrue(BoardMember::active()->where('group', $group)->exists(), "Grupo {$group} sem membros no seed.");
-        }
+        $this->assertSame(30, BoardMember::active()->count());
+        $this->assertEquals(
+            ['presidencia' => 1, 'vice_presidencia' => 1, 'secretaria' => 2, 'conplex' => 4, 'conselho_fiscal' => 6, 'coordenacao_regional' => 16],
+            BoardMember::active()->get()->countBy('group')->all()
+        );
+        $this->assertEquals(
+            ['leste' => 4, 'oeste' => 4, 'norte' => 4, 'sudoeste' => 4],
+            BoardMember::active()->where('group', 'coordenacao_regional')->get()->countBy('region')->all()
+        );
 
         $this->assertTrue(Document::where('category', 'estatuto')->exists());
         $this->assertTrue(Document::where('category', 'regimento')->exists());
         $this->assertTrue(Document::where('category', 'pacto')->exists());
 
-        $this->get(route('diretoria'))->assertStatus(200)->assertSee('Presidência');
+        $html = (string) $this->get(route('diretoria'))->assertStatus(200)->getContent();
+        $this->assertSame(30, substr_count($html, '<article'));
+        $this->assertStringContainsString('Pr. André Luiz Rodrigues da Silva', $html);
+        $this->assertStringContainsString('Irenice Ramos', $html);
+        $this->assertStringContainsString('Allan Kardec Pereira de Assis', $html);
+
         $this->get(route('quem-somos'))->assertStatus(200)->assertSee('Estatuto');
     }
 }
