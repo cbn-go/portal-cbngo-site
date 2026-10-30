@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mockup — Home com avisos 1:1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { cbn: { red: '#E00209', black: '#1E120D', orange: '#F43517', 'orange-mid': '#F36529', 'orange-ink': '#D42D12', gold: '#EFA162', teal: '#038794', cream: '#FFFDFB', sand: '#FAF6F0' } },
+    fontFamily: { 'brand-serif': ['"Baker Signet"', 'Georgia', 'serif'], 'brand-sans': ['"Humanist 521"', 'system-ui', 'sans-serif'] }
+  } } }
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+<style>
+  @font-face { font-family: 'Baker Signet'; src: url('../../resources/assets/fonts/baker-signet.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Humanist 521'; src: url('../../resources/assets/fonts/humanist-521.ttf') format('truetype'); font-display: swap; }
+  body { font-family: 'Humanist 521', system-ui, sans-serif; }
+  [x-cloak] { display: none !important; }
+  .text-balance { text-wrap: balance; }
+
+  /* Anotações do mockup */
+  .mock-note { position: relative; }
+  .mock-note::before { content: attr(data-note); position: absolute; top: -12px; right: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 40; background: #038794; color: #fff; font: 600 11px/1.2 system-ui, sans-serif; padding: 6px 10px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,.15); max-width: 80vw; }
+  body.hide-notes .mock-note::before { display: none; }
+</style>
+</head>
+<body class="bg-cbn-cream text-cbn-black antialiased">
+
+<!-- Barra do mockup -->
+<div class="mock-bar sticky top-0 z-50 bg-cbn-teal text-white text-xs px-4 py-2 flex items-center justify-between gap-4">
+  <span><strong>Mockup</strong> · Home com carrossel de avisos em fotos 1:1, título e subtítulo</span>
+  <button type="button" onclick="document.body.classList.toggle('hide-notes')" class="underline underline-offset-2">Mostrar/ocultar notas</button>
+</div>
+
+<!-- Barra utilitária + menu (resumidos, iguais ao site) -->
+<div class="w-full bg-cbn-black text-white/75 text-xs px-4 sm:px-6">
+  <div class="max-w-7xl mx-auto lg:px-6 h-9 flex items-center justify-between gap-4">
+    <span class="inline-flex items-center gap-1.5 font-medium text-white truncate"><span class="w-1.5 h-1.5 rounded-full bg-cbn-orange shrink-0"></span>Convenção Batista Nacional — Seção Estadual de Goiás</span>
+    <span class="hidden sm:inline font-semibold text-white">Área das Igrejas</span>
+  </div>
+</div>
+<header class="bg-white border-b border-neutral-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-20 flex items-center justify-between">
+    <img src="../../public/images/brand/cbn-go.png" alt="CBN | GO" class="h-11 w-auto">
+    <nav class="hidden lg:flex items-center gap-8 text-sm text-neutral-700">
+      <span>A Convenção</span><span>Igrejas</span><span>Notícias e Artigos</span><span>Projetos Sociais</span>
+    </nav>
+    <span class="hidden sm:inline-flex items-center rounded-lg bg-cbn-orange-ink text-white text-sm font-semibold px-4 py-2.5">Encontre uma igreja</span>
+  </div>
+</header>
+
+<main>
+<!-- HERO: carrossel de avisos 1:1 -->
+<section
+  x-data="avisos()"
+  x-init="start()"
+  @mouseenter="hover = true" @mouseleave="hover = false"
+  @keydown.left.prevent="prev()" @keydown.right.prevent="next()"
+  aria-roledescription="carousel"
+  aria-label="Avisos em destaque"
+  class="relative overflow-hidden bg-cbn-sand border-b border-neutral-200"
+>
+  <!-- Fundo: a foto ativa, desfocada e bem clara -->
+  <template x-for="(item, i) in items" :key="'bg'+i">
+    <div class="absolute inset-0 bg-cover bg-center blur-3xl scale-125 transition-opacity duration-700"
+         :class="active === i ? 'opacity-25' : 'opacity-0'"
+         :style="`background-image:url('${item.img}')`" aria-hidden="true"></div>
+  </template>
+  <div class="absolute inset-0 bg-gradient-to-b from-cbn-cream/40 via-cbn-cream/70 to-cbn-cream" aria-hidden="true"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12 lg:py-16">
+    <div class="grid lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+
+      <!-- Foto 1:1 -->
+      <div class="min-w-0 lg:col-span-6 lg:order-2 mock-note" data-note="Foto quadrada 1:1 (1080×1080, como um post do Instagram)">
+        <div class="relative aspect-square w-full max-w-[560px] mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-cbn-black/20 ring-1 ring-black/5 bg-neutral-200">
+          <template x-for="(item, i) in items" :key="'img'+i">
+            <img :src="item.img" :alt="item.alt"
+                 class="absolute inset-0 w-full h-full object-cover transition-all duration-700"
+                 :class="active === i ? 'opacity-100 scale-100' : 'opacity-0 scale-105'">
+          </template>
+          <!-- Selo de categoria -->
+          <span class="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-cbn-orange-ink shadow" x-text="items[active].tag"></span>
+          <!-- Contador -->
+          <span class="absolute bottom-4 right-4 rounded-full bg-cbn-black/70 text-white text-xs font-semibold px-3 py-1 tabular-nums" x-text="(active+1) + ' / ' + items.length"></span>
+        </div>
+      </div>
+
+      <!-- Título, subtítulo e ação -->
+      <div class="min-w-0 lg:col-span-6 lg:order-1">
+        <div class="inline-flex items-center gap-2 mb-4">
+          <span class="w-2 h-2 rounded-full bg-cbn-orange"></span>
+          <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange-ink">Avisos da Convenção</span>
+        </div>
+
+        <div class="relative min-h-[17rem] sm:min-h-[13rem] lg:min-h-[17rem]">
+          <template x-for="(item, i) in items" :key="'txt'+i">
+            <div class="absolute inset-0 transition-all duration-500"
+                 :class="active === i ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'"
+                 :aria-hidden="active !== i">
+              <h1 class="font-brand-serif font-bold text-3xl sm:text-4xl lg:text-5xl leading-[1.1] tracking-tight text-balance" :class="i===0 && 'mock-note'" data-note="Título (até ~70 caracteres)" x-text="item.title"></h1>
+              <p class="mt-4 text-base sm:text-lg text-neutral-700 leading-relaxed max-w-xl text-balance" :class="i===0 && 'mock-note'" data-note="Subtítulo (até ~160 caracteres)" x-text="item.subtitle"></p>
+              <div class="mt-7 flex flex-wrap items-center gap-4">
+                <a href="#" class="inline-flex items-center gap-2 rounded-lg bg-cbn-orange-ink hover:bg-cbn-black text-white font-semibold px-6 py-3.5 transition">
+                  <span x-text="item.cta"></span>
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                </a>
+                <span class="text-sm text-neutral-500" x-text="item.meta"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- Navegação: miniaturas 1:1 com progresso -->
+        <div class="mt-8 lg:mt-10 mock-note" data-note="Miniaturas 1:1 navegam entre os avisos; a barra mostra o tempo">
+          <div class="flex items-center gap-3">
+            <ol class="flex gap-3 flex-1 min-w-0 overflow-x-auto pb-1">
+              <template x-for="(item, i) in items" :key="'th'+i">
+                <li class="shrink-0">
+                  <button type="button" @click="goTo(i)"
+                          :aria-current="active === i ? 'true' : 'false'"
+                          :aria-label="`Ir para o aviso ${i+1}: ${item.title}`"
+                          class="group block w-16 sm:w-20 text-left focus:outline-none">
+                    <span class="block aspect-square rounded-lg overflow-hidden ring-2 transition"
+                          :class="active === i ? 'ring-cbn-orange' : 'ring-transparent opacity-60 group-hover:opacity-100'">
+                      <img :src="item.thumb" alt="" class="w-full h-full object-cover">
+                    </span>
+                    <span class="mt-2 block h-1 rounded-full bg-neutral-300 overflow-hidden">
+                      <span class="block h-full bg-cbn-orange" :style="`width:${progressFor(i)}%`"></span>
+                    </span>
+                  </button>
+                </li>
+              </template>
+            </ol>
+            <div class="flex items-center gap-2 shrink-0">
+              <button type="button" @click="paused = !paused" :aria-label="paused ? 'Retomar' : 'Pausar'" class="w-10 h-10 rounded-full border border-neutral-300 bg-white flex items-center justify-center hover:border-cbn-black">
+                <svg x-show="!paused" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+                <svg x-show="paused" x-cloak class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <button type="button" @click="prev()" aria-label="Aviso anterior" class="hidden sm:flex w-10 h-10 rounded-full border border-neutral-300 bg-white items-center justify-center hover:border-cbn-black">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+              </button>
+              <button type="button" @click="next()" aria-label="Próximo aviso" class="hidden sm:flex w-10 h-10 rounded-full bg-cbn-black text-white items-center justify-center hover:bg-cbn-orange-ink">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demais seções da home: sem alteração -->
+<section class="py-10 bg-white border-b border-neutral-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+    <div class="rounded-xl border-2 border-dashed border-cbn-teal/50 bg-cbn-teal/5 px-6 py-8 text-center text-sm text-cbn-teal font-semibold">
+      Daqui para baixo a home continua exatamente como está hoje (notícias, igrejas, projetos sociais etc.). Só o hero muda.
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+  const u = (id) => ({
+    img: `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1080&h=1080&q=70`,
+    thumb: `https://images.unsplash.com/${id}?auto=format&fit=crop&w=160&h=160&q=60`,
+  });
+  function avisos() {
+    return {
+      items: [
+        { ...u('photo-1511632765486-a01980e01a18'), alt: 'Pastores reunidos em assembleia', tag: 'Assembleia',
+          title: 'Assembleia Geral Ordinária 2026', subtitle: 'Dias 14 e 15 de março, em Anápolis. Inscreva os mensageiros da sua igreja até 28 de fevereiro.',
+          cta: 'Fazer inscrição', meta: '14–15 mar · Anápolis' },
+        { ...u('photo-1529070538774-1843cb3265df'), alt: 'Jovens em culto ao ar livre', tag: 'Juventude',
+          title: 'Acampamento JUBAN: Conectados', subtitle: 'Quatro dias de louvor, palavra e comunhão para adolescentes e jovens de todo o estado.',
+          cta: 'Saiba mais', meta: 'Julho · Pirenópolis' },
+        { ...u('photo-1488521787991-ed7bbaae773c'), alt: 'Voluntários entregando cestas', tag: 'Ação social',
+          title: 'Campanha do Agasalho 2026', subtitle: 'Doe roupas e cobertores na igreja filiada mais próxima. As entregas vão para famílias atendidas pelos projetos sociais.',
+          cta: 'Onde doar', meta: 'Até 30 de junho' },
+        { ...u('photo-1504052434569-70ad5836ab65'), alt: 'Bíblia aberta sobre a mesa', tag: 'SETEBAN-GO',
+          title: 'Inscrições abertas no SETEBAN-GO', subtitle: 'Bacharel em Teologia e cursos livres, presencial em Goiânia e a distância.',
+          cta: 'Conhecer os cursos', meta: 'Início em agosto' },
+      ],
+      active: 0, interval: 7000, elapsed: 0, paused: false, hover: false, timer: null,
+      start() {
+        const step = 100;
+        this.timer = setInterval(() => {
+          if (this.paused || this.hover) return;
+          this.elapsed += step;
+          if (this.elapsed >= this.interval) this.next();
+        }, step);
+      },
+      goTo(i) { this.active = (i + this.items.length) % this.items.length; this.elapsed = 0; },
+      next() { this.goTo(this.active + 1); },
+      prev() { this.goTo(this.active - 1); },
+      progressFor(i) { return i < this.active ? 100 : i === this.active ? Math.min(100, this.elapsed / this.interval * 100) : 0; },
+    };
+  }
+</script>
+</body>
+</html>

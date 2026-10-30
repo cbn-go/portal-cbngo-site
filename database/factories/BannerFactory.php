@@ -22,6 +22,9 @@ class BannerFactory extends Factory
         return [
             'user_id' => null,
             'title' => fake()->sentence(4),
+            'tag' => 'Assembleia',
+            'subtitle' => 'Inscreva os mensageiros da sua igreja até 28 de fevereiro.',
+            'meta' => '14–15 mar · Anápolis',
             'image' => 'banners/'.fake()->unique()->uuid().'.jpg',
             'alt_text' => 'Encontro de Missões Nacionais 2026, de 12 a 14 de novembro, em Goiânia.',
             'link_url' => '/noticias',
@@ -31,6 +34,7 @@ class BannerFactory extends Factory
             'starts_at' => null,
             'ends_at' => null,
             'is_active' => true,
+            'is_square' => true,
         ];
     }
 
@@ -62,6 +66,14 @@ class BannerFactory extends Factory
             'starts_at' => now()->addDay(),
             'ends_at' => now()->addDays(10),
         ]);
+    }
+
+    /**
+     * Banner 16:9 antigo, ainda sem foto 1:1 (o painel o marca com is_square = false).
+     */
+    public function legacy(): static
+    {
+        return $this->state(fn (): array => ['is_square' => false]);
     }
 
     /**

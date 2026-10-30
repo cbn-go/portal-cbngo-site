@@ -1,4 +1,4 @@
-// Carrossel de banners do hero da home (Issue #23).
+// Carrossel de avisos do hero da home (Issues #23 e #39).
 // O autoplay pausa com o mouse ou o foco dentro do carrossel, pelo botão de pausa
 // e fica desligado para quem prefere menos movimento (prefers-reduced-motion).
 export default function heroCarousel({ count, interval = 7000 }) {
