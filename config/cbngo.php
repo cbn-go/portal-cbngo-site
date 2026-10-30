@@ -89,4 +89,16 @@ return [
         'banners_cache_ttl' => (int) env('HOME_BANNERS_CACHE_TTL', 300),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Área das Igrejas / Painel Administrativo
+    |--------------------------------------------------------------------------
+    |
+    | Endereço do painel administrativo da CBN-GO (gestão e área das igrejas).
+    |
+    */
+
+    'panel_url' => env('CBNGO_PANEL_URL', 'https://painel.cbngo.org.br'),
+
 ];
+

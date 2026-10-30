@@ -42,7 +42,7 @@
     ];
 
     $activeGroup = collect($groups)->search(fn (array $group) => array_key_exists((string) $activeKey, $group['links']));
-    $churchAreaUrl = 'https://admin.cbngo.com.br';
+    $churchAreaUrl = config('cbngo.panel_url', 'https://painel.cbngo.org.br');
     $searchScopes = [
         'noticias.index' => 'Notícias',
         'artigos.index' => 'Artigos',

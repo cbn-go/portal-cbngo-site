@@ -74,7 +74,7 @@
                     @endif
                 </div>
                 <span class="hidden sm:block w-px h-3.5 bg-white/20" aria-hidden="true"></span>
-                <a href="https://admin.cbngo.com.br" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 font-semibold text-white hover:text-cbn-gold transition-colors">
+                <a href="{{ config('cbngo.panel_url', 'https://painel.cbngo.org.br') }}" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 font-semibold text-white hover:text-cbn-gold transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 11-6 0 3 3 0 016 0zM4.5 20.1a7.5 7.5 0 0115 0"/></svg>
                     Área das Igrejas<span class="sr-only"> (abre em nova aba)</span>
                 </a>
