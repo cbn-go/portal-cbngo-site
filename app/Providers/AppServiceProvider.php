@@ -12,7 +12,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Na Hostinger o document root é public_html (o deploy copia public/ para lá). Sem isto o Laravel
+        // leria o manifesto do Vite de uma pasta public/ antiga e apontaria para CSS/JS que não existem mais.
+        if (is_dir($this->app->basePath('public_html'))) {
+            $this->app->usePublicPath($this->app->basePath('public_html'));
+        }
     }
 
     /**
