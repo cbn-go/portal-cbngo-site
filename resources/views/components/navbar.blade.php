@@ -10,6 +10,7 @@
         request()->routeIs('igrejas*') => 'igrejas',
         request()->routeIs('projetos-sociais.*') => 'projetos-sociais',
         request()->routeIs('quem-somos*') => 'quem-somos',
+        request()->routeIs('estatuto.*') => 'estatuto',
         request()->routeIs('diretoria*') => 'diretoria',
         request()->routeIs('contato*') => 'contato',
         request()->routeIs('home') => 'home',
@@ -42,6 +43,8 @@
     ];
 
     $activeGroup = collect($groups)->search(fn (array $group) => array_key_exists((string) $activeKey, $group['links']));
+    // Páginas sem item próprio no menu (ex.: /estatuto, aberto pelos documentos de Quem Somos) acendem o grupo delas.
+    $activeGroup = $activeGroup ?: match ($activeKey) { 'estatuto' => 'convencao', default => false };
     $churchAreaUrl = config('cbngo.panel_url', 'https://painel.cbngo.org.br');
     $searchScopes = [
         'noticias.index' => 'Notícias',

@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Author;
 use App\Models\News;
 use App\Models\SocialProject;
+use App\Models\Statute;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 
@@ -67,6 +68,11 @@ class SitemapController extends Controller
     private function entries(): array
     {
         $entries = array_map(fn (string $route) => ['loc' => route($route), 'lastmod' => null, 'image' => null], self::STATIC_ROUTES);
+
+        $statute = Statute::published()->first(['id', 'updated_at']);
+        if ($statute) {
+            $entries[] = ['loc' => route('estatuto.show'), 'lastmod' => $statute->updated_at?->toAtomString(), 'image' => null];
+        }
 
         News::published()->latest('published_at')->get(['slug', 'featured_image', 'updated_at'])
             ->each(function (News $news) use (&$entries) {
