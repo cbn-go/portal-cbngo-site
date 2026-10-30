@@ -10,11 +10,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * Banner do hero da home, cadastrado no painel administrativo (tabela `banners` do banco compartilhado).
+ * Aviso do hero da home ("Avisos da Home" no painel; tabela `banners` do banco compartilhado):
+ * foto 1:1 com selo, título, subtítulo, botão e linha de data/local (Issue #39).
  *
  * @property int $id
  * @property int|null $user_id
  * @property string $title
+ * @property string|null $tag
+ * @property string|null $subtitle
+ * @property string|null $meta
  * @property string $image
  * @property string $alt_text
  * @property string|null $link_url
@@ -24,11 +28,13 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $starts_at
  * @property Carbon|null $ends_at
  * @property bool $is_active
+ * @property bool $is_square
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read string|null $image_url
  * @property-read string|null $image_srcset
- * @property-read string|null $backdrop_url
+ * @property-read string|null $thumb_url
+ * @property-read string $button_label
  * @property-read string|null $link
  * @property-read bool $is_external
  * @property-read bool $opens_new_tab
@@ -40,12 +46,22 @@ class Banner extends Model
     use HasFactory;
 
     /**
-     * Dimensões da arte no padrão 16:9 do painel (Banner::RECOMMENDED_WIDTH/HEIGHT no painel),
-     * usadas para reservar a proporção do hero e evitar CLS.
+     * Dimensões da foto 1:1 do painel (Banner::RECOMMENDED_WIDTH/HEIGHT no painel),
+     * usadas para reservar a proporção da foto e evitar CLS.
      */
-    public const WIDTH = 1920;
+    public const WIDTH = 1080;
 
     public const HEIGHT = 1080;
+
+    /**
+     * Variantes WebP quadradas geradas pelo painel para banners, com as larguras reais.
+     */
+    public const SRCSET = ['thumb' => '160w', 'card' => '800w', 'cover' => '1080w'];
+
+    /**
+     * Texto do botão quando o painel não informa link_label.
+     */
+    public const DEFAULT_LINK_LABEL = 'Saiba mais';
 
     /**
      * Os atributos atribuíveis em massa.
@@ -55,6 +71,9 @@ class Banner extends Model
     protected $fillable = [
         'user_id',
         'title',
+        'tag',
+        'subtitle',
+        'meta',
         'image',
         'alt_text',
         'link_url',
@@ -64,6 +83,7 @@ class Banner extends Model
         'starts_at',
         'ends_at',
         'is_active',
+        'is_square',
     ];
 
     /**
@@ -77,10 +97,12 @@ class Banner extends Model
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'is_active' => 'boolean',
+        'is_square' => 'boolean',
     ];
 
     /**
-     * Escopo dos banners exibidos agora no hero (ativos e vigentes), na ordem definida no painel.
+     * Escopo dos avisos exibidos agora no hero (ativos, vigentes e com foto 1:1), na ordem definida no painel.
+     * Os banners 16:9 antigos ficam com is_square = false até receberem uma foto quadrada.
      *
      * @param  Builder<Banner>  $query
      * @return Builder<Banner>
@@ -88,6 +110,7 @@ class Banner extends Model
     public function scopeVisible(Builder $query): Builder
     {
         return $query->where('is_active', true)
+            ->where('is_square', true)
             ->where(function (Builder $q) {
                 $q->whereNull('starts_at')
                     ->orWhere('starts_at', '<=', now());
@@ -101,33 +124,43 @@ class Banner extends Model
     }
 
     /**
-     * URL pública da imagem original no storage de mídia compartilhado.
+     * URL da foto (variante WebP cover de 1080px, com fallback no original) no storage de mídia compartilhado.
      *
      * @return Attribute<string|null, never>
      */
     protected function imageUrl(): Attribute
     {
-        return Attribute::get(fn (): ?string => Media::url($this->image));
+        return Attribute::get(fn (): ?string => Media::variant($this->image, 'cover') ?? Media::url($this->image));
     }
 
     /**
-     * srcset com as variantes WebP geradas pelo painel.
+     * srcset com as variantes WebP quadradas geradas pelo painel.
      *
      * @return Attribute<string|null, never>
      */
     protected function imageSrcset(): Attribute
     {
-        return Attribute::get(fn (): ?string => Media::srcset($this->image));
+        return Attribute::get(fn (): ?string => Media::srcset($this->image, self::SRCSET));
     }
 
     /**
-     * Versão leve da arte (variante WebP thumb, com fallback no original) para o fundo desfocado do hero.
+     * Versão leve da foto (variante thumb de 160px, com fallback no original) para miniaturas e fundo desfocado.
      *
      * @return Attribute<string|null, never>
      */
-    protected function backdropUrl(): Attribute
+    protected function thumbUrl(): Attribute
     {
         return Attribute::get(fn (): ?string => Media::variant($this->image, 'thumb') ?? Media::url($this->image));
+    }
+
+    /**
+     * Texto do botão do aviso.
+     *
+     * @return Attribute<string, never>
+     */
+    protected function buttonLabel(): Attribute
+    {
+        return Attribute::get(fn (): string => trim((string) $this->link_label) ?: self::DEFAULT_LINK_LABEL);
     }
 
     /**

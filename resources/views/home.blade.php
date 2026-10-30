@@ -14,7 +14,7 @@
 
 @section('content')
 @if ($banners->isNotEmpty())
-{{-- Hero com as artes dos banners cadastrados no painel (Issues #23 e #24); a arte não tem título visível --}}
+{{-- Hero com os avisos 1:1 cadastrados no painel (Issue #39); os títulos dos avisos são h2 --}}
 <h1 class="sr-only">{{ config('cbngo.organization.name') }}</h1>
 <x-hero-banner :banners="$banners" />
 @else

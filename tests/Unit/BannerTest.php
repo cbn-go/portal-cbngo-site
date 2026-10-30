@@ -11,7 +11,7 @@ class BannerTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Valida que o scope visible() traz só banners ativos e vigentes, na ordem do painel (B.1).
+     * Valida que o scope visible() traz só avisos ativos, vigentes e com foto 1:1, na ordem do painel.
      */
     public function test_visible_scope_filters_inactive_scheduled_and_expired_and_orders_by_position(): void
     {
@@ -25,6 +25,7 @@ class BannerTest extends TestCase
         Banner::factory()->inactive()->create(['position' => 0]);
         Banner::factory()->scheduled()->create(['position' => 0]);
         Banner::factory()->expired()->create(['position' => 0]);
+        Banner::factory()->legacy()->create(['position' => 0]);
 
         $this->assertSame([$first->id, $second->id], Banner::visible()->pluck('id')->all());
     }
@@ -65,15 +66,29 @@ class BannerTest extends TestCase
     }
 
     /**
-     * Valida que a imagem usa o storage de mídia compartilhado e as variantes WebP.
+     * Valida que a foto usa o storage de mídia compartilhado e as variantes WebP quadradas.
      */
-    public function test_image_url_and_srcset_use_shared_media_storage(): void
+    public function test_image_url_and_srcset_use_square_variants_from_shared_media(): void
     {
         config(['media.url' => 'https://midia.cbngo.org.br']);
 
         $banner = new Banner(['image' => 'banners/assembleia.jpg']);
 
-        $this->assertSame('https://midia.cbngo.org.br/banners/assembleia.jpg', $banner->image_url);
-        $this->assertStringContainsString('https://midia.cbngo.org.br/banners/assembleia-cover.webp 1600w', (string) $banner->image_srcset);
+        $this->assertSame('https://midia.cbngo.org.br/banners/assembleia-cover.webp', $banner->image_url);
+        $this->assertSame('https://midia.cbngo.org.br/banners/assembleia-thumb.webp', $banner->thumb_url);
+        $this->assertSame(
+            'https://midia.cbngo.org.br/banners/assembleia-thumb.webp 160w, https://midia.cbngo.org.br/banners/assembleia-card.webp 800w, https://midia.cbngo.org.br/banners/assembleia-cover.webp 1080w',
+            $banner->image_srcset
+        );
+    }
+
+    /**
+     * Valida que o botão usa o link_label do painel ou "Saiba mais".
+     */
+    public function test_button_label_defaults_to_saiba_mais(): void
+    {
+        $this->assertSame('Fazer inscrição', (new Banner(['link_label' => 'Fazer inscrição']))->button_label);
+        $this->assertSame('Saiba mais', (new Banner(['link_label' => null]))->button_label);
+        $this->assertSame('Saiba mais', (new Banner(['link_label' => '  ']))->button_label);
     }
 }
