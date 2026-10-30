@@ -25,9 +25,9 @@ Construir as páginas de apresentação institucional da Convenção Batista Nac
   - Cards `<x-board-member-card>` com foto (`photo_url` segura) ou fallback de iniciais (`data-testid="board-member-initials"`), nome, cargo e região (coordenadores).
   - Empty state quando não houver membros ativos.
 - **Página `/contato` (Sub-issue 7.3):**
-  - Dados oficiais da sede estadual (endereço, telefone, WhatsApp, e-mail e expediente) vindos de `config('cbngo.contact')`, com links `tel:`, `https://wa.me/{digits}`, `mailto:` e "Como chegar" (Google Maps).
-  - Redes sociais oficiais vindas de `config('cbngo.social')`.
-- **Fonte única de contato:** `config/cbngo.php` consumido pela página `/contato`, pelo `<x-footer>` e pela barra superior do layout. E-mail oficial: `contato@cbngo.org.br`.
+  - Dados oficiais da sede estadual (endereço, telefone, WhatsApp, e-mail e expediente) vindos do painel via `App\Support\InstitutionalInfo` (Issue #37, ver `specs/dados-institucionais.md`), com links `tel:`, `https://wa.me/{digits}`, `mailto:` e "Como chegar" (Google Maps).
+  - Redes sociais oficiais preenchidas no painel.
+- **Fonte única de contato:** `App\Support\InstitutionalInfo` (painel, com fallback em `config/cbngo.php`), consumido pela página `/contato`, pelo `<x-footer>` e pela barra superior do layout. E-mail oficial: `contato@cbngo.org.br`.
 - **Navbar:** item "Institucional" ativo (`aria-current="page"`) em `/quem-somos` e `/diretoria`; item "Contato" ativo em `/contato`.
 - **Modelagem, Factory & Seeder:** migrations `board_members` e `documents`, models, factories e `DatabaseSeeder` com diretoria de rascunho e os documentos Estatuto, Regimento Interno e Pacto Renovado.
 
@@ -90,7 +90,7 @@ Schema::create('documents', function (Blueprint $table) {
 - `scopeActive(Builder $query): Builder`
 - `getSafeFileUrl(): ?string` — aceita `http://`, `https://` ou caminho relativo iniciado por `/` (sem `//`); demais esquemas retornam `null`.
 
-**`App\Support\ContactLinks`:** `digits()`, `tel()`, `whatsapp()` e `maps()` geram os links de contato a partir do `config/cbngo.php` (usados em `/contato` e no `<x-footer>`).
+**`App\Support\ContactLinks`:** `digits()`, `tel()`, `whatsapp()` e `maps()` geram os links de contato a partir dos dados institucionais (usados em `/contato` e no `<x-footer>`).
 
 ### 2.3 Rotas & Controller
 
@@ -104,7 +104,7 @@ Route::get('/contato', [InstitutionalController::class, 'contact'])->name('conta
 No `InstitutionalController`:
 - `about()` → `institucional.quem-somos` com `$documents` (`Collection<Document>` ativos por `position`, `title`).
 - `board()` → `institucional.diretoria` com `$groups`: `array<string, array{label: string, members: Collection<BoardMember>}>` na ordem de `BoardMember::GROUPS`, apenas grupos com membros ativos.
-- `contact()` → `institucional.contato` com `$contact` (`config('cbngo.contact')`) e `$social` (`config('cbngo.social')`).
+- `contact()` → `institucional.contato` com `$info` (`App\Support\InstitutionalInfo`).
 
 ---
 

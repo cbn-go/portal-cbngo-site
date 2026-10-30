@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BoardMember;
 use App\Models\Document;
 use App\Models\Statute;
-use App\Support\ContactLinks;
+use App\Support\InstitutionalInfo;
 use Illuminate\View\View;
 
 class InstitutionalController extends Controller
@@ -60,17 +60,8 @@ class InstitutionalController extends Controller
     /**
      * Exibe os dados oficiais de contato da sede estadual.
      */
-    public function contact(): View
+    public function contact(InstitutionalInfo $info): View
     {
-        /** @var array{address: string, phone: string, whatsapp: string, email: string, office_hours: string} $contact */
-        $contact = config('cbngo.contact');
-
-        return view('institucional.contato', [
-            'contact' => $contact,
-            'social' => (array) config('cbngo.social'),
-            'phoneHref' => ContactLinks::tel($contact['phone']),
-            'whatsappUrl' => ContactLinks::whatsapp($contact['whatsapp']),
-            'mapsUrl' => ContactLinks::maps($contact['address']),
-        ]);
+        return view('institucional.contato', ['info' => $info]);
     }
 }

@@ -231,14 +231,16 @@ class InstitutionalPagesTest extends TestCase
     }
 
     /**
-     * Valida que /contato exibe os dados oficiais da sede a partir de config('cbngo.contact') e não possui formulário (AC 7.3).
+     * Valida que /contato exibe os dados oficiais da sede (fallback do config, sem registro do painel) e não possui formulário (AC 7.3).
      */
     public function test_contact_page_renders_official_contact_data_from_config(): void
     {
         $this->withoutVite();
 
         config([
-            'cbngo.contact.address' => 'Rua Teste, 100 - Setor Central, Goiânia - GO',
+            'cbngo.contact.street' => 'Rua Teste',
+            'cbngo.contact.number' => '100',
+            'cbngo.contact.complement' => null,
             'cbngo.contact.phone' => '(62) 3200-1234',
             'cbngo.contact.whatsapp' => '(62) 98487-6863',
             'cbngo.contact.email' => 'contato@cbngo.org.br',
@@ -248,12 +250,13 @@ class InstitutionalPagesTest extends TestCase
         $response = $this->get(route('contato'));
 
         $response->assertStatus(200);
-        $response->assertSee('Rua Teste, 100 - Setor Central, Goiânia - GO');
+        $response->assertSee('Rua Teste, 100');
+        $response->assertSee('Setor Central, Goiânia - GO');
         $response->assertSee('href="tel:+556232001234"', false);
         $response->assertSee('href="https://wa.me/5562984876863"', false);
         $response->assertSee('href="mailto:contato@cbngo.org.br"', false);
         $response->assertSee('Segunda a sexta, das 9h às 18h30');
-        $response->assertSee('https://www.google.com/maps/search/?api=1&amp;query='.rawurlencode('Rua Teste, 100 - Setor Central, Goiânia - GO'), false);
+        $response->assertSee('https://www.google.com/maps/search/?api=1&amp;query='.rawurlencode('Rua Teste, 100 - Setor Central, Goiânia - GO, CEP 74020-045'), false);
         // A página de contato não tem formulário (o menu tem a busca do portal, fora do <main>).
         preg_match('#<main[^>]*>(.*)</main>#s', (string) $response->getContent(), $main);
         $this->assertStringNotContainsString('<form', $main[1]);
