@@ -17,7 +17,7 @@ class StructuredData
      */
     public static function organization(): array
     {
-        $contact = (array) config('cbngo.contact');
+        $info = app(InstitutionalInfo::class);
 
         return [
             '@context' => 'https://schema.org',
@@ -27,16 +27,10 @@ class StructuredData
             'alternateName' => config('cbngo.organization.short_name'),
             'url' => url('/'),
             'logo' => asset('images/brand/cbn-go.png'),
-            'email' => $contact['email'] ?? null,
-            'telephone' => $contact['phone'] ?? null,
-            'address' => [
-                '@type' => 'PostalAddress',
-                'streetAddress' => $contact['address'] ?? null,
-                'addressLocality' => 'Goiânia',
-                'addressRegion' => 'GO',
-                'addressCountry' => 'BR',
-            ],
-            'sameAs' => array_values((array) config('cbngo.social')),
+            'email' => $info->email(),
+            'telephone' => $info->phone(),
+            'address' => $info->postalAddress(),
+            'sameAs' => array_column($info->socialLinks(), 'url'),
         ];
     }
 

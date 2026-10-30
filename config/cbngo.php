@@ -5,28 +5,43 @@
 | Dados institucionais oficiais da CBN-GO
 |--------------------------------------------------------------------------
 |
-| Fonte única dos dados de contato e redes sociais exibidos em /contato,
-| no rodapé e na barra superior do layout (Issue #7).
+| Fallback: os valores oficiais são mantidos no painel (Sistema → Dados
+| institucionais) e lidos por App\Support\InstitutionalInfo (Issue #37).
+| Estes valores só aparecem se o registro do painel não existir ou o banco
+| estiver indisponível. As chaves espelham a tabela institutional_settings.
 |
 */
 
 return [
 
     'contact' => [
-        // TODO revisar com secretaria: endereço completo da sede estadual.
-        'address' => env('CBNGO_ADDRESS', 'Sede Administrativa CBN-GO, Goiânia - GO'),
-        'phone' => env('CBNGO_PHONE', '(62) 8487-6863'),
-        // TODO revisar com secretaria: número oficial de WhatsApp.
-        'whatsapp' => env('CBNGO_WHATSAPP', '(62) 8487-6863'),
         'email' => env('CBNGO_EMAIL', 'contato@cbngo.org.br'),
-        // TODO revisar com secretaria: site legado informa 9h às 18h30; rodapé anterior informava 8h às 17h.
+        'phone' => env('CBNGO_PHONE', '(62) 8487-6863'),
+        'whatsapp' => env('CBNGO_WHATSAPP', '(62) 8487-6863'),
         'office_hours' => env('CBNGO_OFFICE_HOURS', 'Segunda a sexta, das 9h às 18h30'),
+        // Endereço da sede conforme o Art. 2º do Estatuto.
+        'street' => 'Rua 04',
+        'number' => '515',
+        'complement' => '12º andar, sala 1.207, Edifício Parthenon Center',
+        'district' => 'Setor Central',
+        'city' => 'Goiânia',
+        'state' => 'GO',
+        'postal_code' => '74020-045',
+        'maps_url' => null,
     ],
 
     'social' => [
         'instagram' => 'https://www.instagram.com/cbn_go/',
         'facebook' => 'https://www.facebook.com/cbnacionalgoias',
         'youtube' => 'https://youtube.com/@cbngoias',
+        'tiktok' => null,
+        'spotify' => null,
+        'linkedin' => null,
+    ],
+
+    // A chave do cache muda a cada edição no painel (updated_at); o TTL só limita o tamanho do cache.
+    'institutional' => [
+        'cache_ttl' => (int) env('INSTITUTIONAL_CACHE_TTL', 3600),
     ],
 
     /*
