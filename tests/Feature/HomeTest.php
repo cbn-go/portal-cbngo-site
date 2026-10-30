@@ -595,6 +595,8 @@ class HomeTest extends TestCase
 
         $response->assertSee('id="projetos-sociais"', false);
         $response->assertSee('Ver todos os projetos');
+        $response->assertSee('href="'.config('cbngo.panel_url').'"', false);
+        $response->assertDontSee('https://admin.cbngo.com.br', false);
         $this->assertSame(3, substr_count($html, 'data-testid="project-tile"'));
         // O destaque abre o mosaico (primeiro bloco, o maior).
         $this->assertLessThan(

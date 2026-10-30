@@ -256,7 +256,7 @@
         <div class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10 pt-8">
             <p class="text-white/75 text-center sm:text-left">
                 Sua igreja tem um projeto social?
-                <a href="https://admin.cbngo.com.br" target="_blank" rel="noopener noreferrer" class="font-semibold text-white underline underline-offset-2 hover:text-cbn-gold">Cadastre na Área das Igrejas<span class="sr-only"> (abre em nova aba)</span></a>.
+                <a href="{{ config('cbngo.panel_url', 'https://painel.cbngo.org.br') }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-white underline underline-offset-2 hover:text-cbn-gold">Cadastre na Área das Igrejas<span class="sr-only"> (abre em nova aba)</span></a>.
             </p>
             <a
                 href="{{ route('projetos-sociais.index') }}"

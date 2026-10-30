@@ -201,4 +201,23 @@ class DesignSystemTest extends TestCase
         $response->assertSee('data-testid="hero-banner"', false);
         $response->assertSee('alt="Interior de igreja com vitrais (arte de exemplo em 16:9)"', false);
     }
+
+    /**
+     * Valida que o link da Área das Igrejas aponta para o painel oficial em painel.cbngo.org.br.
+     */
+    public function test_church_area_links_point_to_official_panel_url(): void
+    {
+        $panelUrl = config('cbngo.panel_url');
+        $this->assertSame('https://painel.cbngo.org.br', $panelUrl);
+
+        $navbarHtml = $this->blade('<x-navbar />');
+        $navbarHtml->assertSee('href="'.$panelUrl.'"', false);
+        $navbarHtml->assertDontSee('https://admin.cbngo.com.br', false);
+
+        $layoutHtml = $this->blade('@extends("layouts.app") @section("content") @endsection');
+        $layoutHtml->assertSee('href="'.$panelUrl.'"', false);
+        $layoutHtml->assertDontSee('https://admin.cbngo.com.br', false);
+    }
 }
+
+
