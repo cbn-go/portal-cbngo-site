@@ -44,11 +44,12 @@
         <div class="absolute inset-0 bg-gradient-to-b from-cbn-cream/40 via-cbn-cream/70 to-cbn-cream"></div>
     </div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12 lg:py-16">
-        <div class="grid lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-10">
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {{-- Foto 1:1 --}}
             <div class="min-w-0 lg:col-span-6 lg:order-2">
-                <div class="relative aspect-square w-full max-w-[560px] mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-cbn-black/20 ring-1 ring-black/5 bg-neutral-200">
+                {{-- No desktop a foto encolhe com a altura da tela, para a hero caber sem rolar (menu e barras ≈ 17rem) --}}
+                <div class="relative aspect-square w-full max-w-[560px] lg:max-w-[clamp(320px,calc(100svh-17rem),560px)] mx-auto lg:mr-0 rounded-2xl overflow-hidden shadow-2xl shadow-cbn-black/20 ring-1 ring-black/5 bg-neutral-200">
                     @foreach ($banners as $banner)
                         @php($first = $loop->first)
                         <div
@@ -99,7 +100,7 @@
 
             {{-- Texto do aviso e navegação --}}
             <div class="min-w-0 lg:col-span-6 lg:order-1">
-                <div class="inline-flex items-center gap-2 mb-4">
+                <div class="inline-flex items-center gap-2 mb-3 lg:mb-4">
                     <span class="w-2 h-2 rounded-full bg-cbn-orange" aria-hidden="true"></span>
                     <span class="text-xs uppercase font-bold tracking-wider text-cbn-orange-ink">Avisos da Convenção</span>
                 </div>
@@ -120,18 +121,18 @@
                             @endif
                             class="[grid-area:1/1] motion-safe:transition-all motion-safe:duration-500 {{ $first ? 'opacity-100' : 'opacity-0 pointer-events-none' }}"
                         >
-                            <h2 class="font-brand-serif font-bold text-3xl sm:text-4xl lg:text-5xl leading-[1.1] tracking-tight text-cbn-black text-balance">
+                            <h2 class="font-brand-serif font-bold text-3xl sm:text-4xl xl:text-5xl leading-[1.1] tracking-tight text-cbn-black text-balance">
                                 {{ $banner->title }}
                             </h2>
 
                             @if (filled($banner->subtitle))
-                                <p data-hero-subtitle class="mt-4 text-base sm:text-lg text-neutral-700 leading-relaxed max-w-xl text-balance">
+                                <p data-hero-subtitle class="mt-3 lg:mt-4 text-base sm:text-lg text-neutral-700 leading-relaxed max-w-xl text-balance">
                                     {{ $banner->subtitle }}
                                 </p>
                             @endif
 
                             @if ($banner->link || filled($banner->meta))
-                                <div class="mt-7 flex flex-wrap items-center gap-x-4 gap-y-3">
+                                <div class="mt-6 lg:mt-7 flex flex-wrap items-center gap-x-4 gap-y-3">
                                     @if ($banner->link)
                                         <a
                                             href="{{ $banner->link }}"
@@ -157,7 +158,7 @@
                 </div>
 
                 @if ($isCarousel)
-                    <div data-testid="hero-banner-controls" class="mt-8 lg:mt-10 flex items-center gap-3">
+                    <div data-testid="hero-banner-controls" class="mt-8 flex items-center gap-3">
                         <ol class="flex gap-3 flex-1 min-w-0 overflow-x-auto p-1 -m-1">
                             @foreach ($banners as $banner)
                                 <li class="shrink-0">
