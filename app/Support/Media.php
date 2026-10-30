@@ -9,7 +9,7 @@ class Media
      *
      * @var array<int, string>
      */
-    public const SIZES = ['thumb', 'card', 'cover'];
+    public const SIZES = ['thumb', 'card', 'cover', 'full'];
 
     /**
      * Monta a URL pública de um arquivo do storage de mídia compartilhado com o painel.
@@ -51,7 +51,7 @@ class Media
     }
 
     /**
-     * Retorna a URL da variante WebP para o tamanho especificado (thumb, card, cover).
+     * Retorna a URL da variante WebP para o tamanho especificado (thumb, card, cover, full).
      *
      * Regra do painel: para caminho relativo "news/featured/abc.jpg", a variante é "news/featured/abc-{size}.webp".
      * Documentos (PDF, DOC), URLs externas completas, caminhos inseguros ou tamanhos inválidos retornam null.
@@ -92,8 +92,10 @@ class Media
      * Monta a string do atributo srcset contendo as variantes WebP disponíveis com seus descritores de largura.
      *
      * @param  array<string, string>  $sizesMap  Tamanho => descritor (ex: ['thumb' => '400w', 'card' => '800w', 'cover' => '1600w'])
+     *
+     * A variante "full" (2400px) atende telas de alta densidade na capa das notícias.
      */
-    public static function srcset(?string $path, array $sizesMap = ['thumb' => '400w', 'card' => '800w', 'cover' => '1600w']): ?string
+    public static function srcset(?string $path, array $sizesMap = ['thumb' => '400w', 'card' => '800w', 'cover' => '1600w', 'full' => '2400w']): ?string
     {
         $sources = [];
 
